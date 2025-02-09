@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./*"],
+      "@/components/*": ["./src/components/*"],
+      "@/resources/*": ["./src/resources/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/actions": ["./src/app/[locale]/action.js"],
+      "@/auth": ["./src/auth"]
+    }
+  }
+}

@@ -13,6 +13,8 @@
     "classnames": "^2.5.1",
     "compressorjs": "^1.2.1",
     "next": "15.1.4",
+    "next-auth": "^5.0.0-beta.25",
+    "next-intl": "^3.26.3",
     "postcss": "^8.4.39",
     "postcss-preset-env": "^9.5.15",
     "prismjs": "^1.29.0",
