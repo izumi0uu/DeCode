@@ -100,6 +100,19 @@ export default function RootLayout({ children }: RootLayoutProps) {
           >
             <Header />
             <Footer />
+            <Flex
+              position="relative"
+              zIndex={0}
+              paddingX="l"
+              paddingY="l"
+              horizontal="center"
+              fillWidth
+              flex={1}
+            >
+              <Flex horizontal="center" fillWidth flex={1} minHeight="0">
+                {children}
+              </Flex>
+            </Flex>
           </Background>
         </Column>
       </ToastProvider>

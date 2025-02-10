@@ -1,1 +1,1 @@
-export { style, effects, display, mailchimp } from "./config";
+export { style, effects, display, mailchimp, baseURL, mode } from "./config";

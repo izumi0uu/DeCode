@@ -1,3 +1,26 @@
+const baseURL = "DeCode.xyz";
+
+const mode = {
+  dark: {},
+  light: {},
+  phone: {
+    routes: {
+      "/": true,
+      "/myInfo": true,
+      "/courses": false,
+      "/about": false,
+    },
+  },
+  desktop: {
+    routes: {
+      "/": true,
+      "/myInfo": true,
+      "/courses": true,
+      "/about": true,
+    },
+  },
+};
+
 const style = {
   theme: "dark",
   brand: "indigo",
@@ -91,4 +114,4 @@ const mailchimp = {
   },
 };
 
-export { style, effects, display, mailchimp };
+export { style, effects, display, mailchimp, baseURL, mode };
