@@ -1,22 +1,36 @@
 "use client";
 
-import { Flex, Fade, ToggleButton, Line } from "@/once-ui/components";
+import {
+  Flex,
+  Fade,
+  ToggleButton,
+  Line,
+  DropdownWrapper,
+  Button,
+  Text,
+} from "@/once-ui/components";
+import { TimeDisplay } from "@/components/timePlay";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
+import classNames from "classnames";
 
 import styles from "./index.module.scss";
-import { mode } from "@/resources/config";
+import { mode, courses, myInfo, about } from "@/resources";
 
 const locale = navigator.language;
+const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 const Header = () => {
   const pathname = usePathname();
-  const isShowHomeBtn = mode.phone.routes["/"] && mode.desktop.routes["/"];
+  const isShowHomeBtn = mode.phone.routes["/"] || mode.desktop.routes["/"];
   const isShowMyInfoBtn =
-    mode.phone.routes["/myInfo"] && mode.desktop.routes["/myInfo"];
+    mode.phone.routes["/myInfo"] || mode.desktop.routes["/myInfo"];
   const isShowCoursesBtn =
-    mode.phone.routes["/courses"] && mode.desktop.routes["/courses"];
+    mode.phone.routes["/courses"] || mode.desktop.routes["/courses"];
   const isShowAboutBtn =
-    mode.phone.routes["/about"] && mode.desktop.routes["/about"];
+    mode.phone.routes["/about"] || mode.desktop.routes["/about"];
+
+  const [isShowMore, setIsShowMore] = useState(false);
 
   return (
     <>
@@ -59,12 +73,104 @@ const Header = () => {
             <Flex gap="4" vertical="center" textVariant="body-default-s">
               {isShowHomeBtn && (
                 <ToggleButton
-                  prefixIcon="PiHouseDuotone"
+                  prefixIcon="home"
                   href="/"
                   selected={pathname === "/"}
                 />
               )}
               <Line vert maxHeight="24" />
+              {isShowCoursesBtn && (
+                <>
+                  <ToggleButton
+                    className="s-flex-hide"
+                    prefixIcon="courses"
+                    href="/courses"
+                    label={courses.label}
+                    selected={pathname.startsWith("/courses")}
+                  />
+                  <ToggleButton
+                    className="s-flex-show"
+                    prefixIcon="courses"
+                    href="/courses"
+                    selected={pathname.startsWith("/courses")}
+                  />
+                </>
+              )}
+              <Line vert maxHeight="24" />
+              {isShowAboutBtn && (
+                <>
+                  <ToggleButton
+                    className="s-flex-hide"
+                    prefixIcon="about"
+                    href="/about"
+                    label={about.label}
+                    selected={pathname === "/about"}
+                  />
+                  <ToggleButton
+                    className="s-flex-show"
+                    prefixIcon="about"
+                    href="/about"
+                    selected={pathname === "/about"}
+                  />
+                </>
+              )}
+              <Line vert maxHeight="24" />
+              {isShowMyInfoBtn && (
+                <>
+                  <ToggleButton
+                    className="s-flex-hide"
+                    prefixIcon="user"
+                    href="/myInfo"
+                    label={myInfo.label}
+                    selected={pathname === "/myInfo"}
+                  />
+                  <ToggleButton
+                    className="s-flex-show"
+                    prefixIcon="user"
+                    href="/myInfo"
+                    selected={pathname === "/myInfo"}
+                  />
+                </>
+              )}
+              <Line vert maxHeight="24" />
+              {
+                <DropdownWrapper
+                  trigger={
+                    <Button
+                      id="custom-toggle"
+                      variant="secondary"
+                      prefixIcon={isShowMore ? "noShowMore" : "showMore"}
+                      className={classNames(styles.iconTransition)}
+                      onClick={() => setIsShowMore(!isShowMore)}
+                    />
+                  }
+                  dropdown={
+                    <Flex
+                      padding="20"
+                      background="surface"
+                      border="neutral-medium"
+                      radius="m"
+                    >
+                      <Text>Dropdown content here</Text>
+                    </Flex>
+                  }
+                  isOpen={isShowMore}
+                  onOpenChange={setIsShowMore}
+                />
+              }
+            </Flex>
+          </Flex>
+        </Flex>
+        <Flex fillWidth horizontal="end" vertical="center">
+          <Flex
+            paddingRight="12"
+            horizontal="end"
+            vertical="center"
+            textVariant="body-default-s"
+            gap="20"
+          >
+            <Flex hide="s">
+              {<TimeDisplay timeZone={timeZone} locale={locale} />}
             </Flex>
           </Flex>
         </Flex>

@@ -28,6 +28,11 @@ import {
   HiCheckCircle,
   HiOutlineShieldCheck,
   HiOutlineSparkles,
+  HiHome,
+  HiBookOpen,
+  HiMiniAcademicCap,
+  HiMiniListBullet,
+  HiMiniChevronDown,
 } from "react-icons/hi2";
 
 import { RiVisaLine } from "react-icons/ri";
@@ -66,4 +71,10 @@ export const iconLibrary: Record<string, IconType> = {
   visa: RiVisaLine,
   security: HiOutlineShieldCheck,
   sparkle: HiOutlineSparkles,
+  home: HiHome,
+  courses: HiBookOpen,
+  user: HiMiniUser,
+  about: HiMiniAcademicCap,
+  showMore: HiMiniListBullet,
+  noShowMore: HiMiniChevronDown,
 };
