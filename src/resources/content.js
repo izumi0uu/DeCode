@@ -1,5 +1,7 @@
 const courses = {
   label: "Courses",
+  button: "Take the first course",
+  picUrl: "/images/courses.jpg",
   description: "Courses I've taken and learned from",
 };
 
@@ -37,4 +39,13 @@ const logout = {
   description: "Logout from your account",
 };
 
-export { courses, myInfo, about, login, register, logout };
+const website = {
+  name: "DeCode",
+  subName: "DeCode | a guide for web3 beginner",
+  title: "A website for best web3 practices",
+  headline: "Unlocking the Right Way to Web3 Development right now!",
+  subline:
+    "From Solidity security model to DAO governance framework, master the core technology of the next generation of Internet.",
+};
+
+export { courses, myInfo, about, login, register, logout, website };

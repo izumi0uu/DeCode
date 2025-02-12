@@ -9,7 +9,7 @@ interface TimeDisplayProps {
 
 const TimeDisplay: React.FC<TimeDisplayProps> = ({
   timeZone,
-  locale = "en-GB",
+  locale = "en-US",
 }) => {
   const [currentTime, setCurrentTime] = useState("");
 

@@ -3,3 +3,4 @@ export { Footer } from "@/components/footer";
 export { Entrance } from "@/components/entrance";
 export { Home } from "@/components/home";
 export { TimeDisplay } from "@/components/timePlay";
+export { CoursePlay } from "@/components/coursePlay";

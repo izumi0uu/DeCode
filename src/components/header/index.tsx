@@ -11,16 +11,21 @@ import {
 } from "@/once-ui/components";
 import { TimeDisplay } from "@/components/timePlay";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import classNames from "classnames";
 
 import styles from "./index.module.scss";
 import { mode, courses, myInfo, about } from "@/resources";
 
-const locale = navigator.language;
-const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
 const Header = () => {
+  const [locale, setLocale] = useState("en-US");
+  const [timeZone, setTimeZone] = useState("Asia/Shanghai");
+
+  useEffect(() => {
+    setLocale(navigator.language);
+    setTimeZone(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  }, []);
+
   const pathname = usePathname();
   const isShowHomeBtn = mode.phone.routes["/"] || mode.desktop.routes["/"];
   const isShowMyInfoBtn =
