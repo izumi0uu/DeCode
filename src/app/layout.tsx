@@ -97,23 +97,22 @@ export default function RootLayout({ children }: RootLayoutProps) {
               color: effects.grid.color,
               opacity: effects.grid.opacity as any,
             }}
+          />
+          <Header />
+          <Flex
+            position="relative"
+            zIndex={9}
+            paddingX="l"
+            paddingY="l"
+            horizontal="center"
+            fillWidth
+            flex={1}
           >
-            <Header />
-            <Footer />
-            <Flex
-              position="relative"
-              zIndex={0}
-              paddingX="l"
-              paddingY="l"
-              horizontal="center"
-              fillWidth
-              flex={1}
-            >
-              <Flex horizontal="center" fillWidth flex={1} minHeight="0">
-                {children}
-              </Flex>
+            <Flex horizontal="center" fillWidth flex={1} minHeight="0">
+              {children}
             </Flex>
-          </Background>
+            <Footer />
+          </Flex>
         </Column>
       </ToastProvider>
     </Flex>

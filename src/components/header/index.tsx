@@ -7,7 +7,7 @@ import {
   Line,
   DropdownWrapper,
   Button,
-  Text,
+  Arrow,
 } from "@/once-ui/components";
 import { TimeDisplay } from "@/components/timePlay";
 import { usePathname } from "next/navigation";
@@ -151,11 +151,22 @@ const Header = () => {
                       border="neutral-medium"
                       radius="m"
                     >
-                      <Text>Dropdown content here</Text>
+                      <Button
+                        id="trigger"
+                        variant="secondary"
+                        size="s"
+                        href="#"
+                      >
+                        <Flex>
+                          Hover me
+                          <Arrow trigger="#trigger" color="onBackground" />
+                        </Flex>
+                      </Button>
                     </Flex>
                   }
                   isOpen={isShowMore}
                   onOpenChange={setIsShowMore}
+                  floatingPlacement="bottom-end"
                 />
               }
             </Flex>

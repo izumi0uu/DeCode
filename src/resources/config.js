@@ -58,13 +58,12 @@ const effects = {
     opacity: 20,
   },
   lines: {
-    display: false,
+    display: true,
     color: "neutral-alpha-weak",
-    opacity: 100,
+    opacity: 80,
   },
   grid: {
     display: false,
-
     color: "neutral-alpha-weak",
     opacity: 100,
   },
