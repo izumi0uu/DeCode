@@ -1,5 +1,6 @@
 export * from "./types/course";
 export * from "./types/lesson";
+export * from "./types/quiz";
 
 export const simulateCall = (ms: number) =>
   new Promise((resolve) => setTimeout(resolve, ms));

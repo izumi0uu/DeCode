@@ -11,6 +11,8 @@ type QuizQuestion = {
   explanation: string; // 题目解析
   difficulty: "easy" | "medium" | "hard";
   weight: number; // 题目分值
+  updated_at: string;
+  created_at: string;
 } & (
   | {
       type: "single";
@@ -82,3 +84,11 @@ interface CodeEvaluationParams {
   userId: string;
   attemptId: string;
 }
+
+export type {
+  QuizQuestion,
+  QuizMeta,
+  QuizAttempt,
+  QuizResponse,
+  CodeEvaluationParams,
+};
