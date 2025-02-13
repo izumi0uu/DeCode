@@ -8,6 +8,7 @@ import {
   Button,
   Avatar,
 } from "@/once-ui/components";
+import { CoursePlay } from "@/components/coursePlay";
 import styles from "./index.module.scss";
 import { courses, website } from "@/resources/content";
 
@@ -65,6 +66,9 @@ const Home = () => {
             </Button>
           </RevealFx>
         </Column>
+        <RevealFx translateY="16" delay={0.6}>
+          <CoursePlay />
+        </RevealFx>
       </Column>
     </Column>
   );
