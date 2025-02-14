@@ -2,7 +2,7 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./*"],
-      "@/components/*": ["./src/components/*"],
+      "@/components/*": ["./src/components/index.ts"],
       "@/resources/*": ["./src/resources/*"],
       "@/lib/*": ["./src/lib/*"],
       "@/actions": ["./src/app/[locale]/action.js"],

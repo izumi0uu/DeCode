@@ -36,6 +36,7 @@ const Header = () => {
     mode.phone.routes["/about"] || mode.desktop.routes["/about"];
 
   const [isShowMore, setIsShowMore] = useState(false);
+  const [isShowHover, setIsShowHover] = useState(false);
 
   return (
     <>
@@ -92,6 +93,16 @@ const Header = () => {
                     href="/courses"
                     label={courses.label}
                     selected={pathname.startsWith("/courses")}
+                    hoverable
+                    onHoverStart={() => {
+                      console.log("hover start");
+                      setIsShowHover(true);
+                    }}
+                    onHoverEnd={() => {
+                      console.log("hover end");
+                      setIsShowHover(false);
+                    }}
+                    hoverContent={<Flex>test</Flex>}
                   />
                   <ToggleButton
                     className="s-flex-show"

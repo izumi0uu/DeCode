@@ -6,13 +6,25 @@ interface ElementTypeProps {
   children: ReactNode;
   className?: string;
   style?: React.CSSProperties;
+  onHoverStart?: (event: React.MouseEvent<HTMLElement>) => void;
+  onHoverEnd?: (event: React.MouseEvent<HTMLElement>) => void;
   [key: string]: any;
 }
 
 const isExternalLink = (url: string) => /^https?:\/\//.test(url);
 
 const ElementType = forwardRef<HTMLElement, ElementTypeProps>(
-  ({ href, children, className, style, ...props }, ref) => {
+  (
+    { href, children, className, style, onHoverStart, onHoverEnd, ...props },
+    ref
+  ) => {
+    const commonProps = {
+      className,
+      style,
+      onMouseEnter: onHoverStart,
+      onMouseLeave: onHoverEnd,
+    };
+
     if (href) {
       const isExternal = isExternalLink(href);
       if (isExternal) {
@@ -22,8 +34,7 @@ const ElementType = forwardRef<HTMLElement, ElementTypeProps>(
             target="_blank"
             rel="noreferrer"
             ref={ref as React.Ref<HTMLAnchorElement>}
-            className={className}
-            style={style}
+            {...commonProps}
             {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
           >
             {children}
@@ -34,8 +45,7 @@ const ElementType = forwardRef<HTMLElement, ElementTypeProps>(
         <Link
           href={href}
           ref={ref as React.Ref<HTMLAnchorElement>}
-          className={className}
-          style={style}
+          {...commonProps}
           {...(props as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
         >
           {children}
@@ -45,14 +55,13 @@ const ElementType = forwardRef<HTMLElement, ElementTypeProps>(
     return (
       <button
         ref={ref as React.Ref<HTMLButtonElement>}
-        className={className}
-        style={style}
+        {...commonProps}
         {...(props as React.ButtonHTMLAttributes<HTMLButtonElement>)}
       >
         {children}
       </button>
     );
-  },
+  }
 );
 
 ElementType.displayName = "ElementType";
