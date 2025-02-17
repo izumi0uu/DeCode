@@ -19,7 +19,6 @@ export const useHover = <T extends HTMLElement>(
     const handleEnter = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       currentElements.current.add(target);
-      console.log("currentElements", currentElements.current);
       setIsHovered(true);
     };
 
@@ -36,7 +35,6 @@ export const useHover = <T extends HTMLElement>(
           !elements.some((el) => el?.contains(relatedTarget))) &&
         currentElements.current.size === 0
       ) {
-        console.log("leave");
         setIsHovered(false);
       }
     };
