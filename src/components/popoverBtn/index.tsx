@@ -5,9 +5,11 @@ import { Popover } from "@/components/popover";
 import { ToggleButton } from "@/once-ui/components";
 import type { ToggleButtonProps } from "@/once-ui/components/ToggleButton";
 
+type Placement = "top" | "bottom" | "left" | "right";
+
 interface PopoverBtnProps extends ToggleButtonProps {
   hovercontent: React.ReactNode;
-  placement?: "top" | "bottom" | "left" | "right";
+  placement?: Placement;
 }
 
 const PopoverBtn = forwardRef<HTMLButtonElement, PopoverBtnProps>(
