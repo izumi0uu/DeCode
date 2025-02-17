@@ -8,8 +8,9 @@ import {
   DropdownWrapper,
   Button,
   Arrow,
+  SmartLink,
 } from "@/once-ui/components";
-import { TimeDisplay } from "@/components/timePlay";
+import { TimeDisplay, PopoverBtn } from "@/components";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import classNames from "classnames";
@@ -87,22 +88,19 @@ const Header = () => {
               <Line vert maxHeight="24" />
               {isShowCoursesBtn && (
                 <>
-                  <ToggleButton
+                  <PopoverBtn
                     className="s-flex-hide"
                     prefixIcon="courses"
                     href="/courses"
                     label={courses.label}
                     selected={pathname.startsWith("/courses")}
-                    hoverable
-                    onHoverStart={() => {
-                      console.log("hover start");
-                      setIsShowHover(true);
-                    }}
-                    onHoverEnd={() => {
-                      console.log("hover end");
-                      setIsShowHover(false);
-                    }}
-                    hoverContent={<Flex>test</Flex>}
+                    hovercontent={
+                      <Flex direction="column">
+                        <SmartLink href="/courses">test</SmartLink>
+                        <SmartLink href="/courses">test</SmartLink>
+                        <SmartLink href="/courses">test</SmartLink>
+                      </Flex>
+                    }
                   />
                   <ToggleButton
                     className="s-flex-show"

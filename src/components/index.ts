@@ -4,3 +4,5 @@ export { Entrance } from "@/components/entrance";
 export { Home } from "@/components/home";
 export { TimeDisplay } from "@/components/timePlay";
 export { CoursePlay } from "@/components/coursePlay";
+export { Popover } from "@/components/popover";
+export { PopoverBtn } from "@/components/popoverBtn";

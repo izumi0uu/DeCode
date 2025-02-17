@@ -31,11 +31,6 @@ interface CommonProps {
   style?: React.CSSProperties;
   children?: ReactNode;
   href?: string;
-
-  hoverable?: boolean;
-  onHoverStart?: (event: React.MouseEvent<HTMLElement>) => void;
-  onHoverEnd?: (event: React.MouseEvent<HTMLElement>) => void;
-  hoverContent?: ReactNode;
 }
 
 export type ToggleButtonProps = CommonProps &
@@ -59,37 +54,17 @@ const ToggleButton = forwardRef<HTMLElement, ToggleButtonProps>(
       style,
       children,
       href,
-
-      hoverable = false,
-      onHoverStart,
-      onHoverEnd,
-      hoverContent,
       ...props
     },
     ref
   ) => {
-    const [isHover, setIsHover] = useState(false);
-
-    const handleHoverStart = (e: React.MouseEvent<HTMLElement>) => {
-      setIsHover(true);
-      onHoverStart?.(e);
-    };
-
-    const handleHoverEnd = (e: React.MouseEvent<HTMLElement>) => {
-      setIsHover(false);
-      onHoverEnd?.(e);
-    };
-
     return (
       <Flex direction="column" className={styles.container}>
         <ElementType
           ref={ref}
           href={href}
-          onHoverStart={handleHoverStart}
-          onHoverEnd={handleHoverEnd}
           className={classNames(
             styles.button,
-            hoverable && isHover && styles.hover,
             styles[variant],
             styles[size],
             selected && styles.selected,
@@ -128,17 +103,6 @@ const ToggleButton = forwardRef<HTMLElement, ToggleButtonProps>(
             <Icon name={suffixIcon} size={size === "l" ? "m" : "s"} />
           )}
         </ElementType>
-        {hoverable && (
-          <Flex
-            fillWidth
-            className={classNames(
-              styles.hoverContent,
-              isHover && styles.visible
-            )}
-          >
-            {hoverContent}
-          </Flex>
-        )}
       </Flex>
     );
   }
