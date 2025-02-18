@@ -6,3 +6,4 @@ export { TimeDisplay } from "@/components/timePlay";
 export { CoursePlay } from "@/components/coursePlay";
 export { Popover } from "@/components/popover";
 export { PopoverBtn } from "@/components/popoverBtn";
+export { Cascader } from "@/components/cascader";
