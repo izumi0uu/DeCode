@@ -39,3 +39,6 @@ next-env.d.ts
 # strapi
 /decode-strapi
 /decode-strapi/.env
+
+# cursor
+.cursorrules
