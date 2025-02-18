@@ -1,6 +1,13 @@
 import { Flex } from "@/once-ui/components";
+import { NavNode } from "@/types";
 
-const Cascader = () => {
+interface CascaderProps {
+  data: NavNode[];
+  onSelect: (path: string) => void;
+  currentPath?: string;
+}
+
+const Cascader = ({ data, onSelect }: CascaderProps) => {
   return <Flex></Flex>;
 };
 

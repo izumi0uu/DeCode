@@ -7,3 +7,4 @@ export { CoursePlay } from "@/components/coursePlay";
 export { Popover } from "@/components/popover";
 export { PopoverBtn } from "@/components/popoverBtn";
 export { Cascader } from "@/components/cascader";
+export { Progress } from "@/components/progress";
