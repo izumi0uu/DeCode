@@ -6,7 +6,8 @@
       "@/resources/*": ["./src/resources/*"],
       "@/lib/*": ["./src/lib/*"],
       "@/actions": ["./src/app/[locale]/action.js"],
-      "@/auth": ["./src/auth"]
+      "@/auth": ["./src/auth"],
+      "@/types/*": ["./src/types/index.ts"]
     }
   }
 }
