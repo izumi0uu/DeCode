@@ -1,15 +1,10 @@
-// ├── 动态部分（Strapi管理）
-// │   ├── 课程结构树
-// │   ├── 导航标签文案
-// │   └── 排序规则
-// └── 静态部分（代码维护）
-//     ├── 图标映射
-//     ├── 样式主题
-//     └── 路由解析规则
+import { CoursePreview, CourseDetail, Lesson, LessonDetail } from "@/types";
 
-interface NavNode {
+type NavNodeType = "course" | "lesson" | "quiz";
+
+interface NavNodeBase {
   id: string;
-  type: "course" | "module" | "unit";
+  type: NavNodeType;
   path: string; // 路径
   title: string;
   sortOrder: number;
@@ -23,4 +18,39 @@ interface NavNode {
   };
 }
 
-export type { NavNode };
+// 课程导航节点
+interface CourseNavNode extends NavNodeBase {
+  type: "course";
+  metadata: {
+    courseId: CoursePreview["id"];
+    difficulty: CoursePreview["difficulty"];
+    progress: number;
+    learners: number;
+    studyTime: number;
+  };
+}
+
+// 课程章节导航节点
+interface LessonNavNode extends NavNodeBase {
+  type: "lesson";
+  metadata: {
+    courseId: Lesson["course_id"];
+    lessonId: Lesson["id"];
+    progress: number;
+    studyTime: Lesson["study_time"];
+  };
+}
+
+interface QuizNavNode extends NavNodeBase {
+  type: "quiz";
+  metadata: {
+    courseId: number;
+    lessonId: number;
+    hasAttempted: boolean;
+    highestScore?: number;
+  };
+}
+
+type NavNode = CourseNavNode | LessonNavNode | QuizNavNode;
+
+export type { NavNode, NavNodeType, CourseNavNode, LessonNavNode, QuizNavNode };
