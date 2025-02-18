@@ -37,7 +37,7 @@ interface LessonNavNode extends NavNodeBase {
     courseId: Lesson["course_id"];
     lessonId: Lesson["id"];
     progress: number;
-    studyTime: Lesson["study_time"];
+    studyTime: number;
   };
 }
 
