@@ -29,6 +29,7 @@ interface Course {
   study_time: number;
   created_at: string;
   updated_at: string;
+  sort: number;
 }
 
 interface CoursePreview extends Course {
