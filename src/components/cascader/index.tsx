@@ -7,8 +7,13 @@ interface CascaderProps {
   currentPath?: string;
 }
 
-const Cascader = ({ data, onSelect }: CascaderProps) => {
-  return <Flex></Flex>;
+const Cascader = async ({ data, onSelect }: CascaderProps) => {
+  const [courses, lessons, quizzes, useProgress] = await Promise.all([
+    fetch(`${process.env.STRAPI_URL}/api/courses`),
+    fetch(`${process.env.STRAPI_URL}/api/lessons`),
+    fetch(`${process.env.STRAPI_URL}/api/quizzes`),
+    fetch(`${process.env.STRAPI_URL}/api/user-progress`),
+  ]);
 };
 
 export { Cascader };
