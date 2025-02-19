@@ -1,0 +1,2 @@
+const NAVIGATION_CACHE_TAG = "navigation";
+const NAVIGATION_CACHE_REVALIDATE = 3600;
