@@ -10,7 +10,7 @@ import {
   Arrow,
   SmartLink,
 } from "@/once-ui/components";
-import { TimeDisplay, PopoverBtn } from "@/components";
+import { TimeDisplay, PopoverBtn, Cascader } from "@/components";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import classNames from "classnames";
@@ -94,13 +94,7 @@ const Header = () => {
                     href="/courses"
                     label={courses.label}
                     selected={pathname.startsWith("/courses")}
-                    hovercontent={
-                      <Flex direction="column">
-                        <SmartLink href="/courses">test</SmartLink>
-                        <SmartLink href="/courses">test</SmartLink>
-                        <SmartLink href="/courses">test</SmartLink>
-                      </Flex>
-                    }
+                    hovercontent={<Cascader />}
                   />
                   <ToggleButton
                     className="s-flex-show"

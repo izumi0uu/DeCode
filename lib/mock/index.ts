@@ -8,3 +8,5 @@ export * from "./data/courses";
 export * from "./data/lessons";
 // export * from "./data/quizzes";
 // export * from "./data/userProgress";
+
+export * from "./api/navigation";

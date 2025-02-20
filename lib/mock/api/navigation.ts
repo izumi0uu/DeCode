@@ -4,7 +4,7 @@ import { mockLessons } from "../data/lessons";
 import { transformNavigation } from "../../strapi/services/navigationService";
 import { simulateCall } from "../index";
 
-export async function fetchNavigation(options?: {
+async function fetchNavigation(options?: {
   withProgress?: boolean; // 是否包含进度信息
   lang?: "zh" | "en"; // 语言过滤
 }) {
@@ -67,3 +67,5 @@ const mockUserProgress = {
     2: { progress: 50 },
   },
 };
+
+export { fetchNavigation };

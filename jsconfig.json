@@ -5,6 +5,7 @@
       "@/components/*": ["./src/components/index.ts"],
       "@/resources/*": ["./src/resources/*"],
       "@/lib/strapi/*": ["./lib/strapi/index.ts"],
+      "@/lib/mock/*": ["./lib/mock/index.ts"],
       "@/actions": ["./src/app/[locale]/action.js"],
       "@/auth": ["./src/auth"],
       "@/types/*": ["./src/types/index.ts"]
