@@ -1,5 +1,6 @@
 import { Flex } from "@/once-ui/components";
 import { NavNode } from "@/types";
+import { fetchNavigation } from "@/lib/mock/api/navigation";
 
 interface CascaderProps {
   data: NavNode[];
@@ -8,12 +9,12 @@ interface CascaderProps {
 }
 
 const Cascader = async ({ data, onSelect }: CascaderProps) => {
-  const [courses, lessons, quizzes, useProgress] = await Promise.all([
-    fetch(`${process.env.STRAPI_URL}/api/courses`),
-    fetch(`${process.env.STRAPI_URL}/api/lessons`),
-    fetch(`${process.env.STRAPI_URL}/api/quizzes`),
-    fetch(`${process.env.STRAPI_URL}/api/user-progress`),
-  ]);
+  // const [courses, lessons, quizzes, useProgress] = await Promise.all([
+  //   fetch(`${process.env.STRAPI_URL}/api/courses`),
+  //   fetch(`${process.env.STRAPI_URL}/api/lessons`),
+  //   fetch(`${process.env.STRAPI_URL}/api/quizzes`),
+  //   fetch(`${process.env.STRAPI_URL}/api/user-progress`),
+  // ]);
 };
 
 export { Cascader };
