@@ -8,7 +8,7 @@ const CascaderInteraction = ({
 }: {
   children: React.ReactNode;
 } & Pick<CascaderProps, "onSelect">) => {
-  const handleInteraction = (e: React.MouseEvent | React.MouseEvent) => {
+  const handleClickInteraction = (e: React.MouseEvent | React.MouseEvent) => {
     const path = (e.target as HTMLElement)
       .closest("[data-path]")
       ?.getAttribute("data-path");
@@ -16,8 +16,17 @@ const CascaderInteraction = ({
     if (path && onSelect) onSelect(path);
   };
 
+  const handleMouseEnterInteraction = (
+    e: React.MouseEvent | React.MouseEvent
+  ) => {
+    return null;
+  };
+
   return (
-    <div onClick={handleInteraction} onMouseEnter={handleInteraction}>
+    <div
+      onClick={handleClickInteraction}
+      onMouseEnter={handleMouseEnterInteraction}
+    >
       {children}
     </div>
   );
