@@ -1,6 +1,10 @@
 const baseURL = "DeCode.xyz";
 
 const mode = {
+  language: "en",
+  cascaderMode: {
+    withProgress: false,
+  },
   dark: {},
   light: {},
   phone: {

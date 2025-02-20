@@ -1,22 +1,22 @@
-import { Suspense } from "react";
-import { Flex } from "@/once-ui/components";
-import { NavNode } from "@/types";
-import { fetchNavigation } from "@/lib/mock/api/navigation";
+"use client";
 
-interface CascaderProps {
-  data: NavNode[];
-  onSelect: (path: string) => void;
+import { Suspense } from "react";
+import { NavNode } from "@/types";
+import { CascaderContent } from "@/components/cascaderContent";
+
+export interface CascaderProps {
+  data?: NavNode[];
+  onSelect?: (path: string) => void;
   currentPath?: string;
 }
 
-const Cascader = async ({ data, onSelect }: CascaderProps) => {
-  const navigation = await fetchNavigation();
-  // const [courses, lessons, quizzes, useProgress] = await Promise.all([
-  //   fetch(`${process.env.STRAPI_URL}/api/courses`),
-  //   fetch(`${process.env.STRAPI_URL}/api/lessons`),
-  //   fetch(`${process.env.STRAPI_URL}/api/quizzes`),
-  //   fetch(`${process.env.STRAPI_URL}/api/user-progress`),
-  // ]);
+const Cascader = (props: CascaderProps = {} as CascaderProps) => {
+  console.log("cascader", props);
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CascaderContent {...props} currentPath={props?.currentPath} />
+    </Suspense>
+  );
 };
 
 export { Cascader };

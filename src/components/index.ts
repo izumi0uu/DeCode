@@ -1,4 +1,5 @@
 export { Header } from "@/components/header";
+export { HeaderInteraction } from "@/components/headerInteraction";
 export { Footer } from "@/components/footer";
 export { Entrance } from "@/components/entrance";
 export { Home } from "@/components/home";
@@ -7,4 +8,6 @@ export { CoursePlay } from "@/components/coursePlay";
 export { Popover } from "@/components/popover";
 export { PopoverBtn } from "@/components/popoverBtn";
 export { Cascader } from "@/components/cascader";
+export { CascaderInteraction } from "@/components/cascaderInteraction";
+export { CascaderContent } from "@/components/cascaderContent";
 export { Progress } from "@/components/progress";
