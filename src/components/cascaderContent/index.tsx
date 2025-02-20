@@ -22,13 +22,14 @@ const CascaderContent = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
     <CascaderInteraction onSelect={navigateTo}>
       <Flex direction="column">
         {navigationData?.map((node) => (
-          <div
+          <Flex
             key={node.id}
             data-path={node.path}
             data-selected={currentPath === node.path}
+            className="cascader-item"
           >
             {node.title}
-          </div>
+          </Flex>
         ))}
       </Flex>
     </CascaderInteraction>
