@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Flex } from "@/once-ui/components";
 import { NavNode } from "@/types";
 import { fetchNavigation } from "@/lib/mock/api/navigation";
@@ -9,6 +10,7 @@ interface CascaderProps {
 }
 
 const Cascader = async ({ data, onSelect }: CascaderProps) => {
+  const navigation = await fetchNavigation();
   // const [courses, lessons, quizzes, useProgress] = await Promise.all([
   //   fetch(`${process.env.STRAPI_URL}/api/courses`),
   //   fetch(`${process.env.STRAPI_URL}/api/lessons`),

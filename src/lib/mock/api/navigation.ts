@@ -1,7 +1,7 @@
 import { CourseDetail, LessonDetail } from "@/types";
 import { mockCourses } from "../data/courses";
 import { mockLessons } from "../data/lessons";
-import { transformNavigation } from "../../strapi/services/navigationService";
+import { transformNavigation } from "@/lib/strapi/services/navigationService";
 import { simulateCall } from "../index";
 
 async function fetchNavigation(options?: {
