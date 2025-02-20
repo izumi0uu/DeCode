@@ -1,24 +1,28 @@
-"use server";
+"use client";
 
+import { useState, useEffect } from "react";
 import { Flex } from "@/once-ui/components";
 import { CascaderProps } from "@/components/cascader";
 import { CascaderInteraction } from "@/components/cascaderInteraction";
 import { navigateTo } from "@/app/actions/navigateTo";
-import { fetchNavigation } from "@/lib/mock/api/navigation";
-import { mode } from "@/resources/config";
+import { getNavigation } from "@/app/actions/navigation";
+import { NavNode } from "@/types/navigation";
 
-const CascaderContent = async ({
-  data,
+const CascaderContent = ({
   currentPath,
+  ...props
 }: Omit<CascaderProps, "onSelect">) => {
-  const navigation = await fetchNavigation({
-    withProgress: mode.cascaderMode.withProgress,
-    lang: mode.language as "zh" | "en",
-  });
+  const [navigationData, setNavigationData] = useState<NavNode[]>([]);
 
-  const navigationData = navigation.success ? navigation.data : [];
+  useEffect(() => {
+    getNavigation().then((navigation) => {
+      if (navigation.success) {
+        setNavigationData(navigation.data as NavNode[]);
+      }
+    });
+  }, []);
 
-  console.log("navigation", navigation);
+  console.log("navigation", navigationData);
   return (
     <CascaderInteraction onSelect={navigateTo}>
       <Flex direction="column">
