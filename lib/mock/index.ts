@@ -3,3 +3,8 @@ export const simulateCall = (ms: number) =>
 
 export const simulateCallWithData = <T>(ms: number, data: T) =>
   new Promise((resolve) => setTimeout(() => resolve(data), ms));
+
+export * from "./data/courses";
+export * from "./data/lessons";
+// export * from "./data/quizzes";
+// export * from "./data/userProgress";

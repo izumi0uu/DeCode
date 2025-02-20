@@ -36,3 +36,5 @@ interface UserProgress {
     [quizId: string]: QuizProgress;
   };
 }
+
+export type { UserProgress };

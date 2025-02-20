@@ -1,16 +1,16 @@
 interface Author {
   id: number;
-  bio: string;
-  name: string;
-  avatar: string;
+  bio?: string;
+  name?: string;
+  avatar?: string;
   email: string;
-  username: string;
-  nickname: string;
-  github_id: number;
+  username?: string;
+  nickname?: string;
+  github_id?: number;
   social_links?: {
     linkedin?: string;
     twitter?: string;
-    personal_website: string;
+    personal_website?: string;
   };
   // 链上身份验证
   verified_contract_address?: string; // 认证的智能合约地址
