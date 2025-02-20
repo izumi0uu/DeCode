@@ -18,7 +18,7 @@ const CascaderContent = async ({
 
   const navigationData = navigation.success ? navigation.data : [];
 
-  // console.log(navigation);
+  console.log("navigation", navigation);
   return (
     <CascaderInteraction onSelect={navigateTo}>
       <Flex direction="column">
