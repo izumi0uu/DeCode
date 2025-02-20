@@ -35,6 +35,9 @@ async function fetchNavigation(options?: {
       })) as LessonDetail[];
     }
 
+    console.log("courses", courses);
+    console.log("lessons", lessons);
+
     // 4. 使用 transformNavigation 转换数据
     const navigationData = transformNavigation(
       courses,
@@ -42,6 +45,8 @@ async function fetchNavigation(options?: {
       [], // 不包含测验数据
       options?.withProgress ? mockUserProgress : undefined
     );
+
+    console.log("navigationData", navigationData);
 
     return {
       success: true,

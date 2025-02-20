@@ -8,17 +8,12 @@ import { navigateTo } from "@/app/actions/navigateTo";
 import { getNavigation } from "@/app/actions/navigation";
 import { NavNode } from "@/types/navigation";
 
-const CascaderContent = ({
-  currentPath,
-  ...props
-}: Omit<CascaderProps, "onSelect">) => {
+const CascaderContent = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
   const [navigationData, setNavigationData] = useState<NavNode[]>([]);
 
   useEffect(() => {
     getNavigation().then((navigation) => {
-      if (navigation.success) {
-        setNavigationData(navigation.data as NavNode[]);
-      }
+      if (navigation.success) setNavigationData(navigation.data as NavNode[]);
     });
   }, []);
 

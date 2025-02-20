@@ -11,7 +11,6 @@ export interface CascaderProps {
 }
 
 const Cascader = (props: CascaderProps = {} as CascaderProps) => {
-  console.log("cascader", props);
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <CascaderContent {...props} currentPath={props?.currentPath} />
