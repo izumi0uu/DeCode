@@ -7,6 +7,7 @@ import { CascaderInteraction } from "@/components/cascaderInteraction";
 import { navigateTo } from "@/app/actions/navigateTo";
 import { getNavigation } from "@/app/actions/navigation";
 import { NavNode } from "@/types/navigation";
+import styles from "./index.module.scss";
 
 const CascaderContent = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
   const [navigationData, setNavigationData] = useState<NavNode[]>([]);
@@ -17,18 +18,31 @@ const CascaderContent = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
     });
   }, []);
 
-  console.log("navigation", navigationData);
   return (
     <CascaderInteraction onSelect={navigateTo}>
-      <Flex direction="column">
-        {navigationData?.map((node) => (
+      <Flex direction="column" radius="m">
+        {navigationData?.map((course) => (
           <Flex
-            key={node.id}
-            data-path={node.path}
-            data-selected={currentPath === node.path}
-            className="cascader-item"
+            key={course.id}
+            className={styles.courseItem}
+            background="brand-medium"
+            transition="micro-long"
           >
-            {node.title}
+            <Flex>{course.title}</Flex>
+            {course.children && (
+              <Flex className={styles.lessonList}>
+                {course.children.map((lesson) => (
+                  <Flex
+                    key={lesson.id}
+                    className={styles.lessonItem}
+                    background="brand-medium"
+                    transition="micro-long"
+                  >
+                    {lesson.title}
+                  </Flex>
+                ))}
+              </Flex>
+            )}
           </Flex>
         ))}
       </Flex>

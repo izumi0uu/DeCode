@@ -1,0 +1,37 @@
+.cascader {
+  position: relative;
+  width: 200px;
+}
+
+.courseItem {
+  padding: 8px 12px;
+  cursor: pointer;
+  position: relative;
+
+  &:hover {
+    background-color: var(--brand-alpha-medium);
+    transition: var(--transition);
+
+    .lessonList {
+      display: block;
+    }
+  }
+}
+
+.lessonList {
+  display: none;
+  position: absolute;
+  left: 100%;
+  top: 0;
+  min-width: 200px;
+  z-index: 10;
+}
+
+.lessonItem {
+  padding: 8px 12px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--brand-alpha-medium);
+  }
+}

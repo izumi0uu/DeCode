@@ -1,3 +1,5 @@
+// https://once-ui.com/docs/color
+
 const baseURL = "DeCode.xyz";
 
 const mode = {
@@ -36,6 +38,8 @@ const style = {
   surface: "translucent",
   transition: "all",
 };
+
+const navStyle = {};
 
 const effects = {
   mask: {
