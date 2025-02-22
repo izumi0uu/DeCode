@@ -18,6 +18,7 @@
     .lessonList {
       opacity: 1;
       pointer-events: auto;
+      transform: translateX(0);
     }
     .courseTitle {
       background-color: var(--brand-alpha-medium);
@@ -42,6 +43,9 @@
   min-width: 180px;
   left: 100%;
   top: 0;
+  transform: translateX(-20px);
+  transform-origin: left;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .lessonItem {
