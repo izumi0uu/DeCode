@@ -1,19 +1,13 @@
-.cascader {
-  position: relative;
-  width: 200px;
-}
-
-.courseItem {
-  padding: 8px 12px;
+.course {
   cursor: pointer;
   position: relative;
 
   &:hover {
-    background-color: var(--brand-alpha-medium);
-    transition: var(--transition);
-
     .lessonList {
       display: block;
+    }
+    .courseTitle {
+      background-color: var(--brand-alpha-medium);
     }
   }
 }
@@ -32,6 +26,8 @@
   cursor: pointer;
 
   &:hover {
-    background-color: var(--brand-alpha-medium);
+    .lessonTitle {
+      background-color: var(--brand-alpha-medium);
+    }
   }
 }

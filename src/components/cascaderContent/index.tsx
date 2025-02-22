@@ -24,11 +24,22 @@ const CascaderContent = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
         {navigationData?.map((course) => (
           <Flex
             key={course.id}
-            className={styles.courseItem}
+            className={styles.course}
+            paddingY="8"
+            paddingX="12"
             background="brand-medium"
-            transition="micro-long"
           >
-            <Flex>{course.title}</Flex>
+            <Flex
+              className={styles.courseTitle}
+              radius="m"
+              paddingY="4"
+              paddingX="8"
+              transition="micro-long"
+              fillWidth
+            >
+              {course.title}
+            </Flex>
+
             {course.children && (
               <Flex className={styles.lessonList}>
                 {course.children.map((lesson) => (
@@ -36,9 +47,17 @@ const CascaderContent = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
                     key={lesson.id}
                     className={styles.lessonItem}
                     background="brand-medium"
-                    transition="micro-long"
                   >
-                    {lesson.title}
+                    <Flex
+                      className={styles.lessonTitle}
+                      radius="m"
+                      paddingY="4"
+                      paddingX="8"
+                      transition="micro-long"
+                      fillWidth
+                    >
+                      {lesson.title}
+                    </Flex>
                   </Flex>
                 ))}
               </Flex>
