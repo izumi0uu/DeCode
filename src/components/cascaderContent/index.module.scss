@@ -2,9 +2,22 @@
   cursor: pointer;
   position: relative;
 
+  // 当有下一个元素时，移除当前元素的底部圆角
+  &:not(:last-child) {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+
+  // 当不是第一个元素时，移除当前元素的顶部圆角
+  &:not(:first-child) {
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+  }
+
   &:hover {
     .lessonList {
-      display: block;
+      opacity: 1;
+      pointer-events: auto;
     }
     .courseTitle {
       background-color: var(--brand-alpha-medium);
@@ -13,17 +26,28 @@
 }
 
 .lessonList {
-  display: none;
+  opacity: 0;
+  pointer-events: none;
   position: absolute;
+  min-width: 180px;
   left: 100%;
   top: 0;
-  min-width: 200px;
-  z-index: 10;
 }
 
 .lessonItem {
-  padding: 8px 12px;
   cursor: pointer;
+
+  // 当有下一个元素时，移除当前元素的底部圆角
+  &:not(:last-child) {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+
+  // 当不是第一个元素时，移除当前元素的顶部圆角
+  &:not(:first-child) {
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+  }
 
   &:hover {
     .lessonTitle {

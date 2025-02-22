@@ -28,6 +28,7 @@ const CascaderContent = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
             paddingY="8"
             paddingX="12"
             background="brand-medium"
+            radius="m"
           >
             <Flex
               className={styles.courseTitle}
@@ -41,12 +42,15 @@ const CascaderContent = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
             </Flex>
 
             {course.children && (
-              <Flex className={styles.lessonList}>
+              <Flex className={styles.lessonList} radius="m" direction="column">
                 {course.children.map((lesson) => (
                   <Flex
                     key={lesson.id}
                     className={styles.lessonItem}
                     background="brand-medium"
+                    paddingY="8"
+                    paddingX="12"
+                    radius="m"
                   >
                     <Flex
                       className={styles.lessonTitle}
