@@ -35,7 +35,6 @@ const CascaderContent = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
               radius="m"
               paddingY="4"
               paddingX="8"
-              transition="micro-long"
               fillWidth
             >
               {course.title}
@@ -57,7 +56,6 @@ const CascaderContent = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
                       radius="m"
                       paddingY="4"
                       paddingX="8"
-                      transition="micro-long"
                       fillWidth
                     >
                       {lesson.title}

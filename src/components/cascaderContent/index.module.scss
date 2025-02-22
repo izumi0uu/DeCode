@@ -25,6 +25,16 @@
   }
 }
 
+.courseTitle {
+  transition: transform 0.3s, background-color 0.3s;
+  transform: translateX(0);
+
+  &:hover {
+    background-color: var(--brand-alpha-medium);
+    transform: translateX(4px);
+  }
+}
+
 .lessonList {
   opacity: 0;
   pointer-events: none;
@@ -53,5 +63,15 @@
     .lessonTitle {
       background-color: var(--brand-alpha-medium);
     }
+  }
+}
+
+.lessonTitle {
+  transition: transform 0.3s, background-color 0.3s;
+  transform: translateX(0);
+
+  &:hover {
+    background-color: var(--brand-alpha-medium);
+    transform: translateX(4px);
   }
 }
