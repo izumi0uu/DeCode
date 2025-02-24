@@ -21,7 +21,7 @@ const usePopover = () => {
   });
 
   const hover = useHover(context, {
-    delay: { open: 0, close: 100 },
+    delay: { open: 0, close: 200 },
     restMs: 100,
   });
 
