@@ -1,6 +1,5 @@
 "use client";
 
-import { Suspense } from "react";
 import { NavNode } from "@/types";
 import { CascaderContent } from "@/components/cascaderContent";
 
@@ -11,11 +10,8 @@ export interface CascaderProps {
 }
 
 const Cascader = (props: CascaderProps = {} as CascaderProps) => {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <CascaderContent {...props} currentPath={props?.currentPath} />
-    </Suspense>
-  );
+  return <CascaderContent {...props} currentPath={props?.currentPath} />;
 };
 
+Cascader.displayName = "Cascader";
 export { Cascader };

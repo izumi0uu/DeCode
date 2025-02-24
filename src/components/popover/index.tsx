@@ -35,7 +35,7 @@ const Popover = ({ content, children, placement = "bottom" }: PopoverProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
 
   // 监听鼠标悬停
-  const [isHovered] = useHover(
+  const isHovered = useHover(
     triggerRef as RefObject<HTMLElement>,
     contentRef as RefObject<HTMLElement>
   );
@@ -54,7 +54,7 @@ const Popover = ({ content, children, placement = "bottom" }: PopoverProps) => {
 
   // 监听鼠标悬停
   useEffect(() => {
-    if (isHovered) setIsVisible(true);
+    setIsVisible(isHovered);
   }, [isHovered]);
 
   return (
