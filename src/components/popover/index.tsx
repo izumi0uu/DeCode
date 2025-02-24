@@ -5,12 +5,9 @@ import { useEffect } from "react";
 import styles from "./index.module.scss";
 import { usePopover } from "@/components/hooks/useFloating";
 
-type Placement = "top" | "bottom" | "left" | "right";
-
 interface PopoverProps {
   content: React.ReactNode;
   children: React.ReactElement;
-  placement?: Placement;
 }
 
 /**
@@ -25,11 +22,7 @@ const Popover = ({ content, children }: PopoverProps) => {
 
   return (
     <>
-      <div
-        ref={refs.setReference}
-        {...getReferenceProps()}
-        className={styles.trigger}
-      >
+      <div ref={refs.setReference} {...getReferenceProps()}>
         {children}
       </div>
       {isOpen &&
