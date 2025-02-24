@@ -41,14 +41,14 @@ const Popover = ({ content, children }: PopoverProps) => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{
-                  opacity: 0,
-                  scale: [1, 1.02, 0.95],
+                  scale: [1, 1.05, 0.9], // 放大再缩小
+                  opacity: [1, 1, 1], // 保持完全不透明
                   transition: {
+                    duration: 0.4,
+                    ease: "easeInOut",
                     scale: {
-                      duration: 0.3,
-                      times: [0, 0.4, 1],
+                      times: [0, 0.7, 0.9], // 70%时间完成放大，20%时间完成缩小
                     },
-                    opacity: { duration: 0.2 },
                   },
                 }}
               >
