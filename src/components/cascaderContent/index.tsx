@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import useSWR from "swr";
 import { Flex, Skeleton } from "@/once-ui/components";
 import { CascaderProps } from "@/components/cascader";
