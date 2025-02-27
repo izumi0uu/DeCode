@@ -10,7 +10,7 @@ import styles from "./index.module.scss";
 
 const CascaderContent = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
   const fetcher = async () => {
-    const response = await fetch("/api/header");
+    const response = await fetch("/api/navigation");
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
@@ -21,7 +21,7 @@ const CascaderContent = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
     data: navigationData,
     isLoading,
     error,
-  } = useSWR("/api/header", fetcher, {
+  } = useSWR("/api/navigation", fetcher, {
     dedupingInterval: 60000,
     onError: (err) => {
       console.log(err);

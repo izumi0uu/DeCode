@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Flex } from "@/once-ui/components";
 import { CourseCarousel } from "@/components";
