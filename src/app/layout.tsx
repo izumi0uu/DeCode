@@ -101,7 +101,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <Header />
           <Flex
             position="relative"
-            zIndex={9}
+            zIndex={8}
             paddingX="l"
             paddingY="l"
             horizontal="center"

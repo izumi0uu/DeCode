@@ -2,12 +2,12 @@
 
 import React from "react";
 import { Flex } from "@/once-ui/components";
-import { CourseCarousel } from "@/components";
+import { BannerCarousel } from "@/features/home-and-course-preview/components";
 
 export default function Page({ params }: { params: { locale: string } }) {
   return (
     <Flex>
-      <CourseCarousel />
+      <BannerCarousel />
     </Flex>
   );
 }
