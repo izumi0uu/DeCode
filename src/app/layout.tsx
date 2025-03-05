@@ -102,8 +102,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <Flex
             position="relative"
             zIndex={8}
-            paddingX="l"
-            paddingY="l"
             horizontal="center"
             fillWidth
             flex={1}
