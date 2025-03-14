@@ -87,8 +87,4 @@ export type {
   WalletLoginParams,
   BaseUser,
   OnChainIdentity,
-  LearningProgress,
-  CourseProgress,
-  LessonProgress,
-  QuizProgress,
 };
