@@ -1,3 +1,5 @@
+import { UserProgress } from "./userProgress";
+
 interface BaseUser {
   id: string;
   name: string;
@@ -36,60 +38,9 @@ interface OnChainIdentity {
   reputationScore: number; // 基于学习行为的链上信誉分
 }
 
-// 学习进度跟踪 - 与 UserProgress 保持一致
-interface CourseProgress {
-  progress: number; // 课程总进度（0-100）
-  lastAccessed: string; // 最后访问时间
-  completed?: boolean; // 是否完成
-  startedAt?: string; // 开始学习时间
-  completedAt?: string; // 完成时间
-}
-
-interface LessonProgress {
-  progress: number; // 章节进度（0-100）
-  lastAccessed: string; // 最后访问时间
-  completed?: boolean; // 是否完成
-  startedAt?: string; // 开始学习时间
-  completedAt?: string; // 完成时间
-  timeSpent?: number; // 学习时长（分钟）
-}
-
-interface QuizProgress {
-  attempts: number; // 尝试次数
-  highestScore: number; // 最高分数
-  lastAttempt: string; // 最后尝试时间
-  passed?: boolean; // 是否通过
-  attemptsLeft?: number; // 剩余尝试次数
-  lastScore?: number; // 最近一次分数
-}
-
-interface LearningProgress {
-  courses: {
-    [courseId: number]: CourseProgress;
-  };
-  lessons: {
-    [lessonId: number]: LessonProgress;
-  };
-  quizzes: {
-    [quizId: string]: QuizProgress;
-  };
-
-  // 学习统计
-  statistics: {
-    totalCourses: number;
-    completedCourses: number;
-    totalLessons: number;
-    completedLessons: number;
-    totalQuizzes: number;
-    passedQuizzes: number;
-    totalTimeSpent: number; // 总学习时长（分钟）
-    averageScore: number; // 平均测验分数
-  };
-}
-
-interface User extends BaseUser, OnChainIdentity, LearningProgress {
+interface User extends BaseUser, OnChainIdentity {
   // 学习进度
-  learningProgress: LearningProgress;
+  learningProgress: UserProgress;
 
   socialAccounts: {
     github?: string;

@@ -35,6 +35,17 @@ interface UserProgress {
   quizzes: {
     [quizId: string]: QuizProgress;
   };
+
+  statistics?: {
+    totalCourses: number;
+    completedCourses: number;
+    totalLessons: number;
+    completedLessons: number;
+    totalQuizzes: number;
+    passedQuizzes: number;
+    totalTimeSpent: number;
+    averageScore: number;
+  };
 }
 
 export type { UserProgress };
