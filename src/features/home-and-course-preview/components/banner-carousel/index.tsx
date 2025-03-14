@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Flex, Text, RevealFx, Fade } from "@/once-ui/components";
 import styles from "./index.module.scss";
 
-const BannerCarousel = () => {
+const BannerCarousel = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <Flex fillWidth className={styles.bannerCarousel} direction="column">
