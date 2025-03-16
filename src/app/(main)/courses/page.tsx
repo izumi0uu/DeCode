@@ -13,7 +13,6 @@ export default function Page({ params }: { params: { locale: string } }) {
       <BannerCarousel>
         <AnimatePresenceStackWrapper />
       </BannerCarousel>
-      <AnimatePresenceStackWrapper />
     </Flex>
   );
 }

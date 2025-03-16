@@ -39,15 +39,15 @@ const StackBox = ({
     }
     if (info.offset.x > 100) {
       setExitX(250);
-      setIndex?.(index - 1);
+      setIndex?.(index + 1);
     }
   };
 
   return (
     <motion.div
       style={{
-        width: 150,
-        height: 150,
+        width: 220,
+        height: 220,
         position: "absolute",
         x,
         rotate,
@@ -69,8 +69,8 @@ const StackBox = ({
     >
       <motion.div
         style={{
-          width: 150,
-          height: 150,
+          width: 220,
+          height: 220,
           backgroundColor: "#fff",
           borderRadius: 30,
           scale,
