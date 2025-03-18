@@ -4,14 +4,14 @@ import React from "react";
 import { Flex } from "@/once-ui/components";
 import {
   BannerCarousel,
-  AnimatePresenceStackWrapper,
+  AnimatePresenceBoxes,
 } from "@/features/home-and-course-preview/components";
 
 export default function Page({ params }: { params: { locale: string } }) {
   return (
     <Flex>
       <BannerCarousel>
-        <AnimatePresenceStackWrapper />
+        <AnimatePresenceBoxes />
       </BannerCarousel>
     </Flex>
   );

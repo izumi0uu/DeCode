@@ -27,7 +27,7 @@ const StackBox = ({
 
   const variantsBackCard = {
     initial: { scale: 0, y: 105, opacity: 0 },
-    animate: { scale: 0.75, y: 30, opacity: 0.5 },
+    animate: { scale: 0.75, y: 40, opacity: 0.5 },
   };
 
   const handleDragEnd = (_: any, info: any) => {
