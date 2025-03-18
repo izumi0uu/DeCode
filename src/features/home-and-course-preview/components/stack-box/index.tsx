@@ -35,11 +35,11 @@ const StackBox = ({
 
     if (info.offset.x < -100) {
       setExitX(-250);
-      setIndex?.(index + 1);
+      setIndex(index + 1);
     }
     if (info.offset.x > 100) {
       setExitX(250);
-      setIndex?.(index + 1);
+      setIndex(index + 1);
     }
   };
 
@@ -51,6 +51,7 @@ const StackBox = ({
         position: "absolute",
         x,
         rotate,
+        cursor: "grab",
       }}
       whileTap={{ cursor: "grabbing" }}
       drag={drag}
