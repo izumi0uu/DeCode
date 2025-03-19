@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchNavigation } from "@/lib/mock/api/navigation";
+import { fetchNavigation } from "../../../../mock/api/navigation";
 import { mode } from "@/resources/config";
 
 export async function GET() {

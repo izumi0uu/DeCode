@@ -1,7 +1,7 @@
 "use server";
 
 import { cache } from "react";
-import { fetchNavigation } from "@/lib/mock/api/navigation";
+import { fetchNavigation } from "../../../mock/api/navigation";
 import { mode } from "@/resources/config";
 
 export const getNavigation = cache(async () => {

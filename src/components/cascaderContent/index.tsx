@@ -5,7 +5,7 @@ import { Flex, Skeleton } from "@/once-ui/components";
 import { CascaderProps } from "@/components/cascader";
 import { CascaderInteraction } from "@/components/cascaderInteraction";
 import { navigateTo } from "@/app/actions/navigateTo";
-import { NavNode } from "@/types/navigation";
+import { NavNode } from "@/features/types/navigation";
 import styles from "./index.module.scss";
 
 const CascaderContent = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {

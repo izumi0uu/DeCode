@@ -1,6 +1,6 @@
 "use client";
 
-import { NavNode } from "@/types";
+import { NavNode } from "@/features/types";
 import { CascaderContent } from "@/components/cascaderContent";
 
 export interface CascaderProps {

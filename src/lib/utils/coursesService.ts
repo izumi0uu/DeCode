@@ -1,6 +1,11 @@
-import { NavNode, CourseDetail, LessonDetail, QuizMeta } from "@/types";
+import {
+  NavNode,
+  CourseDetail,
+  LessonDetail,
+  QuizMeta,
+} from "@/features/types";
 
-function transformNavigation(
+function transformIntoCourseTree(
   courses: CourseDetail[], // 所有课程数据
   lessons: LessonDetail[], // 所有章节数据
   quizzes: QuizMeta[], // 所有测验数据
@@ -56,4 +61,4 @@ function transformNavigation(
   }));
 }
 
-export { transformNavigation };
+export { transformIntoCourseTree };

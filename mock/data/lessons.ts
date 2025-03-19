@@ -1,4 +1,4 @@
-import { LessonDetail } from "@/types";
+import { LessonDetail } from "@/features/types";
 import { mockCourses } from "./courses";
 
 const mockLessons: LessonDetail[] = [

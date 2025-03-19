@@ -1,7 +1,7 @@
-import { CourseDetail, LessonDetail } from "@/types";
+import { CourseDetail, LessonDetail } from "@/features/types";
 import { mockCourses } from "../data/courses";
 import { mockLessons } from "../data/lessons";
-import { transformNavigation } from "@/lib/strapi/services/navigationService";
+import { transformIntoCourseTree } from "@/lib/utils/coursesService";
 import { simulateCall } from "../index";
 
 async function fetchNavigation(options?: {
@@ -35,8 +35,8 @@ async function fetchNavigation(options?: {
       })) as LessonDetail[];
     }
 
-    // 4. 使用 transformNavigation 转换数据
-    const navigationData = transformNavigation(
+    // 4. 使用 transformIntoCourseTree 转换数据
+    const navigationData = transformIntoCourseTree(
       courses,
       lessons,
       [], // 不包含测验数据
