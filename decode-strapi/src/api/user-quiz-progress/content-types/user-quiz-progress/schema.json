@@ -1,0 +1,44 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_quiz_progresses",
+  "info": {
+    "singularName": "user-quiz-progress",
+    "pluralName": "user-quiz-progresses",
+    "displayName": "UserQuizProgress"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "score": {
+      "type": "integer",
+      "default": 0
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["not_started", "in_progress", "completed", "passed", "failed"]
+    },
+    "maxScore": {
+      "type": "integer"
+    },
+    "startedAt": {
+      "type": "datetime"
+    },
+    "submittedAt": {
+      "type": "datetime"
+    },
+    "timeSpent": {
+      "type": "integer"
+    },
+    "attemptsCount": {
+      "type": "integer",
+      "default": 1
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": true
+    }
+  }
+}

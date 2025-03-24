@@ -1,0 +1,20 @@
+{
+  "collectionName": "components_general_meta_tags",
+  "info": {
+    "displayName": "MetaTags"
+  },
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    },
+    "keywords": {
+      "type": "text"
+    },
+    "ogImage": {
+      "type": "media"
+    }
+  }
+}

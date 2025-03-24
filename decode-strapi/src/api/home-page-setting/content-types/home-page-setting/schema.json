@@ -1,0 +1,56 @@
+{
+  "kind": "singleType",
+  "collectionName": "home_page_settings",
+  "info": {
+    "singularName": "home-page-setting",
+    "pluralName": "home-page-settings",
+    "displayName": "HomePageSettings",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "heroTitle": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "heroSubtitle": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "heroImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false
+    },
+    "featuredCourses": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::course.course"
+    },
+    "testimonials": {
+      "type": "component",
+      "repeatable": true,
+      "component": "general.testimonial-item",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  }
+}

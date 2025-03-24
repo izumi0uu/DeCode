@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_general_social_links",
+  "info": {
+    "displayName": "SocialLinks",
+    "icon": "emotionHappy"
+  },
+  "options": {},
+  "attributes": {
+    "platform": {
+      "type": "enumeration",
+      "enum": [
+        "twitter",
+        "github",
+        "linkedin",
+        "insta",
+        "website",
+        "bilibili"
+      ]
+    },
+    "url": {
+      "type": "string",
+      "unique": false,
+      "required": true
+    }
+  }
+}

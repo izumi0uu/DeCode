@@ -1,0 +1,29 @@
+{
+  "kind": "singleType",
+  "collectionName": "tokenomics_configs",
+  "info": {
+    "singularName": "tokenomics-config",
+    "pluralName": "tokenomics-configs",
+    "displayName": "TokenomicsConfig"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "courseCompletionReward": {
+      "type": "integer"
+    },
+    "quizPassReward": {
+      "type": "integer"
+    },
+    "codeSubmissionReward": {
+      "type": "integer"
+    },
+    "contributionReward": {
+      "type": "integer"
+    },
+    "rewardRules": {
+      "type": "richtext"
+    }
+  }
+}

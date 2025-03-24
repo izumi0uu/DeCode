@@ -1,0 +1,53 @@
+{
+  "kind": "collectionType",
+  "collectionName": "quizzes",
+  "info": {
+    "singularName": "quiz",
+    "pluralName": "quizzes",
+    "displayName": "Quiz"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "unique": true,
+      "default": "Unnamed"
+    },
+    "description": {
+      "type": "richtext"
+    },
+    "timeLimit": {
+      "type": "integer"
+    },
+    "passingScore": {
+      "type": "integer"
+    },
+    "published": {
+      "type": "boolean",
+      "default": false
+    },
+    "lesson": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::lesson.lesson",
+      "required": true
+    },
+    "questions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::quiz-question.quiz-question"
+    },
+    "quizMaterials": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::quiz-material.quiz-material"
+    }
+  }
+}

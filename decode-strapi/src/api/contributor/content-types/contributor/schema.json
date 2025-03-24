@@ -1,0 +1,57 @@
+{
+  "kind": "collectionType",
+  "collectionName": "contributors",
+  "info": {
+    "singularName": "contributor",
+    "pluralName": "contributors",
+    "displayName": "Contributor",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "default": "Unnamed"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name"
+    },
+    "avatar": {
+      "type": "media",
+      "multiple": false,
+      "required": false
+    },
+    "bio": {
+      "type": "richtext"
+    },
+    "role": {
+      "type": "string"
+    },
+    "expertiseAreas": {
+      "type": "text"
+    },
+    "walletAddress": {
+      "type": "string"
+    },
+    "socialLinks": {
+      "type": "component",
+      "component": "general.social-links",
+      "repeatable": true
+    },
+    "courses": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::course.course"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "plugin::users-permissions.user"
+    }
+  }
+}

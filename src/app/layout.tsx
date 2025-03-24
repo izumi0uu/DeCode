@@ -11,6 +11,8 @@ import { Header, Footer } from "@/components";
 
 import { style, effects } from "@/resources/index";
 
+import { Providers } from "./providers";
+
 const primary = Raleway({
   variable: "--font-primary",
   subsets: ["latin"],
@@ -56,7 +58,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         tertiary?.variable
       )}
     >
-      <ToastProvider>
+      <Providers>
         <Column
           style={{ minHeight: "100vh" }}
           as="body"
@@ -112,7 +114,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <Footer />
           </Flex>
         </Column>
-      </ToastProvider>
+      </Providers>
     </Flex>
   );
 }

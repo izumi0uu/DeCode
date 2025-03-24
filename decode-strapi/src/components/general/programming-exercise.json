@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_general_programming_exercise",
+  "info": {
+    "displayName": "ProgrammingExercise"
+  },
+  "attributes": {
+    "instructions": {
+      "type": "richtext",
+      "required": true
+    },
+    "startingCode": {
+      "type": "text"
+    },
+    "expectedOutput": {
+      "type": "text"
+    },
+    "hints": {
+      "type": "richtext"
+    },
+    "aiAssistEnabled": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

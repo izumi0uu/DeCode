@@ -1,0 +1,29 @@
+{
+  "kind": "singleType",
+  "collectionName": "blockchain_configs",
+  "info": {
+    "singularName": "blockchain-config",
+    "pluralName": "blockchain-configs",
+    "displayName": "BlockchainConfig"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "sbtContractAddress": {
+      "type": "string"
+    },
+    "tokenContractAddress": {
+      "type": "string"
+    },
+    "defaultNetworkId": {
+      "type": "integer"
+    },
+    "ipfsGateway": {
+      "type": "string"
+    },
+    "theGraphEndpoint": {
+      "type": "string"
+    }
+  }
+}

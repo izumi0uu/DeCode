@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_general_course_requirements",
+  "info": {
+    "displayName": "CourseRequirement"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Unnamed"
+    },
+    "description": {
+      "type": "text",
+      "default": "description"
+    },
+    "isRequired": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

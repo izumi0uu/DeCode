@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "sbt_certifications",
+  "info": {
+    "singularName": "sbt-certification",
+    "pluralName": "sbt-certifications",
+    "displayName": "SBTCertification"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "tokenId": {
+      "type": "string",
+      "unique": true
+    },
+    "contractAddress": {
+      "type": "string",
+      "unique": true
+    },
+    "ipfsHash": {
+      "type": "string",
+      "unique": true
+    },
+    "mintedAt": {
+      "type": "datetime"
+    },
+    "transactionHash": {
+      "type": "string",
+      "unique": true
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": true
+    },
+    "course": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::course.course",
+      "required": true
+    }
+  }
+}

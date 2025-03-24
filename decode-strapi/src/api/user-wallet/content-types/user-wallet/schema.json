@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "user_wallets",
+  "info": {
+    "singularName": "user-wallet",
+    "pluralName": "user-wallets",
+    "displayName": "UserWallet"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "address": {
+      "type": "string",
+      "unique": true,
+      "required": true
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "connectedAt": {
+      "type": "datetime"
+    },
+    "lastUsedAt": {
+      "type": "datetime"
+    },
+    "chainId": {
+      "type": "integer"
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "required": true
+    }
+  }
+}

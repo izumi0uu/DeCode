@@ -1,0 +1,115 @@
+{
+  "kind": "collectionType",
+  "collectionName": "courses",
+  "info": {
+    "singularName": "course",
+    "pluralName": "courses",
+    "displayName": "Course",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "slug": {
+      "type": "uid",
+      "required": false,
+      "targetField": "title"
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Unnamed",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "description": {
+      "type": "text",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "level": {
+      "type": "enumeration",
+      "enum": ["beginner", "intermediate", "advanced"],
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "duration": {
+      "type": "integer"
+    },
+    "coverImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images", "files", "videos", "audios"]
+    },
+    "tags": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::tag.tag",
+      "mappedBy": "courses"
+    },
+    "coursePublishedAt": {
+      "type": "datetime",
+      "default": "2025-03-30T16:00:00.000Z"
+    },
+    "published": {
+      "type": "boolean",
+      "default": true
+    },
+    "isPopular": {
+      "type": "boolean"
+    },
+    "difficulty": {
+      "type": "enumeration",
+      "enum": ["easy", "medium", "hard"],
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "category": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::category.category"
+    },
+    "sbtEnabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "sbtContractAddress": {
+      "type": "text",
+      "unique": true
+    },
+    "lessons": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::lesson.lesson"
+    },
+    "contributors": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::contributor.contributor"
+    },
+    "resources": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::resource.resource"
+    }
+  }
+}

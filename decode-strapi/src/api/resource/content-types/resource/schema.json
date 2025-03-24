@@ -1,0 +1,57 @@
+{
+  "kind": "collectionType",
+  "collectionName": "resources",
+  "info": {
+    "singularName": "resource",
+    "pluralName": "resources",
+    "displayName": "Resource"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "default": "Unnamed"
+    },
+    "description": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["video", "document", "link", "code"]
+    },
+    "url": {
+      "type": "string"
+    },
+    "file": {
+      "type": "media"
+    },
+    "course": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::course.course"
+    },
+    "lessons": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::lesson.lesson"
+    }
+  }
+}

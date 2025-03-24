@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_general_learning_outcomes",
+  "info": {
+    "displayName": "LearningOutcome"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Unnamed"
+    },
+    "description": {
+      "type": "text",
+      "default": "description"
+    }
+  }
+}

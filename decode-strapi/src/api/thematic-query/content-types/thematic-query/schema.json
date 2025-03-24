@@ -1,0 +1,47 @@
+{
+  "kind": "collectionType",
+  "collectionName": "thematic_queries",
+  "info": {
+    "singularName": "thematic-query",
+    "pluralName": "thematic-queries",
+    "displayName": "ThematicQuery",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "question": {
+      "type": "json",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "keywords": {
+      "type": "json",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "responses": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::thematic-response.thematic-response"
+    },
+    "courses": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::course.course"
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "thematic_responses",
+  "info": {
+    "singularName": "thematic-response",
+    "pluralName": "thematic-responses",
+    "displayName": "ThematicResponse"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "content": {
+      "type": "blocks",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "approved": {
+      "type": "boolean",
+      "default": false
+    },
+    "query": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::thematic-query.thematic-query",
+      "required": true
+    },
+    "contributor": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::contributor.contributor"
+    }
+  }
+}

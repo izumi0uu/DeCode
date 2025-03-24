@@ -1,0 +1,38 @@
+{
+  "name": "decode-strapi",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A Strapi application for decode",
+  "scripts": {
+    "build": "strapi build",
+    "deploy": "strapi deploy",
+    "develop": "strapi develop",
+    "start": "strapi start",
+    "strapi": "strapi"
+  },
+  "dependencies": {
+    "@chartbrew/plugin-strapi": "^2.0.1",
+    "@strapi/plugin-cloud": "5.10.2",
+    "@strapi/plugin-users-permissions": "5.10.2",
+    "@strapi/strapi": "5.10.2",
+    "mysql2": "3.9.8",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.0.0",
+    "strapi-advanced-uuid": "^2.0.2",
+    "styled-components": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=18.0.0 <=22.x.x",
+    "npm": ">=6.0.0"
+  },
+  "strapi": {
+    "uuid": "dc17e7d8-6199-42f9-9699-dd1a33d2711d"
+  }
+}

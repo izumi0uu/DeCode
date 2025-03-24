@@ -1,0 +1,51 @@
+{
+  "kind": "collectionType",
+  "collectionName": "quiz_options",
+  "info": {
+    "singularName": "quiz-option",
+    "pluralName": "quiz-options",
+    "displayName": "QuizOption",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "text": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "isCorrect": {
+      "type": "boolean",
+      "default": false,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    },
+    "explanation": {
+      "type": "blocks",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "question": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::quiz-question.quiz-question",
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_general_quiz_settings",
+  "info": {
+    "displayName": "QuizSettings"
+  },
+  "attributes": {
+    "timeLimit": {
+      "type": "integer"
+    },
+    "passingScore": {
+      "type": "integer",
+      "default": 70
+    },
+    "showAnswersAfterSubmission": {
+      "type": "boolean",
+      "default": true
+    },
+    "allowRetry": {
+      "type": "boolean",
+      "default": true
+    },
+    "maxAttempts": {
+      "type": "integer",
+      "default": 3
+    }
+  }
+}

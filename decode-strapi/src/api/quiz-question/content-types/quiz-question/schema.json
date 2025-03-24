@@ -1,0 +1,54 @@
+{
+  "kind": "collectionType",
+  "collectionName": "quiz_questions",
+  "info": {
+    "singularName": "quiz-question",
+    "pluralName": "quiz-questions",
+    "displayName": "QuizQuestion"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "question": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "required": true
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["single", "multiple", "programming"],
+      "required": true
+    },
+    "points": {
+      "type": "integer",
+      "default": 1
+    },
+    "sortOrder": {
+      "type": "integer"
+    },
+    "codeTemplate": {
+      "type": "text"
+    },
+    "quiz": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::quiz.quiz",
+      "required": true
+    },
+    "options": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::quiz-option.quiz-option"
+    }
+  }
+}

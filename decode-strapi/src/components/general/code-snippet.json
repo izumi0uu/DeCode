@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_general_code_snippets",
+  "info": {
+    "displayName": "CodeSnippet",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Unnamed"
+    },
+    "description": {
+      "type": "text",
+      "default": "description"
+    },
+    "language": {
+      "type": "enumeration",
+      "enum": [
+        "javascript",
+        "solidity",
+        "jsx",
+        "tsx"
+      ],
+      "default": "javascript"
+    },
+    "code": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

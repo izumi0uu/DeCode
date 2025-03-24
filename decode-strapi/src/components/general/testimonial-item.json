@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_general_testimonial_items",
+  "info": {
+    "displayName": "TestimonialItem"
+  },
+  "options": {},
+  "attributes": {
+    "quote": {
+      "type": "text",
+      "required": true
+    },
+    "avatar": {
+      "type": "media"
+    },
+    "role": {
+      "type": "string"
+    },
+    "rating": {
+      "type": "integer",
+      "min": 1,
+      "max": 5
+    }
+  }
+}
