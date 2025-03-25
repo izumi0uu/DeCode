@@ -1288,6 +1288,8 @@ export interface ApiUserCourseProgressUserCourseProgress
         number
       > &
       Schema.Attribute.DefaultTo<0>;
+    course: Schema.Attribute.Relation<'manyToOne', 'api::course.course'> &
+      Schema.Attribute.Required;
     courseStatus: Schema.Attribute.Enumeration<
       ['not_started', 'in_progress', 'completed']
     >;

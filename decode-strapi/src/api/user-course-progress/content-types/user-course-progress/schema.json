@@ -41,6 +41,12 @@
       "relation": "manyToOne",
       "target": "api::lesson.lesson",
       "required": true
+    },
+    "course": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::course.course",
+      "required": true
     }
   }
 }

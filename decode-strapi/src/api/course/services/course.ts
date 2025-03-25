@@ -4,9 +4,9 @@
 
 import { factories } from "@strapi/strapi";
 
-async function findPopular(options = {}) {
+async function findPopular() {
   try {
-    const courses = await strapi.db.query("api::course.course").findMany({
+    const courses = await strapi.entityService.findMany("api::course.course", {
       filters: {
         isPopular: true,
         published: true,
@@ -27,7 +27,19 @@ async function findPopular(options = {}) {
       })
     );
 
-    return coursesWithStats;
+    const pagination = {
+      page: 1,
+      pageSize: 10,
+      pageCount: 1,
+      total: coursesWithStats.length,
+    };
+
+    return {
+      data: coursesWithStats,
+      meta: {
+        pagination,
+      },
+    };
   } catch (error) {
     console.error("Error finding popular courses:", error);
     throw error;
