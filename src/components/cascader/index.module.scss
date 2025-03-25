@@ -1,0 +1,85 @@
+.cascaderContent {
+  transition: transform 0.3s ease;
+  width: 180px;
+}
+
+.course {
+  cursor: pointer;
+  position: relative;
+
+  // 当有下一个元素时，移除当前元素的底部圆角
+  &:not(:last-child) {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+
+  // 当不是第一个元素时，移除当前元素的顶部圆角
+  &:not(:first-child) {
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+  }
+
+  &:hover {
+    .lessonList {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+    .courseTitle {
+      background-color: var(--brand-alpha-medium);
+    }
+  }
+}
+
+.courseTitle {
+  transition: transform 0.3s, background-color 0.3s;
+  transform: translateX(0);
+
+  &:hover {
+    background-color: var(--brand-alpha-medium);
+    transform: translateX(4px);
+  }
+}
+
+.lessonList {
+  opacity: 0;
+  position: absolute;
+  min-width: 180px;
+  left: 100%;
+  top: 0;
+  transform: translateX(-20px);
+  transform-origin: left;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.lessonItem {
+  cursor: pointer;
+
+  // 当有下一个元素时，移除当前元素的底部圆角
+  &:not(:last-child) {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+
+  // 当不是第一个元素时，移除当前元素的顶部圆角
+  &:not(:first-child) {
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+  }
+
+  &:hover {
+    .lessonTitle {
+      background-color: var(--brand-alpha-medium);
+    }
+  }
+}
+
+.lessonTitle {
+  transition: transform 0.3s, background-color 0.3s;
+  transform: translateX(0);
+
+  &:hover {
+    background-color: var(--brand-alpha-medium);
+    transform: translateX(4px);
+  }
+}

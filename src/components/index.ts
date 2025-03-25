@@ -9,7 +9,6 @@ export { Popover } from "@/components/popover";
 export { PopoverBtn } from "@/components/popoverBtn";
 export { Cascader } from "@/components/cascader";
 export { CascaderInteraction } from "@/components/cascaderInteraction";
-export { CascaderContent } from "@/components/cascaderContent";
 export { CourseCarousel } from "@/components/courseCarousel";
 export { CourseCarouselItem } from "@/components/courseCarouselItem";
 export { CourseCarouselInteraction } from "@/components/courseCarouselInteraction";
