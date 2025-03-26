@@ -25,7 +25,7 @@ import { LearningPathConfigListResponse } from "./learning-path-config";
 import { HomePageSettingResponse } from "./home-page-setting";
 import { WebsiteConfigurationResponse } from "./website-configuration";
 
-export {
+export type {
   ApiError,
   CourseListResponse,
   CourseResponse,
