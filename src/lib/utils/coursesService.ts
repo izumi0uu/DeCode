@@ -27,38 +27,54 @@ function transformIntoCourseTree(
     id: `course-${course.id}`,
     type: "course",
     title: course.title,
-    path: `/courses/${course.id}`,
-    sortOrder: course.sort,
+    path: `/courses/${course.slug || course.id}`,
+    sortOrder: course.sortOrder || 0,
     metadata: {
       courseId: course.id,
       courseTitle: course.title,
       progress: userProgress?.courses?.[course.id]?.progress || 0,
-      learners: course.learners,
-      studyTime: course.study_time,
-      status: course.status,
-      difficulty: course.difficulty,
-      lang: course.lang,
+      learners: course.learners || 0,
+      studyTime: course.duration || 0,
+      status: course.status || (course.published ? "published" : "draft"),
+      difficulty: mapDifficulty(course.difficulty),
+      lang: course.locale || "en",
     },
 
     // 3. 转换该课程的所有章节
     children: (lessonsByCourseId[course.id] || [])
-      .sort((a, b) => a.sort - b.sort)
+      .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
       .map((lesson) => ({
         id: `lesson-${lesson.id}`,
         type: "lesson",
         title: lesson.title,
-        path: `/courses/${course.id}/lessons/${lesson.id}`,
-        sortOrder: lesson.sort,
+        path: `/courses/${course.slug || course.id}/lessons/${
+          lesson.slug || lesson.id
+        }`,
+        sortOrder: lesson.sortOrder || 0,
         metadata: {
           courseId: course.id,
           lessonId: lesson.id,
           progress: userProgress?.lessons?.[lesson.id]?.progress || 0,
-          studyTime: lesson.study_time,
-          status: lesson.status,
-          lang: lesson.lang,
+          studyTime: lesson.duration || 0,
+          status: lesson.status || (lesson.publishedAt ? "published" : "draft"),
+          lang: lesson.locale || course.locale || "en",
         },
       })),
   }));
+}
+
+function mapDifficulty(
+  difficulty: string
+): "Beginner" | "Intermediate" | "Advanced" {
+  const map: Record<string, "Beginner" | "Intermediate" | "Advanced"> = {
+    easy: "Beginner",
+    medium: "Intermediate",
+    hard: "Advanced",
+    beginner: "Beginner",
+    intermediate: "Intermediate",
+    advanced: "Advanced",
+  };
+  return map[difficulty] || "Beginner";
 }
 
 export { transformIntoCourseTree };
