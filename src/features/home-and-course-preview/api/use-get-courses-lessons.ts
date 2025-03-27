@@ -11,6 +11,7 @@ import {
   COURSE_LIGHT_FIELDS,
   QUIZ_LIGHT_FIELDS,
 } from "@/features/types";
+
 // 获取课程数据
 const fetchCourses = async () => {
   const response = await fetch("/api/courses");
@@ -20,6 +21,7 @@ const fetchCourses = async () => {
   return response.json() as Promise<CourseListResponse>;
 };
 
+// 获取不含content的章节数据
 const fetchLessonsLight = async () => {
   // 构建查询，排除 content 字段
   const query = qs.stringify(
@@ -59,7 +61,7 @@ const transformData = (
       // 查找属于当前课程的所有章节
       const courseId = course.id;
       const courseLessons = lessons.data.filter(
-        (lesson) => lesson.course?.data?.id === courseId // 修复关系数据访问
+        (lesson) => lesson.course?.id === courseId
       );
 
       // 为每个章节创建子节点
@@ -68,7 +70,7 @@ const transformData = (
         title: lesson.title,
         path: `/courses/${course.slug}/${lesson.slug}`,
         type: "lesson",
-        sortOrder: lesson.sortOrder || 0, // 使用正确的字段名
+        sortOrder: lesson.sortOrder || 0,
         metadata: {
           courseId: courseId,
           lessonId: lesson.id,

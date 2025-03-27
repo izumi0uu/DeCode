@@ -77,5 +77,5 @@ export interface Media {
 /**
  * 通用 Relation 类型
  */
-export type Relation<T> = { data: T | null };
+export type Relation<T> = T & { data?: T | null };
 export type RelationArray<T> = { data: T[] };
