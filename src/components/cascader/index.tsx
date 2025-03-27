@@ -1,6 +1,5 @@
 "use client";
 
-import useSWR from "swr";
 import { Flex, Skeleton } from "@/once-ui/components";
 import { CascaderInteraction } from "@/components/cascaderInteraction";
 import { navigateTo } from "@/app/actions/navigateTo";
