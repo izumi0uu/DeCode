@@ -1,5 +1,10 @@
 // src/types/api/quiz-answer.ts
-import { Relation, StrapiListResponse, StrapiResponse } from "./common";
+import {
+  Relation,
+  RelationArray,
+  StrapiListResponse,
+  StrapiResponse,
+} from "./common";
 import { Quiz } from "./quiz";
 import { QuizQuestion } from "./quiz-question";
 import { QuizOption } from "./quiz-option";

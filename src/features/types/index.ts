@@ -1,5 +1,4 @@
-// 导出公共类型
-export * from "./api/common;
+export * from "./api/common";
 
 // 导出核心内容类型
 export * from "./api/course";

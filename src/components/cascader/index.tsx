@@ -4,8 +4,9 @@ import useSWR from "swr";
 import { Flex, Skeleton } from "@/once-ui/components";
 import { CascaderInteraction } from "@/components/cascaderInteraction";
 import { navigateTo } from "@/app/actions/navigateTo";
-import { NavNode } from "@/features/types/navigation";
+import { NavNode } from "@/features/types/ui/nav-node";
 import styles from "./index.module.scss";
+import { useCoursesAndLessons } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
 
 export interface CascaderProps {
   data?: NavNode[];
@@ -14,24 +15,7 @@ export interface CascaderProps {
 }
 
 const Cascader = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
-  const fetcher = async () => {
-    const response = await fetch("/api/navigation");
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    return response.json();
-  };
-
-  const {
-    data: navigationData,
-    isLoading,
-    error,
-  } = useSWR("/api/navigation", fetcher, {
-    dedupingInterval: 60000,
-    onError: (err) => {
-      console.log(err);
-    },
-  });
+  const { data: navigationData, isLoading, error } = useCoursesAndLessons();
 
   if (error || !navigationData) return null;
 

@@ -1,4 +1,4 @@
-import { ApiError } from "./common";
+import { StrapiError } from "./common";
 import { CourseListResponse, CourseResponse } from "./course";
 import { LessonListResponse, LessonResponse } from "./lesson";
 import { QuizListResponse, QuizResponse } from "./quiz";
@@ -26,7 +26,7 @@ import { HomePageSettingResponse } from "./home-page-setting";
 import { WebsiteConfigurationResponse } from "./website-configuration";
 
 export type {
-  ApiError,
+  StrapiError,
   CourseListResponse,
   CourseResponse,
   LessonListResponse,
