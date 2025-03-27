@@ -35,11 +35,12 @@ export interface Lesson {
   duration: number; // 章节时长（分钟）
   isPreview: boolean; // 是否为免费预览章节
   published: boolean;
-  publishedAt: string | null;
+  lessonPublishedAt: string | null;
   course: Relation<Course>;
   quiz: Relation<Quiz>;
   createdAt: string;
   updatedAt: string;
+  sortOrder: number;
 }
 
 /**
@@ -64,3 +65,14 @@ export type LessonResponse = StrapiResponse<Lesson>;
  * 章节列表响应类型
  */
 export type LessonListResponse = StrapiListResponse<Lesson>;
+
+/**
+ * 轻量级章节接口，不包含 content 字段
+ * 适用于列表显示和导航
+ */
+export type LessonLight = Omit<Lesson, "content">;
+
+/**
+ * 轻量级章节列表响应类型
+ */
+export type LessonLightListResponse = StrapiListResponse<LessonLight>;

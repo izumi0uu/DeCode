@@ -74,6 +74,12 @@
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::resource.resource"
+    },
+    "published": {
+      "type": "boolean"
+    },
+    "lessonPublishedAt": {
+      "type": "datetime"
     }
   }
 }

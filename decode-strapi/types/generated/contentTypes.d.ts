@@ -696,8 +696,10 @@ export interface ApiLessonLesson extends Struct.CollectionTypeSchema {
       }>;
     duration: Schema.Attribute.Integer;
     isPreview: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    lessonPublishedAt: Schema.Attribute.DateTime;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::lesson.lesson'>;
+    published: Schema.Attribute.Boolean;
     publishedAt: Schema.Attribute.DateTime;
     quizzes: Schema.Attribute.Relation<'oneToMany', 'api::quiz.quiz'>;
     resources: Schema.Attribute.Relation<

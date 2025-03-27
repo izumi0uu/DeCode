@@ -1,13 +1,16 @@
 // src/features/home-and-course-preview/api/use-get-courses-lessons.ts
 import { useQuery } from "@tanstack/react-query";
-import {
-  CourseResponse,
-  LessonAttributes,
-  LessonResponse,
-  NavNode,
+import { CourseResponse, LessonResponse, NavNode } from "@/features/types";
+import qs from "qs";
+import type {
+  CourseListResponse,
+  LessonLightListResponse,
 } from "@/features/types";
-import type { CourseListResponse, LessonListResponse } from "@/features/types";
-
+import {
+  LESSON_LIGHT_FIELDS,
+  COURSE_LIGHT_FIELDS,
+  QUIZ_LIGHT_FIELDS,
+} from "@/features/types";
 // 获取课程数据
 const fetchCourses = async () => {
   const response = await fetch("/api/courses");
@@ -17,19 +20,38 @@ const fetchCourses = async () => {
   return response.json() as Promise<CourseListResponse>;
 };
 
-// 获取章节数据
-const fetchLessons = async () => {
-  const response = await fetch("/api/lessons");
+const fetchLessonsLight = async () => {
+  // 构建查询，排除 content 字段
+  const query = qs.stringify(
+    {
+      fields: LESSON_LIGHT_FIELDS,
+      populate: {
+        course: {
+          fields: COURSE_LIGHT_FIELDS,
+        },
+        quizzes: {
+          fields: QUIZ_LIGHT_FIELDS,
+        },
+      },
+    },
+    {
+      encodeValuesOnly: true, // 美化 URL
+    }
+  );
+
+  const response = await fetch(`/api/lessons?${query}`);
+
   if (!response.ok) {
-    throw new Error("Failed to fetch lessons");
+    throw new Error("Failed to fetch light lessons");
   }
-  return response.json() as Promise<LessonListResponse>;
+
+  return response.json() as Promise<LessonLightListResponse>;
 };
 
 // 转换数据为导航树结构
 const transformData = (
   courses: CourseListResponse,
-  lessons: LessonListResponse
+  lessons: LessonLightListResponse
 ): NavNode[] => {
   try {
     // 创建课程导航节点
@@ -37,28 +59,43 @@ const transformData = (
       // 查找属于当前课程的所有章节
       const courseId = course.id;
       const courseLessons = lessons.data.filter(
-        (lesson) => lesson.course?.id === courseId // 修改这里的访问路径
+        (lesson) => lesson.course?.data?.id === courseId // 修复关系数据访问
       );
 
       // 为每个章节创建子节点
       const lessonNodes: NavNode[] = courseLessons.map((lesson) => ({
         id: lesson.id.toString(),
-        title: lesson.title, // 直接访问属性
-        path: `/courses/${course.slug}/${lesson.slug}`, // 直接访问slug
+        title: lesson.title,
+        path: `/courses/${course.slug}/${lesson.slug}`,
         type: "lesson",
-        metadata: {}, // 添加必要属性
-        sortOrder: lesson.position || 0, // 添加必要属性
+        sortOrder: lesson.sortOrder || 0, // 使用正确的字段名
+        metadata: {
+          courseId: courseId,
+          lessonId: lesson.id,
+          progress: 0, // 默认值
+          studyTime: lesson.duration || 0,
+          status: lesson.published ? "published" : "draft",
+          lang: course.locale || "en", // 从课程获取
+        },
       }));
 
       // 返回课程节点，包含章节子节点
       return {
         id: courseId.toString(),
-        title: course.title, // 直接访问属性
-        path: `/courses/${course.title.toLowerCase().replace(/\s+/g, "-")}`,
+        title: course.title,
+        path: `/courses/${course.slug}`, // 使用 slug 而非标题转换
         type: "course",
         children: lessonNodes.length > 0 ? lessonNodes : undefined,
-        metadata: {}, // 添加必要属性
-        sortOrder: 0, // 添加必要属性
+        sortOrder: 0,
+        metadata: {
+          courseId: courseId,
+          difficulty: course.difficulty || "beginner",
+          progress: 0, // 默认值
+          learners: 0, // 默认值
+          studyTime: course.duration || 0,
+          status: course.published ? "published" : "draft",
+          lang: course.locale || "en",
+        },
       };
     });
 
@@ -77,8 +114,8 @@ export const useCoursesAndLessons = () => {
   });
 
   const lessonsQuery = useQuery({
-    queryKey: ["lessons"],
-    queryFn: fetchLessons,
+    queryKey: ["lessons-light"],
+    queryFn: fetchLessonsLight,
     enabled: !!coursesQuery.data, // 只有在课程数据加载完成后才加载章节数据
   });
 
@@ -111,6 +148,6 @@ export const useCourses = () => {
 export const useLessons = () => {
   return useQuery({
     queryKey: ["lessons"],
-    queryFn: () => fetchLessons(),
+    queryFn: () => fetchLessonsLight(),
   });
 };
