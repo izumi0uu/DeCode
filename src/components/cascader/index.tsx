@@ -46,7 +46,7 @@ const Cascader = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
   return (
     <CascaderInteraction onSelect={navigateTo}>
       <Flex direction="column" radius="m" className={styles.cascaderContent}>
-        {navigationData?.data.map((course: NavNode) => (
+        {navigationData?.map((course: NavNode) => (
           <Flex
             key={course.id}
             className={styles.course}
