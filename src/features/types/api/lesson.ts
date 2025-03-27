@@ -1,84 +1,66 @@
-import { StrapiAttribute, StrapiRelationship, StrapiMedia } from "./commons";
-import { CourseAttributes } from "./course";
+// src/types/api/lesson.ts
+import {
+  Media,
+  Relation,
+  RelationArray,
+  StrapiListResponse,
+  StrapiResponse,
+} from "./common";
+import { Course } from "./course";
+import { Quiz } from "./quiz";
 
 /**
- * 课程章节属性
+ * 章节类型枚举
  */
-export interface LessonAttributes extends StrapiAttribute {
-  title: string;
-  slug: string;
-  description: string;
-  content: any; // 富文本内容
-  videoUrl: string;
-  isPreview: boolean;
-  position: number;
-  duration: number;
-  course: StrapiRelationship<CourseAttributes>;
-  quizzes: StrapiRelationship<QuizAttributes>;
-  resources: StrapiRelationship<ResourceAttributes>;
+export enum LessonType {
+  VIDEO = "video",
+  TEXT = "text",
+  CODE = "code",
+  MIXED = "mixed",
 }
 
 /**
- * 课程章节类型
+ * 章节基础属性
  */
 export interface Lesson {
   id: number;
-  attributes: LessonAttributes;
+  title: string;
+  slug: string;
+  description: string;
+  content: string;
+  coverImage: Relation<Media>;
+  videoUrl: string | null;
+  type: LessonType;
+  position: number; // 章节在课程中的排序位置
+  duration: number; // 章节时长（分钟）
+  isPreview: boolean; // 是否为免费预览章节
+  published: boolean;
+  publishedAt: string | null;
+  course: Relation<Course>;
+  quiz: Relation<Quiz>;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
- * 章节列表响应
+ * 创建章节的输入类型
  */
-export interface LessonListResponse {
-  data: Lesson[];
-  meta: {
-    pagination: {
-      page: number;
-      pageSize: number;
-      pageCount: number;
-      total: number;
-    };
-  };
-}
+export type LessonInput = Omit<
+  Lesson,
+  "id" | "createdAt" | "updatedAt" | "publishedAt"
+>;
 
 /**
- * 单个章节响应
+ * 更新章节的输入类型
  */
-export interface LessonResponse {
-  data: Lesson;
-  meta: {};
-}
+export type LessonUpdateInput = Partial<LessonInput>;
 
 /**
- * 章节创建请求
+ * 章节响应类型
  */
-export interface LessonCreateRequest {
-  data: {
-    title: string;
-    slug: string;
-    description: string;
-    content?: any;
-    videoUrl?: string;
-    isPreview?: boolean;
-    position?: number;
-    duration?: number;
-    course: number; // 关联课程ID
-  };
-}
+export type LessonResponse = StrapiResponse<Lesson>;
 
 /**
- * 章节更新请求
+ * 章节列表响应类型
  */
-export interface LessonUpdateRequest {
-  data: Partial<{
-    title: string;
-    slug: string;
-    description: string;
-    content: any;
-    videoUrl: string;
-    isPreview: boolean;
-    position: number;
-    duration: number;
-    course: number;
-  }>;
-}
+export type LessonListResponse = StrapiListResponse<Lesson>;

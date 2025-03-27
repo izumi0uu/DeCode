@@ -1,98 +1,71 @@
-import { StrapiAttribute, StrapiRelationship, StrapiMedia } from "./commons";
-import { LessonAttributes } from "./lesson";
-import { CategoryAttributes } from "./category";
-import { TagAttributes } from "./tag";
-import { ContributorAttributes } from "./contributor";
+// src/types/api/course.ts
+import {
+  Media,
+  Relation,
+  RelationArray,
+  StrapiListResponse,
+  StrapiResponse,
+} from "./common";
+import { Category } from "./category";
+import { Tag } from "./tag";
+import { Contributor } from "./contributor";
+import { Lesson } from "./lesson";
 
 /**
- * 课程难度级别
+ * 课程难度枚举
  */
-export type CourseDifficultyLevel = "beginner" | "intermediate" | "advanced";
+export enum CourseDifficulty {
+  BEGINNER = "beginner",
+  INTERMEDIATE = "intermediate",
+  ADVANCED = "advanced",
+}
 
 /**
- * 课程属性类型
+ * 课程基础属性
  */
-export interface CourseAttributes extends StrapiAttribute {
+export interface Course {
+  id: number;
   title: string;
   slug: string;
   description: string;
   content: string;
-  duration: number;
-  difficulty: CourseDifficultyLevel;
-  published: boolean;
+  coverImage: Relation<Media>;
   isPopular: boolean;
-  sbtEnabled: boolean;
-  sbtContractAddress: string | null;
-  coverImage: StrapiMedia;
-  lessons: StrapiRelationship<LessonAttributes>;
-  categories: StrapiRelationship<CategoryAttributes>;
-  tags: StrapiRelationship<TagAttributes>;
-  contributors: StrapiRelationship<ContributorAttributes>;
+  isFeatured: boolean;
+  published: boolean;
+  publishedAt: string | null;
+  difficulty: CourseDifficulty;
+  duration: number; // 课程时长（分钟）
+  prerequisites: string;
+  learningObjectives: string;
+  locale: string;
+  category: Relation<Category>;
+  tags: RelationArray<Tag>;
+  author: Relation<Contributor>;
+  lessons: RelationArray<Lesson>;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
- * 课程类型
+ * 创建课程的输入类型
  */
-export interface Course {
-  id: number;
-  attributes: CourseAttributes;
-}
+export type CourseInput = Omit<
+  Course,
+  "id" | "createdAt" | "updatedAt" | "publishedAt"
+>;
 
 /**
- * 课程列表响应
+ * 更新课程的输入类型
  */
-export interface CourseListResponse {
-  data: Course[];
-  meta: {
-    pagination: {
-      page: number;
-      pageSize: number;
-      pageCount: number;
-      total: number;
-    };
-  };
-}
+export type CourseUpdateInput = Partial<CourseInput>;
 
 /**
- * 单个课程响应
+ * 课程响应类型
  */
-export interface CourseResponse {
-  data: Course;
-  meta: {};
-}
+export type CourseResponse = StrapiResponse<Course>;
 
 /**
- * 课程创建请求
+ * 课程列表响应类型
  */
-export interface CourseCreateRequest {
-  data: {
-    title: string;
-    slug: string;
-    description: string;
-    content?: string;
-    duration?: number;
-    difficulty?: CourseDifficultyLevel;
-    published?: boolean;
-    isPopular?: boolean;
-    sbtEnabled?: boolean;
-    sbtContractAddress?: string | null;
-  };
-}
-
-/**
- * 课程更新请求
- */
-export interface CourseUpdateRequest {
-  data: Partial<{
-    title: string;
-    slug: string;
-    description: string;
-    content: string;
-    duration: number;
-    difficulty: CourseDifficultyLevel;
-    published: boolean;
-    isPopular: boolean;
-    sbtEnabled: boolean;
-    sbtContractAddress: string | null;
-  }>;
-}
+export type CourseListResponse = StrapiListResponse<Course>;

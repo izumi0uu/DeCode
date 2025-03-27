@@ -1,53 +1,60 @@
-import { StrapiAttribute, StrapiRelationship } from "./commons";
-import { UserAttributes } from "./user";
-import { QuizAttributes } from "./quiz";
-import { QuizAnswerAttributes } from "./quiz-answer";
-import { UserCourseProgressAttributes } from "./user-course-progress";
+// src/types/api/user-quiz-progress.ts
+import { Relation, StrapiListResponse, StrapiResponse } from "./common";
+import { Quiz } from "./quiz";
 
 /**
- * 用户测验进度状态
+ * 用户测验进度状态枚举
  */
-export type QuizProgressStatus =
-  | "not_started"
-  | "in_progress"
-  | "completed"
-  | "failed";
-
-/**
- * 用户测验进度属性
- */
-export interface UserQuizProgressAttributes extends StrapiAttribute {
-  status: QuizProgressStatus;
-  score: number;
-  startedAt: string | null;
-  completedAt: string | null;
-  timeSpent: number; // 秒数
-  attemptsCount: number;
-  user: StrapiRelationship<UserAttributes>;
-  quiz: StrapiRelationship<QuizAttributes>;
-  answers: StrapiRelationship<QuizAnswerAttributes>;
-  userCourseProgress: StrapiRelationship<UserCourseProgressAttributes>;
+export enum QuizProgressStatus {
+  NOT_STARTED = "not_started",
+  IN_PROGRESS = "in_progress",
+  COMPLETED = "completed",
+  FAILED = "failed",
+  PASSED = "passed",
 }
 
 /**
- * 用户测验进度类型
+ * 用户测验进度基础属性
  */
 export interface UserQuizProgress {
   id: number;
-  attributes: UserQuizProgressAttributes;
+  user: number; // 用户ID
+  quiz: Relation<Quiz>;
+  status: QuizProgressStatus;
+  score: number; // 得分
+  maxScore: number; // 最高可能分数
+  answers: {
+    questionId: number;
+    selectedOptions: number[];
+    isCorrect: boolean;
+    points: number;
+  }[];
+  attempts: number; // 尝试次数
+  startedAt: string | null;
+  completedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
- * 用户测验进度列表响应
+ * 创建用户测验进度的输入类型
  */
-export interface UserQuizProgressListResponse {
-  data: UserQuizProgress[];
-  meta: {
-    pagination: {
-      page: number;
-      pageSize: number;
-      pageCount: number;
-      total: number;
-    };
-  };
-}
+export type UserQuizProgressInput = Omit<
+  UserQuizProgress,
+  "id" | "createdAt" | "updatedAt"
+>;
+
+/**
+ * 更新用户测验进度的输入类型
+ */
+export type UserQuizProgressUpdateInput = Partial<UserQuizProgressInput>;
+
+/**
+ * 用户测验进度响应类型
+ */
+export type UserQuizProgressResponse = StrapiResponse<UserQuizProgress>;
+
+/**
+ * 用户测验进度列表响应类型
+ */
+export type UserQuizProgressListResponse = StrapiListResponse<UserQuizProgress>;

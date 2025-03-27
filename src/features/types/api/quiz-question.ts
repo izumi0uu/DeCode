@@ -1,54 +1,58 @@
-import { StrapiAttribute, StrapiRelationship } from "./commons";
-import { QuizAttributes } from "./quiz";
-import { QuizOptionAttributes } from "./quiz-option";
-/**
- * 测验题目类型
- */
-export type QuizQuestionType =
-  | "single_choice"
-  | "multiple_choice"
-  | "true_false"
-  | "fill_blank";
+// src/types/api/quiz-question.ts
+import {
+  Relation,
+  RelationArray,
+  StrapiListResponse,
+  StrapiResponse,
+} from "./common";
+import { Quiz } from "./quiz";
+import { QuizOption } from "./quiz-option";
 
 /**
- * 测验题目属性
+ * 问题类型枚举
  */
-export interface QuizQuestionAttributes extends StrapiAttribute {
-  question: string;
-  type: QuizQuestionType;
-  points: number;
-  explanation: string | null;
-  quiz: StrapiRelationship<QuizAttributes>;
-  options: StrapiRelationship<QuizOptionAttributes>;
+export enum QuestionType {
+  SINGLE_CHOICE = "single_choice",
+  MULTIPLE_CHOICE = "multiple_choice",
+  TRUE_FALSE = "true_false",
+  SHORT_ANSWER = "short_answer",
 }
 
 /**
- * 测验题目类型
+ * 测验问题基础属性
  */
 export interface QuizQuestion {
   id: number;
-  attributes: QuizQuestionAttributes;
+  question: string;
+  type: QuestionType;
+  points: number;
+  explanation: string | null; // 问题解释（回答后显示）
+  position: number; // 问题顺序
+  quiz: Relation<Quiz>;
+  options: RelationArray<QuizOption>;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
- * 测验题目列表响应
+ * 创建测验问题的输入类型
  */
-export interface QuizQuestionListResponse {
-  data: QuizQuestion[];
-  meta: {
-    pagination: {
-      page: number;
-      pageSize: number;
-      pageCount: number;
-      total: number;
-    };
-  };
-}
+export type QuizQuestionInput = Omit<
+  QuizQuestion,
+  "id" | "createdAt" | "updatedAt"
+>;
 
 /**
- * 单个测验题目响应
+ * 更新测验问题的输入类型
  */
-export interface QuizQuestionResponse {
-  data: QuizQuestion;
-  meta: {};
-}
+export type QuizQuestionUpdateInput = Partial<QuizQuestionInput>;
+
+/**
+ * 测验问题响应类型
+ */
+export type QuizQuestionResponse = StrapiResponse<QuizQuestion>;
+
+/**
+ * 测验问题列表响应类型
+ */
+export type QuizQuestionListResponse = StrapiListResponse<QuizQuestion>;

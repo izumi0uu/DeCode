@@ -1,47 +1,63 @@
-import { StrapiAttribute, StrapiRelationship, StrapiMedia } from "./commons";
-import { CourseAttributes } from "./course";
+// src/types/api/contributor.ts
+import {
+  Media,
+  Relation,
+  RelationArray,
+  StrapiListResponse,
+  StrapiResponse,
+} from "./common";
+import { Course } from "./course";
 
 /**
- * 贡献者角色
+ * 贡献者角色枚举
  */
-export type ContributorRole = "author" | "editor" | "reviewer" | "translator";
-
-/**
- * 贡献者属性
- */
-export interface ContributorAttributes extends StrapiAttribute {
-  name: string;
-  bio: string;
-  avatar: StrapiMedia;
-  role: ContributorRole;
-  socialLinks: {
-    twitter?: string;
-    github?: string;
-    linkedin?: string;
-    website?: string;
-  };
-  courses: StrapiRelationship<CourseAttributes>;
+export enum ContributorRole {
+  AUTHOR = "author",
+  INSTRUCTOR = "instructor",
+  EDITOR = "editor",
+  REVIEWER = "reviewer",
 }
 
 /**
- * 贡献者类型
+ * 贡献者基础属性
  */
 export interface Contributor {
   id: number;
-  attributes: ContributorAttributes;
+  name: string;
+  bio: string;
+  email: string;
+  avatar: Relation<Media>;
+  role: ContributorRole;
+  socialLinks: {
+    github?: string;
+    twitter?: string;
+    linkedin?: string;
+    website?: string;
+  };
+  courses: RelationArray<Course>;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
- * 贡献者列表响应
+ * 创建贡献者的输入类型
  */
-export interface ContributorListResponse {
-  data: Contributor[];
-  meta: {
-    pagination: {
-      page: number;
-      pageSize: number;
-      pageCount: number;
-      total: number;
-    };
-  };
-}
+export type ContributorInput = Omit<
+  Contributor,
+  "id" | "createdAt" | "updatedAt"
+>;
+
+/**
+ * 更新贡献者的输入类型
+ */
+export type ContributorUpdateInput = Partial<ContributorInput>;
+
+/**
+ * 贡献者响应类型
+ */
+export type ContributorResponse = StrapiResponse<Contributor>;
+
+/**
+ * 贡献者列表响应类型
+ */
+export type ContributorListResponse = StrapiListResponse<Contributor>;

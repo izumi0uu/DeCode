@@ -1,39 +1,50 @@
-import { StrapiAttribute, StrapiRelationship, StrapiMedia } from "./commons";
-import { CourseAttributes } from "./course";
+// src/types/api/home-page-setting.ts
+import { Media, Relation, RelationArray, StrapiResponse } from "./common";
+import { Course } from "./course";
 
 /**
- * 首页设置属性
- */
-export interface HomePageSettingAttributes extends StrapiAttribute {
-  heroTitle: string;
-  heroSubtitle: string;
-  heroImage: StrapiMedia;
-  featuredCourses: StrapiRelationship<CourseAttributes>;
-  aboutSection: {
-    title: string;
-    content: string;
-    image: StrapiMedia;
-  };
-  ctaSection: {
-    title: string;
-    content: string;
-    buttonText: string;
-    buttonUrl: string;
-  };
-}
-
-/**
- * 首页设置类型
+ * 首页设置基础属性
  */
 export interface HomePageSetting {
   id: number;
-  attributes: HomePageSettingAttributes;
+  heroTitle: string;
+  heroSubtitle: string;
+  heroImage: Relation<Media>;
+  featuredCourses: RelationArray<Course>;
+  popularCourses: RelationArray<Course>;
+  bannerImages: RelationArray<Media>;
+  bannerTitle: string;
+  bannerDescription: string;
+  bannerButtonText: string;
+  bannerButtonUrl: string;
+  featuredSectionTitle: string;
+  featuredSectionDescription: string;
+  popularSectionTitle: string;
+  popularSectionDescription: string;
+  testimonials: {
+    name: string;
+    avatar?: Relation<Media>;
+    testimonial: string;
+    role: string;
+  }[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
- * 首页设置响应
+ * 创建首页设置的输入类型
  */
-export interface HomePageSettingResponse {
-  data: HomePageSetting;
-  meta: {};
-}
+export type HomePageSettingInput = Omit<
+  HomePageSetting,
+  "id" | "createdAt" | "updatedAt"
+>;
+
+/**
+ * 更新首页设置的输入类型
+ */
+export type HomePageSettingUpdateInput = Partial<HomePageSettingInput>;
+
+/**
+ * 首页设置响应类型
+ */
+export type HomePageSettingResponse = StrapiResponse<HomePageSetting>;

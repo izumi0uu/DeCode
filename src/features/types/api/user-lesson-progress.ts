@@ -1,47 +1,53 @@
-import { StrapiAttribute, StrapiRelationship } from "./commons";
-import { UserAttributes } from "./user";
-import { LessonAttributes } from "./lesson";
-import { UserCourseProgressAttributes } from "./user-course-progress";
+// src/types/api/user-lesson-progress.ts
+import { Relation, StrapiListResponse, StrapiResponse } from "./common";
+import { Lesson } from "./lesson";
 
 /**
- * 用户章节进度状态
+ * 用户章节进度状态枚举
  */
-export type LessonProgressStatus = "not_started" | "in_progress" | "completed";
-
-/**
- * 用户章节进度属性
- */
-export interface UserLessonProgressAttributes extends StrapiAttribute {
-  status: LessonProgressStatus;
-  progress: number; // 百分比 0-100
-  lastPosition: number; // 上次学习位置（视频时间点或滚动位置）
-  startedAt: string | null;
-  completedAt: string | null;
-  timeSpent: number; // 秒数
-  user: StrapiRelationship<UserAttributes>;
-  lesson: StrapiRelationship<LessonAttributes>;
-  userCourseProgress: StrapiRelationship<UserCourseProgressAttributes>;
+export enum LessonProgressStatus {
+  NOT_STARTED = "not_started",
+  IN_PROGRESS = "in_progress",
+  COMPLETED = "completed",
 }
 
 /**
- * 用户章节进度类型
+ * 用户章节进度基础属性
  */
 export interface UserLessonProgress {
   id: number;
-  attributes: UserLessonProgressAttributes;
+  user: number; // 用户ID
+  lesson: Relation<Lesson>;
+  status: LessonProgressStatus;
+  progress: number; // 进度百分比 (0-100)
+  currentPosition: number; // 当前视频位置（秒）
+  startedAt: string | null;
+  completedAt: string | null;
+  lastAccessedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
- * 用户章节进度列表响应
+ * 创建用户章节进度的输入类型
  */
-export interface UserLessonProgressListResponse {
-  data: UserLessonProgress[];
-  meta: {
-    pagination: {
-      page: number;
-      pageSize: number;
-      pageCount: number;
-      total: number;
-    };
-  };
-}
+export type UserLessonProgressInput = Omit<
+  UserLessonProgress,
+  "id" | "createdAt" | "updatedAt"
+>;
+
+/**
+ * 更新用户章节进度的输入类型
+ */
+export type UserLessonProgressUpdateInput = Partial<UserLessonProgressInput>;
+
+/**
+ * 用户章节进度响应类型
+ */
+export type UserLessonProgressResponse = StrapiResponse<UserLessonProgress>;
+
+/**
+ * 用户章节进度列表响应类型
+ */
+export type UserLessonProgressListResponse =
+  StrapiListResponse<UserLessonProgress>;

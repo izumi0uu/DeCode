@@ -1,38 +1,46 @@
-import { StrapiAttribute, StrapiRelationship } from "./commons";
-import { QuizQuestionAttributes } from "./quiz-question";
-import { UserQuizProgressAttributes } from "./user-quiz-progress";
+// src/types/api/quiz-answer.ts
+import { Relation, StrapiListResponse, StrapiResponse } from "./common";
+import { Quiz } from "./quiz";
+import { QuizQuestion } from "./quiz-question";
+import { QuizOption } from "./quiz-option";
 
 /**
-/**
- * 测验答案属性
- */
-export interface QuizAnswerAttributes extends StrapiAttribute {
-  selectedOptions: number[]; // 选择的选项ID
-  userAnswer: string | null; // 用户填空题答案
-  isCorrect: boolean;
-  question: StrapiRelationship<QuizQuestionAttributes>;
-  userQuizProgress: StrapiRelationship<UserQuizProgressAttributes>;
-}
-
-/**
- * 测验答案类型
+ * 测验答案基础属性
  */
 export interface QuizAnswer {
   id: number;
-  attributes: QuizAnswerAttributes;
+  user: number; // 用户ID
+  quiz: Relation<Quiz>;
+  question: Relation<QuizQuestion>;
+  selectedOptions: RelationArray<QuizOption>;
+  textAnswer: string | null; // 用于简答题
+  isCorrect: boolean;
+  points: number;
+  timeTaken: number | null; // 回答问题所花费的时间（秒）
+  attemptNumber: number; // 尝试次数
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
- * 测验答案列表响应
+ * 创建测验答案的输入类型
  */
-export interface QuizAnswerListResponse {
-  data: QuizAnswer[];
-  meta: {
-    pagination: {
-      page: number;
-      pageSize: number;
-      pageCount: number;
-      total: number;
-    };
-  };
-}
+export type QuizAnswerInput = Omit<
+  QuizAnswer,
+  "id" | "createdAt" | "updatedAt"
+>;
+
+/**
+ * 更新测验答案的输入类型
+ */
+export type QuizAnswerUpdateInput = Partial<QuizAnswerInput>;
+
+/**
+ * 测验答案响应类型
+ */
+export type QuizAnswerResponse = StrapiResponse<QuizAnswer>;
+
+/**
+ * 测验答案列表响应类型
+ */
+export type QuizAnswerListResponse = StrapiListResponse<QuizAnswer>;

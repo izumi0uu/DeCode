@@ -1,51 +1,56 @@
-import { StrapiAttribute, StrapiRelationship } from "./commons";
+// src/types/api/sbt-certification.ts
+import { Relation, StrapiListResponse, StrapiResponse } from "./common";
+import { Course } from "./course";
 
 /**
- * SBT认证状态
+ * SBT 认证状态枚举
  */
-export type SbtCertificationStatus = "pending" | "minted" | "failed";
-
-/**
- * SBT认证属性
- */
-export interface SbtCertificationAttributes extends StrapiAttribute {
-  tokenId: string;
-  transactionHash: string;
-  status: SbtCertificationStatus;
-  mintedAt: string | null;
-  metadata: {
-    name: string;
-    description: string;
-    image: string;
-    attributes: Array<{
-      trait_type: string;
-      value: string | number;
-    }>;
-  };
-  user: StrapiRelationship<UserAttributes>;
-  course: StrapiRelationship<CourseAttributes>;
-  userCourseProgress: StrapiRelationship<UserCourseProgressAttributes>;
+export enum SbtCertificationStatus {
+  PENDING = "pending",
+  MINTING = "minting",
+  MINTED = "minted",
+  FAILED = "failed",
 }
 
 /**
- * SBT认证类型
+ * SBT 认证基础属性
  */
 export interface SbtCertification {
   id: number;
-  attributes: SbtCertificationAttributes;
+  user: number; // 用户ID
+  course: Relation<Course>;
+  walletAddress: string;
+  transactionHash: string | null;
+  ipfsHash: string | null;
+  tokenId: number | null;
+  tokenUri: string | null;
+  metadataJson: string; // JSON 字符串，包含证书元数据
+  status: SbtCertificationStatus;
+  mintedAt: string | null;
+  completionDate: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
- * SBT认证列表响应
+ * 创建 SBT 认证的输入类型
  */
-export interface SbtCertificationListResponse {
-  data: SbtCertification[];
-  meta: {
-    pagination: {
-      page: number;
-      pageSize: number;
-      pageCount: number;
-      total: number;
-    };
-  };
-}
+export type SbtCertificationInput = Omit<
+  SbtCertification,
+  "id" | "createdAt" | "updatedAt"
+>;
+
+/**
+ * 更新 SBT 认证的输入类型
+ */
+export type SbtCertificationUpdateInput = Partial<SbtCertificationInput>;
+
+/**
+ * SBT 认证响应类型
+ */
+export type SbtCertificationResponse = StrapiResponse<SbtCertification>;
+
+/**
+ * SBT 认证列表响应类型
+ */
+export type SbtCertificationListResponse = StrapiListResponse<SbtCertification>;

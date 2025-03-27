@@ -1,5 +1,5 @@
 // 导出公共类型
-export * from "./api/commons";
+export * from "./api/common;
 
 // 导出核心内容类型
 export * from "./api/course";
@@ -39,3 +39,6 @@ export * from "./api/learning-path-config";
 
 // 导出所有API响应类型
 export * from "./api/responses";
+
+// 导出UI相关类型
+export * from "./ui/nav-node";

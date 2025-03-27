@@ -1,43 +1,40 @@
-import { StrapiAttribute, StrapiRelationship } from "./commons";
-import { QuizQuestionAttributes } from "./quiz-question";
+// src/types/api/quiz-option.ts
+import { Relation, StrapiListResponse, StrapiResponse } from "./common";
+import { QuizQuestion } from "./quiz-question";
 
 /**
- * 测验选项属性
- */
-export interface QuizOptionAttributes extends StrapiAttribute {
-  text: string;
-  isCorrect: boolean;
-  explanation: string | null;
-  question: StrapiRelationship<QuizQuestionAttributes>;
-}
-
-/**
- * 测验选项类型
+ * 测验选项基础属性
  */
 export interface QuizOption {
   id: number;
-  attributes: QuizOptionAttributes;
+  text: string;
+  isCorrect: boolean;
+  explanation: string | null; // 选项解释
+  position: number; // 选项顺序
+  question: Relation<QuizQuestion>;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
- * 测验选项列表响应
+ * 创建测验选项的输入类型
  */
-export interface QuizOptionListResponse {
-  data: QuizOption[];
-  meta: {
-    pagination: {
-      page: number;
-      pageSize: number;
-      pageCount: number;
-      total: number;
-    };
-  };
-}
+export type QuizOptionInput = Omit<
+  QuizOption,
+  "id" | "createdAt" | "updatedAt"
+>;
 
 /**
- * 单个测验选项响应
+ * 更新测验选项的输入类型
  */
-export interface QuizOptionResponse {
-  data: QuizOption;
-  meta: {};
-}
+export type QuizOptionUpdateInput = Partial<QuizOptionInput>;
+
+/**
+ * 测验选项响应类型
+ */
+export type QuizOptionResponse = StrapiResponse<QuizOption>;
+
+/**
+ * 测验选项列表响应类型
+ */
+export type QuizOptionListResponse = StrapiListResponse<QuizOption>;

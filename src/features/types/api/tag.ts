@@ -1,19 +1,35 @@
-import { StrapiAttribute, StrapiRelationship } from "./commons";
-import { CourseAttributes } from "./course";
+// src/types/api/tag.ts
+import { RelationArray, StrapiListResponse, StrapiResponse } from "./common";
+import { Course } from "./course";
 
 /**
- * 标签属性
- */
-export interface TagAttributes extends StrapiAttribute {
-  name: string;
-  slug: string;
-  courses: StrapiRelationship<CourseAttributes>;
-}
-
-/**
- * 标签类型
+ * 标签基础属性
  */
 export interface Tag {
   id: number;
-  attributes: TagAttributes;
+  name: string;
+  slug: string;
+  courses: RelationArray<Course>;
+  createdAt: string;
+  updatedAt: string;
 }
+
+/**
+ * 创建标签的输入类型
+ */
+export type TagInput = Omit<Tag, "id" | "createdAt" | "updatedAt">;
+
+/**
+ * 更新标签的输入类型
+ */
+export type TagUpdateInput = Partial<TagInput>;
+
+/**
+ * 标签响应类型
+ */
+export type TagResponse = StrapiResponse<Tag>;
+
+/**
+ * 标签列表响应类型
+ */
+export type TagListResponse = StrapiListResponse<Tag>;

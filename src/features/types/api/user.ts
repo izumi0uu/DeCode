@@ -1,4 +1,4 @@
-import { StrapiAttribute, StrapiRelationship, StrapiMedia } from "./commons";
+import { StrapiAttribute, StrapiRelationship, StrapiMedia } from "./common";
 import {
   UserCourseProgressAttributes,
   UserLessonProgressAttributes,

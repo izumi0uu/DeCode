@@ -1,50 +1,54 @@
-import { StrapiAttribute, StrapiRelationship, StrapiMedia } from "./commons";
-import { UserAttributes } from "./user";
-import { CourseAttributes } from "./course";
-import { UserLessonProgressAttributes } from "./user-lesson-progress";
-import { UserQuizProgressAttributes } from "./user-quiz-progress";
+// src/types/api/user-course-progress.ts
+import { Relation, StrapiListResponse, StrapiResponse } from "./common";
+import { Course } from "./course";
 
 /**
- * 用户课程进度状态
+ * 用户课程进度状态枚举
  */
-export type CourseProgressStatus = "not_started" | "in_progress" | "completed";
-
-/**
- * 用户课程进度属性
- */
-export interface UserCourseProgressAttributes extends StrapiAttribute {
-  status: CourseProgressStatus;
-  progress: number; // 百分比 0-100
-  startedAt: string | null;
-  completedAt: string | null;
-  lastAccessedAt: string | null;
-  timeSpent: number; // 秒数
-  certificate: StrapiMedia;
-  user: StrapiRelationship<UserAttributes>;
-  course: StrapiRelationship<CourseAttributes>;
-  lessonProgresses: StrapiRelationship<UserLessonProgressAttributes>;
-  quizProgresses: StrapiRelationship<UserQuizProgressAttributes>;
+export enum CourseProgressStatus {
+  NOT_STARTED = "not_started",
+  IN_PROGRESS = "in_progress",
+  COMPLETED = "completed",
 }
 
 /**
- * 用户课程进度类型
+ * 用户课程进度基础属性
  */
 export interface UserCourseProgress {
   id: number;
-  attributes: UserCourseProgressAttributes;
+  user: number; // 用户ID
+  course: Relation<Course>;
+  status: CourseProgressStatus;
+  progress: number; // 进度百分比 (0-100)
+  startedAt: string | null;
+  completedAt: string | null;
+  lastAccessedAt: string | null;
+  certificateIssued: boolean;
+  certificateUrl?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
- * 用户课程进度列表响应
+ * 创建用户课程进度的输入类型
  */
-export interface UserCourseProgressListResponse {
-  data: UserCourseProgress[];
-  meta: {
-    pagination: {
-      page: number;
-      pageSize: number;
-      pageCount: number;
-      total: number;
-    };
-  };
-}
+export type UserCourseProgressInput = Omit<
+  UserCourseProgress,
+  "id" | "createdAt" | "updatedAt"
+>;
+
+/**
+ * 更新用户课程进度的输入类型
+ */
+export type UserCourseProgressUpdateInput = Partial<UserCourseProgressInput>;
+
+/**
+ * 用户课程进度响应类型
+ */
+export type UserCourseProgressResponse = StrapiResponse<UserCourseProgress>;
+
+/**
+ * 用户课程进度列表响应类型
+ */
+export type UserCourseProgressListResponse =
+  StrapiListResponse<UserCourseProgress>;

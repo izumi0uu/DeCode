@@ -1,42 +1,52 @@
-import { StrapiAttribute, StrapiRelationship, StrapiMedia } from "./commons";
-import { LessonAttributes } from "./lesson";
+// src/types/api/resource.ts
+import { Media, Relation, StrapiListResponse, StrapiResponse } from "./common";
 
 /**
- * 资源类型
+ * 资源类型枚举
  */
-export type ResourceType = "document" | "link" | "image" | "code" | "video";
+export enum ResourceType {
+  DOCUMENT = "document",
+  VIDEO = "video",
+  LINK = "link",
+  CODE = "code",
+  GITHUB = "github",
+}
 
 /**
- * 资源属性
+ * 资源基础属性
  */
-export interface ResourceAttributes extends StrapiAttribute {
+export interface Resource {
+  id: number;
   title: string;
   description: string;
   type: ResourceType;
   url: string;
-  file: StrapiMedia;
-  lesson: StrapiRelationship<LessonAttributes>;
+  file: Relation<Media>;
+  published: boolean;
+  publishedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
- * 资源类型
+ * 创建资源的输入类型
  */
-export interface Resource {
-  id: number;
-  attributes: ResourceAttributes;
-}
+export type ResourceInput = Omit<
+  Resource,
+  "id" | "createdAt" | "updatedAt" | "publishedAt"
+>;
 
 /**
- * 资源列表响应
+ * 更新资源的输入类型
  */
-export interface ResourceListResponse {
-  data: Resource[];
-  meta: {
-    pagination: {
-      page: number;
-      pageSize: number;
-      pageCount: number;
-      total: number;
-    };
-  };
-}
+export type ResourceUpdateInput = Partial<ResourceInput>;
+
+/**
+ * 资源响应类型
+ */
+export type ResourceResponse = StrapiResponse<Resource>;
+
+/**
+ * 资源列表响应类型
+ */
+export type ResourceListResponse = StrapiListResponse<Resource>;

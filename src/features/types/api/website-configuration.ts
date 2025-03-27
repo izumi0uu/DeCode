@@ -1,39 +1,49 @@
-import { StrapiAttribute, StrapiMedia } from "./commons";
+// src/types/api/website-configuration.ts
+import { Media, Relation, StrapiResponse } from "./common";
 
 /**
- * 网站配置属性
- */
-export interface WebsiteConfigurationAttributes extends StrapiAttribute {
-  siteName: string;
-  siteDescription: string;
-  siteUrl: string;
-  favicon: StrapiMedia;
-  logo: StrapiMedia;
-  metaTitle: string;
-  metaDescription: string;
-  socialLinks: {
-    twitter?: string;
-    github?: string;
-    discord?: string;
-    telegram?: string;
-  };
-  footerText: string;
-  googleAnalyticsId: string;
-  enableRegistration: boolean;
-}
-
-/**
- * 网站配置类型
+ * 网站配置基础属性
  */
 export interface WebsiteConfiguration {
   id: number;
-  attributes: WebsiteConfigurationAttributes;
+  siteName: string;
+  siteDescription: string;
+  siteKeywords: string;
+  logo: Relation<Media>;
+  favicon: Relation<Media>;
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+  contactEmail: string;
+  socialLinks: {
+    twitter?: string;
+    discord?: string;
+    github?: string;
+    telegram?: string;
+    youtube?: string;
+  };
+  footerText: string;
+  termsAndConditions: string;
+  privacyPolicy: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
- * 网站配置响应
+ * 创建网站配置的输入类型
  */
-export interface WebsiteConfigurationResponse {
-  data: WebsiteConfiguration;
-  meta: {};
-}
+export type WebsiteConfigurationInput = Omit<
+  WebsiteConfiguration,
+  "id" | "createdAt" | "updatedAt"
+>;
+
+/**
+ * 更新网站配置的输入类型
+ */
+export type WebsiteConfigurationUpdateInput =
+  Partial<WebsiteConfigurationInput>;
+
+/**
+ * 网站配置响应类型
+ */
+export type WebsiteConfigurationResponse = StrapiResponse<WebsiteConfiguration>;

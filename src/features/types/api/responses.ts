@@ -1,4 +1,4 @@
-import { ApiError } from "./commons";
+import { ApiError } from "./common";
 import { CourseListResponse, CourseResponse } from "./course";
 import { LessonListResponse, LessonResponse } from "./lesson";
 import { QuizListResponse, QuizResponse } from "./quiz";
