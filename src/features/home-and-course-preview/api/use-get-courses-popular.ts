@@ -12,7 +12,7 @@ const fetchPopularCourses = async () => {
     },
   });
 
-  const response = await fetch(`/api/courses/${queryString}`);
+  const response = await fetch(`/api/courses?${queryString}`);
   if (!response.ok) throw new Error("Failed to fetch popular courses");
 
   return response.json() as Promise<CourseResponse[]>;
