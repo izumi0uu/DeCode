@@ -2,17 +2,6 @@
  * course router
  */
 
-export default {
-  routes: [
-    {
-      method: "GET",
-      path: "/courses",
-      handler: "course.find",
-    },
-    {
-      method: "GET",
-      path: "/courses/popular",
-      handler: "course.findPopular",
-    },
-  ],
-};
+import { factories } from "@strapi/strapi";
+
+export default factories.createCoreRouter("api::course.course");

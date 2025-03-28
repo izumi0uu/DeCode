@@ -32,7 +32,6 @@ export interface Course {
   coverImage: Relation<Media>;
   isPopular: boolean;
   isFeatured: boolean;
-  published: boolean;
   publishedAt: string | null;
   difficulty: CourseDifficulty;
   duration: number; // 课程时长（分钟）

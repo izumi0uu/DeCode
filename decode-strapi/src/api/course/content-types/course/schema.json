@@ -41,7 +41,11 @@
     },
     "level": {
       "type": "enumeration",
-      "enum": ["beginner", "intermediate", "advanced"],
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ],
       "pluginOptions": {
         "i18n": {
           "localized": true
@@ -55,7 +59,12 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": ["images", "files", "videos", "audios"]
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
     },
     "tags": {
       "type": "relation",
@@ -67,16 +76,16 @@
       "type": "datetime",
       "default": "2025-03-30T16:00:00.000Z"
     },
-    "published": {
-      "type": "boolean",
-      "default": true
-    },
     "isPopular": {
       "type": "boolean"
     },
     "difficulty": {
       "type": "enumeration",
-      "enum": ["easy", "medium", "hard"],
+      "enum": [
+        "easy",
+        "medium",
+        "hard"
+      ],
       "pluginOptions": {
         "i18n": {
           "localized": true

@@ -18,7 +18,6 @@ export interface Quiz {
   passingScore: number; // 通过分数
   timeLimit: number | null; // 时间限制（分钟）
   shuffleQuestions: boolean; // 是否打乱问题顺序
-  published: boolean;
   publishedAt: string | null;
   lesson: Relation<Lesson>;
   questions: RelationArray<QuizQuestion>;

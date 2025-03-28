@@ -7,7 +7,6 @@ export const LESSON_LIGHT_FIELDS = [
   "duration",
   "sortOrder",
   "isPreview",
-  "published",
   "publishedAt",
   "createdAt",
   "updatedAt",

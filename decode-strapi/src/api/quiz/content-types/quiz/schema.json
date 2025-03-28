@@ -4,7 +4,8 @@
   "info": {
     "singularName": "quiz",
     "pluralName": "quizzes",
-    "displayName": "Quiz"
+    "displayName": "Quiz",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -28,10 +29,6 @@
     },
     "passingScore": {
       "type": "integer"
-    },
-    "published": {
-      "type": "boolean",
-      "default": false
     },
     "lesson": {
       "type": "relation",

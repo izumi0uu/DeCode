@@ -34,7 +34,6 @@ export interface Lesson {
   position: number; // 章节在课程中的排序位置
   duration: number; // 章节时长（分钟）
   isPreview: boolean; // 是否为免费预览章节
-  published: boolean;
   lessonPublishedAt: string | null;
   course: Relation<Course>;
   quiz: Relation<Quiz>;

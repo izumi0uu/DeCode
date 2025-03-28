@@ -1,16 +1,20 @@
+import { CourseResponse } from "@/features/types/api/course";
 import { useTransform, useMotionValue, motion } from "framer-motion";
 import { useState } from "react";
+import Image from "next/image";
 
 const StackBox = ({
   frontCard,
   drag,
   index,
   setIndex,
+  popularCourses,
 }: {
   frontCard?: boolean;
   drag?: "x" | "y";
   index?: number;
   setIndex?: (index: number) => void;
+  popularCourses?: CourseResponse[];
 }) => {
   const [exitX, setExitX] = useState(0);
 
@@ -76,7 +80,9 @@ const StackBox = ({
           borderRadius: 30,
           scale,
         }}
-      />
+      >
+        {/* <Image alt="course-popular" width={220} height={220} /> */}
+      </motion.div>
     </motion.div>
   );
 };

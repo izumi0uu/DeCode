@@ -544,7 +544,6 @@ export interface ApiCourseCourse extends Struct.CollectionTypeSchema {
       }>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::course.course'>;
-    published: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     publishedAt: Schema.Attribute.DateTime;
     resources: Schema.Attribute.Relation<'oneToMany', 'api::resource.resource'>;
     sbtContractAddress: Schema.Attribute.Text & Schema.Attribute.Unique;
@@ -699,7 +698,6 @@ export interface ApiLessonLesson extends Struct.CollectionTypeSchema {
     lessonPublishedAt: Schema.Attribute.DateTime;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::lesson.lesson'>;
-    published: Schema.Attribute.Boolean;
     publishedAt: Schema.Attribute.DateTime;
     quizzes: Schema.Attribute.Relation<'oneToMany', 'api::quiz.quiz'>;
     resources: Schema.Attribute.Relation<
@@ -926,6 +924,7 @@ export interface ApiQuizQuestionQuizQuestion
 export interface ApiQuizQuiz extends Struct.CollectionTypeSchema {
   collectionName: 'quizzes';
   info: {
+    description: '';
     displayName: 'Quiz';
     pluralName: 'quizzes';
     singularName: 'quiz';
@@ -948,7 +947,6 @@ export interface ApiQuizQuiz extends Struct.CollectionTypeSchema {
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::quiz.quiz'>;
     passingScore: Schema.Attribute.Integer;
-    published: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     publishedAt: Schema.Attribute.DateTime;
     questions: Schema.Attribute.Relation<
       'oneToMany',

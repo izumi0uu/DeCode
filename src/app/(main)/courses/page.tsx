@@ -37,7 +37,7 @@ export default function Page({ params }: { params: { locale: string } }) {
   return (
     <Flex>
       <BannerCarousel>
-        <AnimatePresenceBoxes />
+        <AnimatePresenceBoxes popularCourses={popularCourses} />
       </BannerCarousel>
     </Flex>
   );
