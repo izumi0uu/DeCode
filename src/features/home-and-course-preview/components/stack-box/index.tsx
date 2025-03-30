@@ -1,7 +1,8 @@
-import { CourseResponse } from "@/features/types/api/course";
+import { Course, CourseResponse } from "@/features/types/api/course";
 import { useTransform, useMotionValue, motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import { Flex } from "@/once-ui/components";
 
 const StackBox = ({
   frontCard,
@@ -14,7 +15,7 @@ const StackBox = ({
   drag?: "x" | "y";
   index?: number;
   setIndex?: (index: number) => void;
-  popularCourses?: CourseResponse[];
+  popularCourses?: Course;
 }) => {
   const [exitX, setExitX] = useState(0);
 
@@ -46,6 +47,10 @@ const StackBox = ({
       setIndex(index + 1);
     }
   };
+
+  useEffect(() => {
+    console.log(popularCourses);
+  }, [popularCourses, index]);
 
   return (
     <motion.div
@@ -81,7 +86,33 @@ const StackBox = ({
           scale,
         }}
       >
-        {/* <Image alt="course-popular" width={220} height={220} /> */}
+        {popularCourses && (
+          <>
+            <Flex>
+              <Image
+                alt={popularCourses.title || "course cover"}
+                src={
+                  popularCourses?.coverImage?.formats?.small?.url
+                    ? `${
+                        process.env.NEXT_PUBLIC_STRAPI_API_URL ||
+                        "http://localhost:1337"
+                      }${popularCourses.coverImage.formats.small.url}`
+                    : "/images/cover1.jpg" // 默认使用本地备用图片
+                }
+                fill
+                style={{
+                  objectFit: "cover",
+                  borderRadius: 30,
+                }}
+                priority
+                onError={(e) => {
+                  e.currentTarget.src = "/images/cover1.jpg";
+                }}
+              />
+            </Flex>
+            <Flex>{popularCourses.title}</Flex>
+          </>
+        )}
       </motion.div>
     </motion.div>
   );

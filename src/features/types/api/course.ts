@@ -1,10 +1,9 @@
-// src/types/api/course.ts
 import {
-  Media,
   Relation,
   RelationArray,
   StrapiListResponse,
   StrapiResponse,
+  MediaImage,
 } from "./common";
 import { Category } from "./category";
 import { Tag } from "./tag";
@@ -29,7 +28,7 @@ export interface Course {
   slug: string;
   description: string;
   content: string;
-  coverImage: Relation<Media>;
+  coverImage: Relation<MediaImage>;
   isPopular: boolean;
   isFeatured: boolean;
   publishedAt: string | null;

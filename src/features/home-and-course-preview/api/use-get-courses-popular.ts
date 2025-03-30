@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import qs from "qs";
-import type { CourseResponse } from "@/features/types/api/course";
+import type { CourseListResponse } from "@/features/types/api/course";
 
 const fetchPopularCourses = async () => {
   const queryString = qs.stringify({
@@ -15,7 +15,7 @@ const fetchPopularCourses = async () => {
   const response = await fetch(`/api/courses?${queryString}`);
   if (!response.ok) throw new Error("Failed to fetch popular courses");
 
-  return response.json() as Promise<CourseResponse[]>;
+  return response.json() as Promise<CourseListResponse>;
 };
 
 export const usePopularCourses = () => {
