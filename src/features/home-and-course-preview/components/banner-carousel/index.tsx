@@ -41,4 +41,5 @@ const BannerCarousel = ({ children, data }: BannerCarouselProps) => {
     </Flex>
   );
 };
+
 export { BannerCarousel };

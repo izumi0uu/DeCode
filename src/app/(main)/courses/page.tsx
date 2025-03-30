@@ -8,6 +8,7 @@ import {
 } from "@/features/home-and-course-preview/components";
 import { Course } from "@/features/types/api/course";
 import { usePopularCourses } from "@/features/home-and-course-preview/api/use-get-courses-popular";
+import { CourseCarouselProvider } from "@/features/home-and-course-preview/context/courseCarouselContext";
 
 export default function Page({ params }: { params: { locale: string } }) {
   const [tagList, setTagList] = useState<string[]>(["All"]);
@@ -27,8 +28,10 @@ export default function Page({ params }: { params: { locale: string } }) {
   }, [popularCoursesData]);
 
   return (
-    <BannerCarousel>
-      <AnimatePresenceBoxes popularCourses={popularCourses} />
-    </BannerCarousel>
+    <CourseCarouselProvider courses={popularCourses}>
+      <BannerCarousel>
+        <AnimatePresenceBoxes />
+      </BannerCarousel>
+    </CourseCarouselProvider>
   );
 }

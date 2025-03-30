@@ -9,13 +9,13 @@ const StackBox = ({
   drag,
   index,
   setIndex,
-  popularCourses,
+  course,
 }: {
   frontCard?: boolean;
   drag?: "x" | "y";
   index?: number;
   setIndex?: (index: number) => void;
-  popularCourses?: Course;
+  course?: Course;
 }) => {
   const [exitX, setExitX] = useState(0);
 
@@ -49,8 +49,8 @@ const StackBox = ({
   };
 
   useEffect(() => {
-    console.log(popularCourses);
-  }, [popularCourses, index]);
+    console.log(course);
+  }, [course, index]);
 
   return (
     <motion.div
@@ -86,17 +86,17 @@ const StackBox = ({
           scale,
         }}
       >
-        {popularCourses && (
+        {course && (
           <>
             <Flex>
               <Image
-                alt={popularCourses.title || "course cover"}
+                alt={course.title || "course cover"}
                 src={
-                  popularCourses?.coverImage?.formats?.small?.url
+                  course?.coverImage?.formats?.small?.url
                     ? `${
                         process.env.NEXT_PUBLIC_STRAPI_API_URL ||
                         "http://localhost:1337"
-                      }${popularCourses.coverImage.formats.small.url}`
+                      }${course.coverImage.formats.small.url}`
                     : "/images/cover1.jpg" // 默认使用本地备用图片
                 }
                 fill
@@ -110,7 +110,7 @@ const StackBox = ({
                 }}
               />
             </Flex>
-            <Flex>{popularCourses.title}</Flex>
+            <Flex>{course.title}</Flex>
           </>
         )}
       </motion.div>
