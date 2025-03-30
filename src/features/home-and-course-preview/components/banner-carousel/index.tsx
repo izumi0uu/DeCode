@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Flex, Text, RevealFx, Fade } from "@/once-ui/components";
+import { Flex, Fade } from "@/once-ui/components";
 import styles from "./index.module.scss";
 
 interface BannerCarouselProps {
@@ -22,12 +22,7 @@ const BannerCarousel = ({ children, data }: BannerCarouselProps) => {
         />
       </Flex>
 
-      <div className={styles.contentWrapper}>
-        {children}
-        <Text variant="body-strong-xl" color="white">
-          Hello
-        </Text>
-      </div>
+      <div className={styles.contentWrapper}>{children}</div>
 
       <Fade
         hide="s"

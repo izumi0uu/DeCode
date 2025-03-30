@@ -2,7 +2,7 @@ import { Course, CourseResponse } from "@/features/types/api/course";
 import { useTransform, useMotionValue, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Flex } from "@/once-ui/components";
+import { Text } from "@/once-ui/components";
 
 const StackBox = ({
   frontCard,
@@ -18,6 +18,10 @@ const StackBox = ({
   course?: Course;
 }) => {
   const [exitX, setExitX] = useState(0);
+
+  // 卡片尺寸增大
+  const cardWidth = 300;
+  const cardHeight = 360;
 
   const x = useMotionValue(0);
   const scale = useTransform(x, [-150, 0, 150], [0.5, 1, 0.5]);
@@ -48,6 +52,12 @@ const StackBox = ({
     }
   };
 
+  // 防止内容被选择或拖动的事件处理函数
+  const preventInteraction = (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    return false;
+  };
+
   useEffect(() => {
     console.log(course);
   }, [course, index]);
@@ -55,8 +65,8 @@ const StackBox = ({
   return (
     <motion.div
       style={{
-        width: 220,
-        height: 220,
+        width: cardWidth,
+        height: cardHeight,
         position: "absolute",
         x,
         rotate,
@@ -79,16 +89,38 @@ const StackBox = ({
     >
       <motion.div
         style={{
-          width: 220,
-          height: 220,
+          width: cardWidth,
+          height: cardHeight,
           backgroundColor: "#fff",
           borderRadius: 30,
           scale,
+          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.15)",
+          border: "4px solid #3366FF",
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          padding: "6px", // 给边框和内容间添加空白
+          userSelect: "none", // 防止选择文本
         }}
+        onContextMenu={preventInteraction} // 防止右键菜单
+        onCopy={preventInteraction} // 防止复制
+        onCut={preventInteraction} // 防止剪切
       >
         {course && (
           <>
-            <Flex>
+            <div
+              style={{
+                position: "relative",
+                width: "100%",
+                height: "70%",
+                borderRadius: "24px",
+                overflow: "hidden",
+                marginBottom: "12px",
+                pointerEvents: "none", // 防止鼠标交互
+              }}
+              draggable="false"
+              onDragStart={preventInteraction}
+            >
               <Image
                 alt={course.title || "course cover"}
                 src={
@@ -102,15 +134,57 @@ const StackBox = ({
                 fill
                 style={{
                   objectFit: "cover",
-                  borderRadius: 30,
+                  pointerEvents: "none", // 防止图片鼠标交互
                 }}
+                draggable="false"
                 priority
                 onError={(e) => {
                   e.currentTarget.src = "/images/cover1.jpg";
                 }}
+                unoptimized // 防止Next.js优化导致图片可交互
               />
-            </Flex>
-            <Flex>{course.title}</Flex>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                padding: "16px",
+                height: "30%",
+                textAlign: "center",
+                overflow: "hidden",
+                userSelect: "none", // 防止选择文本
+                pointerEvents: "none", // 防止鼠标交互
+              }}
+              draggable="false"
+              onDragStart={preventInteraction}
+            >
+              <Text
+                variant="body-strong-xl"
+                color="dark"
+                style={{
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  pointerEvents: "none", // 防止文本鼠标交互
+                }}
+              >
+                {course.title}
+              </Text>
+              <Text
+                variant="body-default-xs"
+                color="gray600"
+                style={{
+                  marginTop: "4px",
+                  pointerEvents: "none", // 防止文本鼠标交互
+                }}
+              >
+                {course.difficulty || "beginner"} · {course.duration || 0} min
+              </Text>
+            </div>
           </>
         )}
       </motion.div>
