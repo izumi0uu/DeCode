@@ -29,6 +29,14 @@
       "type": "uid",
       "targetField": "name"
     },
+    "shortDescription": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
     "courses": {
       "type": "relation",
       "relation": "manyToMany",

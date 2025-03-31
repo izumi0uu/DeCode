@@ -1087,6 +1087,12 @@ export interface ApiTagTag extends Struct.CollectionTypeSchema {
       }> &
       Schema.Attribute.DefaultTo<'Unnamed'>;
     publishedAt: Schema.Attribute.DateTime;
+    shortDescription: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     slug: Schema.Attribute.UID<'name'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
