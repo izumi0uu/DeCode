@@ -4,7 +4,7 @@ import type { CourseListResponse } from "@/features/types/api/course";
 
 const fetchPopularCourses = async () => {
   const queryString = qs.stringify({
-    populate: ["coverImage"],
+    populate: ["coverImage", "tags"],
     filters: {
       isPopular: {
         $eq: true,

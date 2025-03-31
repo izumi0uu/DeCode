@@ -42,8 +42,8 @@ const StackBox = ({
   };
 
   const variantsBackCard = {
-    initial: { scale: 0.6, y: 40, opacity: 0, zIndex: 1 },
-    animate: { scale: 0.8, y: 40, opacity: 0.7, zIndex: 1 },
+    initial: { scale: 0.6, y: 60, opacity: 0, zIndex: 1 },
+    animate: { scale: 0.8, y: 60, opacity: 0.7, zIndex: 1 },
     exit: { opacity: 0, scale: 1, transition: { duration: 0.2 } },
   };
 
@@ -151,6 +151,15 @@ const StackBox = ({
               >
                 {course.difficulty || "beginner"} · {course.duration || 0} min
               </Text>
+              {frontCard && course.tags && course.tags.length > 0 && (
+                <div className={styles.tags}>
+                  {course.tags.map((tag) => (
+                    <span key={tag.id} className={styles.tag}>
+                      {tag.name}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </>
         )}

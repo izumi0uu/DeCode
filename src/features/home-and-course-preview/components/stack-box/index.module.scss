@@ -56,3 +56,21 @@
   margin-top: 4px;
   pointer-events: none;
 }
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.tag {
+  background-color: rgba(51, 102, 255, 0.1);
+  color: #3366ff;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  pointer-events: none;
+}
