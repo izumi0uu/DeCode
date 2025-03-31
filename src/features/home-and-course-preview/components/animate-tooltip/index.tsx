@@ -23,7 +23,7 @@ export const AnimatedTooltip = ({
       reference: boxRef.current,
     },
     placement: position,
-    middleware: [offset(10), flip(), shift(), arrow({ element: arrowRef })],
+    middleware: [offset(), flip(), shift(), arrow({ element: arrowRef })],
   });
 
   // 线条动画变体
