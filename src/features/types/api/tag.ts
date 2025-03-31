@@ -9,6 +9,7 @@ export interface Tag {
   id: number;
   name: string;
   slug: string;
+  shortDescription?: string;
   courses: RelationArray<Course>;
   createdAt: string;
   updatedAt: string;

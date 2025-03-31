@@ -19,10 +19,18 @@
 .content {
   background-color: rgba(0, 0, 0, 0.8);
   color: white;
-  padding: 8px 12px;
-  border-radius: 4px;
-  max-width: 250px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  max-width: 280px;
   font-size: 14px;
+  line-height: 1.5;
+  overflow-y: auto;
+  max-height: 300px;
+
+  strong {
+    color: #add8e6;
+    margin-right: 4px;
+  }
 }
 
 .arrow {

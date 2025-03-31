@@ -4,7 +4,7 @@ import { useFloating, offset, flip, shift, arrow } from "@floating-ui/react";
 import styles from "./index.module.scss";
 
 interface AnimatedTooltipProps {
-  boxRef: React.RefObject<HTMLElement>;
+  boxRef: React.RefObject<HTMLDivElement | null>;
   content: React.ReactNode;
   isVisible: boolean;
   position?: "left" | "right" | "top" | "bottom";
