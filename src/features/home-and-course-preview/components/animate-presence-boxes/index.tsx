@@ -42,7 +42,7 @@ export const AnimatePresenceBoxes = () => {
   }
 
   return (
-    <div className={styles.animatePresenceBoxes}>
+    <div className={styles.animatePresenceBoxes} ref={frontCardRef}>
       <AnimatePresence mode="popLayout">
         <StackBox
           key={`front-${currentIndex}`}
@@ -51,7 +51,6 @@ export const AnimatePresenceBoxes = () => {
           index={currentIndex}
           setIndex={setCurrentIndex}
           course={courses[currentIndex]}
-          ref={frontCardRef}
         />
         <StackBox
           key={`back-${currentIndex + 1}`}
@@ -60,10 +59,10 @@ export const AnimatePresenceBoxes = () => {
         />
       </AnimatePresence>
       <AnimatedTooltip
-        boxRef={frontCardRef}
         content={getTagDescriptions()}
         isVisible={showTooltip}
         position="right"
+        boxRef={frontCardRef}
       />
     </div>
   );

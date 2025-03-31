@@ -1,20 +1,25 @@
-import { Course, CourseResponse } from "@/features/types/api/course";
+import { Course } from "@/features/types/api/course";
 import { useTransform, useMotionValue, motion } from "framer-motion";
-import { useEffect, useState, forwardRef } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Text } from "@/once-ui/components";
 import styles from "./index.module.scss";
 
-const StackBox = forwardRef<
-  HTMLDivElement,
-  {
-    frontCard?: boolean;
-    drag?: "x" | "y";
-    index?: number;
-    setIndex?: (index: number) => void;
-    course?: Course;
-  }
->(({ frontCard, drag, index, setIndex, course }, ref) => {
+interface StackBoxProps {
+  frontCard?: boolean;
+  drag?: "x" | "y";
+  index?: number;
+  setIndex?: (index: number) => void;
+  course?: Course;
+}
+
+export const StackBox = ({
+  frontCard,
+  drag,
+  index,
+  setIndex,
+  course,
+}: StackBoxProps) => {
   const [exitX, setExitX] = useState(0);
 
   // 卡片尺寸增大
@@ -70,7 +75,6 @@ const StackBox = forwardRef<
 
   return (
     <motion.div
-      ref={ref}
       className={styles.cardContainer}
       style={{
         x,
@@ -164,8 +168,4 @@ const StackBox = forwardRef<
       </motion.div>
     </motion.div>
   );
-});
-
-StackBox.displayName = "StackBox";
-
-export { StackBox };
+};

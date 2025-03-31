@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFloating, offset, flip, shift, arrow } from "@floating-ui/react";
 import styles from "./index.module.scss";
@@ -14,7 +14,7 @@ export const AnimatedTooltip = ({
   boxRef,
   content,
   isVisible,
-  position = "left",
+  position = "right",
 }: AnimatedTooltipProps) => {
   const arrowRef = useRef(null);
 
