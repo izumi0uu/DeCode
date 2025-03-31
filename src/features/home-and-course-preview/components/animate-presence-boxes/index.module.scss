@@ -1,0 +1,9 @@
+.animatePresenceBoxes {
+  position: relative;
+  width: 350px;
+  height: 400px;
+  perspective: 1000px;
+  display: grid;
+  grid-template: 1fr / 1fr;
+  place-items: center;
+}

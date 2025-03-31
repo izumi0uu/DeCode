@@ -3,6 +3,7 @@ import { useTransform, useMotionValue, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Text } from "@/once-ui/components";
+import styles from "./index.module.scss";
 
 const StackBox = ({
   frontCard,
@@ -72,13 +73,10 @@ const StackBox = ({
 
   return (
     <motion.div
+      className={styles.cardContainer}
       style={{
-        width: cardWidth,
-        height: cardHeight,
-        position: "absolute",
         x,
         rotate,
-        cursor: "grab",
       }}
       whileTap={{ cursor: "grabbing" }}
       drag={drag}
@@ -96,36 +94,18 @@ const StackBox = ({
       }
     >
       <motion.div
+        className={styles.card}
         style={{
-          width: cardWidth,
-          height: cardHeight,
-          backgroundColor: "#fff",
-          borderRadius: 30,
           scale,
-          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.15)",
-          border: "4px solid #3366FF",
-          overflow: "hidden",
-          display: "flex",
-          flexDirection: "column",
-          padding: "6px", // 给边框和内容间添加空白
-          userSelect: "none", // 防止选择文本
         }}
-        onContextMenu={preventInteraction} // 防止右键菜单
-        onCopy={preventInteraction} // 防止复制
-        onCut={preventInteraction} // 防止剪切
+        onContextMenu={preventInteraction}
+        onCopy={preventInteraction}
+        onCut={preventInteraction}
       >
         {course && (
           <>
             <div
-              style={{
-                position: "relative",
-                width: "100%",
-                height: "70%",
-                borderRadius: "24px",
-                overflow: "hidden",
-                marginBottom: "12px",
-                pointerEvents: "none", // 防止鼠标交互
-              }}
+              className={styles.stackBoxImage}
               draggable="false"
               onDragStart={preventInteraction}
             >
@@ -137,58 +117,37 @@ const StackBox = ({
                         process.env.NEXT_PUBLIC_STRAPI_API_URL ||
                         "http://localhost:1337"
                       }${course.coverImage.formats.small.url}`
-                    : "/images/cover1.jpg" // 默认使用本地备用图片
+                    : "/images/cover1.jpg"
                 }
                 fill
                 style={{
                   objectFit: "cover",
-                  pointerEvents: "none", // 防止图片鼠标交互
+                  pointerEvents: "none",
                 }}
                 draggable="false"
                 priority
                 onError={(e) => {
                   e.currentTarget.src = "/images/cover1.jpg";
                 }}
-                unoptimized // 防止Next.js优化导致图片可交互
+                unoptimized
               />
             </div>
             <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                padding: "16px",
-                height: "30%",
-                textAlign: "center",
-                overflow: "hidden",
-                userSelect: "none", // 防止选择文本
-                pointerEvents: "none", // 防止鼠标交互
-              }}
+              className={styles.cardContent}
               draggable="false"
               onDragStart={preventInteraction}
             >
               <Text
                 variant="body-strong-xl"
                 color="dark"
-                style={{
-                  display: "-webkit-box",
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: "vertical",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  pointerEvents: "none", // 防止文本鼠标交互
-                }}
+                className={styles.title}
               >
                 {course.title}
               </Text>
               <Text
                 variant="body-default-xs"
                 color="gray600"
-                style={{
-                  marginTop: "4px",
-                  pointerEvents: "none", // 防止文本鼠标交互
-                }}
+                className={styles.subtitle}
               >
                 {course.difficulty || "beginner"} · {course.duration || 0} min
               </Text>

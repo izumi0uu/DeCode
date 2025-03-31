@@ -1,48 +1,28 @@
-import { useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { StackBox } from "../stack-box";
-import { useCourseCarousel } from "@/features/home-and-course-preview/context/courseCarouselContext";
+import { useCourseCarousel } from "../../context/courseCarouselContext";
+import styles from "./index.module.scss";
 
-const AnimatePresenceBoxes = () => {
-  const { currentIndex, setCurrentIndex, currentCourse, nextCourse } =
-    useCourseCarousel();
-
-  const cardWidth = 300;
-  const cardHeight = 360;
-
-  const containerWidth = useMemo(() => cardWidth + 50, []);
-  const containerHeight = useMemo(() => cardHeight + 50, []);
+export const AnimatePresenceBoxes = () => {
+  const { courses, currentIndex, setCurrentIndex } = useCourseCarousel();
 
   return (
-    <motion.div
-      style={{
-        position: "relative",
-        width: containerWidth,
-        height: containerHeight,
-        perspective: "1000px",
-      }}
-    >
-      <AnimatePresence initial={false} mode="popLayout">
-        {nextCourse && (
-          <StackBox
-            key={`next-${currentIndex}-${nextCourse.id}`}
-            frontCard={false}
-            course={nextCourse}
-          />
-        )}
-        {currentCourse && (
-          <StackBox
-            key={`current-${currentIndex}-${currentCourse.id}`}
-            frontCard={true}
-            index={currentIndex}
-            setIndex={setCurrentIndex}
-            course={currentCourse}
-            drag="x"
-          />
-        )}
+    <div className={styles.animatePresenceBoxes}>
+      <AnimatePresence mode="popLayout">
+        <StackBox
+          key={`front-${currentIndex}`}
+          frontCard
+          drag="x"
+          index={currentIndex}
+          setIndex={setCurrentIndex}
+          course={courses[currentIndex]}
+        />
+        <StackBox
+          key={`back-${currentIndex + 1}`}
+          index={currentIndex + 1}
+          course={courses[currentIndex + 1]}
+        />
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 };
-
-export { AnimatePresenceBoxes };
