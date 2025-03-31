@@ -42,8 +42,8 @@ const StackBox = ({
   };
 
   const variantsBackCard = {
-    initial: { scale: 0.6, y: 60, opacity: 0, zIndex: 1 },
-    animate: { scale: 0.8, y: 60, opacity: 0.7, zIndex: 1 },
+    initial: { scale: 0.6, y: 50, opacity: 0, zIndex: 1 },
+    animate: { scale: 0.8, y: 50, opacity: 0.7, zIndex: 1 },
     exit: { opacity: 0, scale: 1, transition: { duration: 0.2 } },
   };
 
