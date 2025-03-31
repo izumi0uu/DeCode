@@ -153,7 +153,7 @@ const StackBox = ({
               </Text>
               {frontCard && course.tags && course.tags.length > 0 && (
                 <div className={styles.tags}>
-                  {course.tags.map((tag) => (
+                  {course.tags.slice(0, 4).map((tag) => (
                     <span key={tag.id} className={styles.tag}>
                       {tag.name}
                     </span>
