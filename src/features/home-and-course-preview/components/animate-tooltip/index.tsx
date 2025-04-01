@@ -1,30 +1,26 @@
 import React, { useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useFloating, offset, flip, shift, arrow } from "@floating-ui/react";
 import styles from "./index.module.scss";
-
+import { Tag } from "@/features/home-and-course-preview/types";
 interface AnimatedTooltipProps {
-  boxRef: React.RefObject<HTMLDivElement | null>;
-  content: React.ReactNode;
+  tag: Tag;
   isVisible: boolean;
   position?: "left" | "right" | "top" | "bottom";
+  extraStyles?: React.CSSProperties;
 }
 
 export const AnimatedTooltip = ({
-  boxRef,
-  content,
+  tag,
   isVisible,
   position = "right",
+  extraStyles,
 }: AnimatedTooltipProps) => {
-  const arrowRef = useRef(null);
-
-  const { refs, floatingStyles, middlewareData } = useFloating({
-    elements: {
-      reference: boxRef.current,
-    },
-    placement: position,
-    middleware: [offset(), flip(), shift(), arrow({ element: arrowRef })],
-  });
+  const positionStyles = {
+    right: position === "right" ? "-200px" : "auto",
+    left: position === "left" ? "-200px" : "auto",
+    top: position === "top" ? "-200px" : "auto",
+    bottom: position === "bottom" ? "-200px" : "auto",
+  };
 
   // 线条动画变体
   const lineVariants = {
@@ -60,8 +56,7 @@ export const AnimatedTooltip = ({
     <AnimatePresence>
       {isVisible && (
         <div
-          ref={refs.setFloating}
-          style={floatingStyles}
+          style={{ ...positionStyles, ...extraStyles }}
           className={styles.tooltipContainer}
         >
           <motion.div
@@ -78,16 +73,9 @@ export const AnimatedTooltip = ({
             animate="visible"
             exit="exit"
           >
-            {content}
+            <strong>{tag.name}:</strong> {tag.shortDescription}
           </motion.div>
-          <div
-            ref={arrowRef}
-            className={styles.arrow}
-            style={{
-              left: middlewareData.arrow?.x ?? "",
-              top: middlewareData.arrow?.y ?? "",
-            }}
-          />
+          <div className={styles.arrow} />
         </div>
       )}
     </AnimatePresence>
