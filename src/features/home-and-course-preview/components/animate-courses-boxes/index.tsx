@@ -1,11 +1,20 @@
-import { useCallback, useState, useRef } from "react";
+import { useCallback, useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Text, Flex, Button } from "@/once-ui/components";
+import { CourseCardSkeletons } from "@/features/course/components/skeletons";
 import styles from "./index.module.scss";
 
 export const AnimateCoursesBoxes = () => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const coursesSectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleExplore = useCallback(() => {
     if (coursesSectionRef.current) {
@@ -107,7 +116,9 @@ export const AnimateCoursesBoxes = () => {
         align="center"
         wrap
       >
-        {!loading ? (
+        {loading ? (
+          <CourseCardSkeletons count={3} />
+        ) : (
           courses.map((course) => (
             <motion.div
               key={course.id}
@@ -119,8 +130,6 @@ export const AnimateCoursesBoxes = () => {
               {course.title}
             </motion.div>
           ))
-        ) : (
-          <Text variant="body-strong-l">Loading courses...</Text>
         )}
       </Flex>
     </Flex>
