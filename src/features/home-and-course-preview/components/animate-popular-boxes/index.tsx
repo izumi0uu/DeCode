@@ -2,7 +2,6 @@ import { AnimatePresence } from "framer-motion";
 import { StackBox } from "../stack-box";
 import { useCourseCarousel } from "../../context/courseCarouselContext";
 import { AnimatedTooltip } from "../animate-tooltip";
-import { useEffect } from "react";
 import styles from "./index.module.scss";
 import {
   TagCarouselProvider,

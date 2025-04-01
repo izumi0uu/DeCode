@@ -1,0 +1,184 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  position: relative;
+}
+
+.banner {
+  position: relative;
+  width: 100%;
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+  margin-bottom: 40px;
+}
+
+.bannerBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to right,
+    rgba(30, 15, 60, 0.95),
+    rgba(40, 20, 80, 0.9)
+  );
+  background-size: cover;
+  background-position: center;
+  z-index: 1;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-blend-mode: overlay;
+    opacity: 0.3;
+    z-index: -1;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+      circle at 30% 50%,
+      rgba(102, 126, 234, 0.4),
+      transparent 50%
+    );
+    z-index: 1;
+  }
+}
+
+.decorations {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.dot {
+  position: absolute;
+  border-radius: 50%;
+  background-color: rgba(159, 204, 255, 0.5);
+  box-shadow: 0 0 10px rgba(159, 204, 255, 0.8);
+  opacity: 0.6;
+  animation: pulse 4s infinite alternate;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
+}
+
+.glow {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(102, 126, 234, 0.4),
+    transparent 70%
+  );
+  top: 50%;
+  left: 20%;
+  transform: translate(-50%, -50%);
+  filter: blur(50px);
+  z-index: 1;
+  opacity: 0.6;
+  animation: glowPulse 6s infinite alternate;
+}
+
+@keyframes glowPulse {
+  0% {
+    opacity: 0.4;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  100% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+.bannerContent {
+  max-width: 650px;
+  padding: 0 60px;
+  margin-left: 60px;
+  position: relative;
+  z-index: 2;
+  text-align: left;
+}
+
+.bannerTitle {
+  color: white;
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 12px;
+  background: linear-gradient(45deg, #fff, #a9c2ff);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 40px rgba(169, 194, 255, 0.4);
+  white-space: nowrap;
+}
+
+.bannerSubtitle {
+  color: #9fccff;
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+}
+
+.bannerDescription {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  max-width: 600px;
+}
+
+.exploreButton {
+  padding: 10px 24px;
+  background: linear-gradient(45deg, #3366ff, #667eea);
+  border: none;
+  border-radius: 50px;
+  color: white;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 7px 20px rgba(102, 126, 234, 0.7);
+    background: linear-gradient(45deg, #4477ff, #7a8eee);
+  }
+}
+
+.coursesSection {
+  width: 100%;
+  position: relative;
+  z-index: 3;
+  padding: 0 40px;
+  display: flex;
+  justify-content: center;
+}
