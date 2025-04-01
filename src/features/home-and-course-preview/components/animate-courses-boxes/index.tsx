@@ -1,7 +1,7 @@
 import { useCallback, useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Text, Flex, Button } from "@/once-ui/components";
-import { CourseCardSkeletons } from "@/features/course/components/skeletons";
+import { CourseCardSkeletons } from "@/features/home-and-course-preview/components/skeletons";
 import styles from "./index.module.scss";
 
 export const AnimateCoursesBoxes = () => {
