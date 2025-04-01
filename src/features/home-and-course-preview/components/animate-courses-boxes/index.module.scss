@@ -137,15 +137,28 @@
 }
 
 .exploreButton {
-  transition: transform 0.3s ease !important;
+  transition: all 0.3s ease !important;
+  padding: 12px 30px;
+  background: linear-gradient(45deg, #3366ff, #667eea);
+  border: none;
+  border-radius: 50px;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
 }
 
 .exploreButton:hover {
-  transform: scale(1.05);
+  transform: scale(0.98);
+  box-shadow: 0 7px 20px rgba(102, 126, 234, 0.7);
+  background: linear-gradient(45deg, #4477ff, #7a8eee);
 }
 
 .exploreButton:active {
   transform: scale(0.98);
+  box-shadow: 0 7px 20px rgba(102, 126, 234, 0.7);
+  background: linear-gradient(45deg, #4477ff, #7a8eee);
 }
 
 .coursesSection {

@@ -18,7 +18,7 @@ export const AnimateCoursesBoxes = () => {
     { id: 3, title: "Smart Contract Development" },
   ];
 
-  // 预定义光点位置和大小，替代随机值
+  // 预定义光点位置和大小
   const dotPositions = [
     { width: "20px", height: "20px", left: "15%", top: "20%", delay: "0.2s" },
     { width: "16px", height: "16px", left: "35%", top: "45%", delay: "0.5s" },
