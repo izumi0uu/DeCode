@@ -1,77 +1,106 @@
-import { Flex } from "@/once-ui/components";
-import { useCourseCarousel } from "../../context/courseCarouselContext";
-import styles from "./index.module.scss";
+import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
+import { Text, Flex, Button } from "@/once-ui/components";
+import styles from "./index.module.scss";
 
-const AnimateCoursesBoxes = () => {
-  const { courses } = useCourseCarousel();
+export const AnimateCoursesBoxes = () => {
+  const [loading, setLoading] = useState(false);
+
+  const handleExplore = useCallback(() => {
+    console.log("Exploring courses...");
+    // Implement course exploration logic here
+  }, []);
+
+  // Mock course data - this would typically come from an API
+  const courses = [
+    { id: 1, title: "Introduction to Web3" },
+    { id: 2, title: "Blockchain Fundamentals" },
+    { id: 3, title: "Smart Contract Development" },
+  ];
+
+  // 预定义光点位置和大小，替代随机值
+  const dotPositions = [
+    { width: "20px", height: "20px", left: "15%", top: "20%", delay: "0.2s" },
+    { width: "16px", height: "16px", left: "35%", top: "45%", delay: "0.5s" },
+    { width: "22px", height: "22px", left: "55%", top: "15%", delay: "0.3s" },
+    { width: "18px", height: "18px", left: "75%", top: "35%", delay: "0.8s" },
+    { width: "24px", height: "24px", left: "25%", top: "70%", delay: "0.6s" },
+  ];
 
   return (
-    <div className={styles.container}>
-      {/* Banner 部分 */}
+    <Flex direction="column" className={styles.container}>
+      {/* Banner Section */}
       <div className={styles.banner}>
-        <motion.div
-          className={styles.bannerBackground}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-        />
-
-        <div className={styles.decorations}>
-          <div
-            className={styles.dot}
-            style={{ left: "15%", top: "20%", width: "10px", height: "10px" }}
-          />
-          <div
-            className={styles.dot}
-            style={{ left: "35%", top: "45%", width: "8px", height: "8px" }}
-          />
-          <div
-            className={styles.dot}
-            style={{ left: "55%", top: "15%", width: "12px", height: "12px" }}
-          />
-          <div
-            className={styles.dot}
-            style={{ left: "75%", top: "35%", width: "9px", height: "9px" }}
-          />
-          <div
-            className={styles.dot}
-            style={{ left: "25%", top: "70%", width: "11px", height: "11px" }}
-          />
+        <div className={styles.bannerBackground}>
+          <div className={styles.glow}></div>
+          <div className={styles.decorations}>
+            {dotPositions.map((dot, i) => (
+              <div
+                key={i}
+                className={styles.dot}
+                style={{
+                  width: dot.width,
+                  height: dot.height,
+                  left: dot.left,
+                  top: dot.top,
+                  animationDelay: dot.delay,
+                }}
+              ></div>
+            ))}
+          </div>
         </div>
 
-        {/* 静态光效 */}
-        <div className={styles.glow} />
+        <div className={styles.bannerContent}>
+          <Text as="h1" className={styles.bannerTitle} variant="body-strong-xl">
+            Discover Web3 Education
+          </Text>
 
-        <motion.div
-          className={styles.bannerContent}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-        >
-          <h1 className={styles.bannerTitle}>Explore the future world</h1>
-          <h2 className={styles.bannerSubtitle}></h2>
-          <p className={styles.bannerDescription}>
-            From blockchain basics to smart contract development, from DeFi to
-            NFT applications, we provide you with a comprehensive Web3
-            technology learning system to start your journey of exploring the
-            distributed Internet.
-          </p>
+          <Text
+            as="h2"
+            className={styles.bannerSubtitle}
+            variant="body-strong-l"
+          >
+            Learn. Build. Innovate.
+          </Text>
 
-          <motion.button
+          <Text
+            as="p"
+            className={styles.bannerDescription}
+            variant="body-default-m"
+          >
+            Join our community and gain the skills needed to thrive in the
+            decentralized future. Explore courses crafted by industry experts.
+          </Text>
+
+          <Button
+            variant="primary"
+            size="m"
+            onClick={handleExplore}
             className={styles.exploreButton}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
           >
             Start exploring
-          </motion.button>
-        </motion.div>
+          </Button>
+        </div>
       </div>
 
-      {/* 课程卡片部分 */}
-      <Flex className={styles.coursesSection}></Flex>
-    </div>
+      {/* Courses Section */}
+      <Flex className={styles.coursesSection} align="center" wrap>
+        {!loading ? (
+          courses.map((course) => (
+            <motion.div
+              key={course.id}
+              className={styles.courseCard}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 * course.id }}
+            >
+              {course.title}
+            </motion.div>
+          ))
+        ) : (
+          <Text variant="body-strong-l">Loading courses...</Text>
+        )}
+      </Flex>
+    </Flex>
   );
 };
-
-export { AnimateCoursesBoxes };
