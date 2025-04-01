@@ -79,14 +79,24 @@ export const AnimateCoursesBoxes = () => {
             decentralized future. Explore courses crafted by industry experts.
           </Text>
 
-          <Button
-            variant="primary"
-            size="m"
-            onClick={handleExplore}
-            className={styles.exploreButton}
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.8,
+              delay: 0.5,
+              ease: [0.4, 0, 0.2, 1],
+            }}
           >
-            Start exploring
-          </Button>
+            <Button
+              variant="primary"
+              size="m"
+              onClick={handleExplore}
+              className={styles.exploreButton}
+            >
+              Start exploring
+            </Button>
+          </motion.div>
         </div>
       </div>
 
