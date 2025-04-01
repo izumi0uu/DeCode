@@ -69,7 +69,7 @@ const AnimateCoursesBoxes = () => {
       </div>
 
       {/* 课程卡片部分 */}
-      <div className={styles.coursesSection}></div>
+      <Flex className={styles.coursesSection}></Flex>
     </div>
   );
 };
