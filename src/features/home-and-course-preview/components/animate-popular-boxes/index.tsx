@@ -10,7 +10,7 @@ import {
 } from "../../context/tagCarouselContext";
 
 // 内部组件，使用 TagCarouselContext
-const AnimatePresenceBoxesInner = () => {
+const AnimatePopularBoxesInner = () => {
   const { courses, currentIndex, setCurrentIndex } = useCourseCarousel();
   const { randomTags, isTooltipVisible, refreshTags } = useTagCarousel();
 
@@ -20,7 +20,7 @@ const AnimatePresenceBoxesInner = () => {
   }
 
   return (
-    <div className={styles.animatePresenceBoxes}>
+    <div className={styles.animatePopularBoxes}>
       <AnimatePresence mode="popLayout">
         <StackBox
           key={`front-${currentIndex}`}
@@ -56,10 +56,10 @@ const AnimatePresenceBoxesInner = () => {
 };
 
 // 导出组件，提供 TagCarouselContext
-export const AnimatePresenceBoxes = () => {
+export const AnimatePopularBoxes = () => {
   return (
     <TagCarouselProvider maxTags={4} defaultInterval={30000}>
-      <AnimatePresenceBoxesInner />
+      <AnimatePopularBoxesInner />
     </TagCarouselProvider>
   );
 };

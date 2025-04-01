@@ -4,9 +4,11 @@ import React, { use, useEffect, useState } from "react";
 import { Flex } from "@/once-ui/components";
 import {
   BannerCarousel,
-  AnimatePresenceBoxes,
+  AnimateCoursesBoxes,
+  AnimatePopularBoxes,
 } from "@/features/home-and-course-preview/components";
 import { Course } from "@/features/types/api/course";
+import { useCourses } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
 import { usePopularCourses } from "@/features/home-and-course-preview/api/use-get-courses-popular";
 import { CourseCarouselProvider } from "@/features/home-and-course-preview/context/courseCarouselContext";
 
@@ -20,6 +22,8 @@ export default function Page({ params }: { params: { locale: string } }) {
   const { data: popularCoursesData, isLoading: popularCoursesLoading } =
     usePopularCourses();
 
+  const { data: coursesData, isLoading: coursesLoading } = useCourses();
+
   useEffect(() => {
     if (popularCoursesData) {
       // 从 CourseListResponse 转换为 Course[]
@@ -28,10 +32,15 @@ export default function Page({ params }: { params: { locale: string } }) {
   }, [popularCoursesData]);
 
   return (
-    <CourseCarouselProvider courses={popularCourses}>
-      <BannerCarousel>
-        <AnimatePresenceBoxes />
-      </BannerCarousel>
-    </CourseCarouselProvider>
+    <>
+      <CourseCarouselProvider courses={popularCourses}>
+        <BannerCarousel>
+          <AnimatePopularBoxes />
+        </BannerCarousel>
+      </CourseCarouselProvider>
+      <CourseCarouselProvider courses={courses}>
+        <AnimateCoursesBoxes />
+      </CourseCarouselProvider>
+    </>
   );
 }
