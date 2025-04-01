@@ -1,6 +1,11 @@
 import { Course } from "@/features/types/api/course";
 import { Tag } from "@/features/types";
-import { useTransform, useMotionValue, motion } from "framer-motion";
+import {
+  useTransform,
+  useMotionValue,
+  motion,
+  AnimatePresence,
+} from "framer-motion";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Text } from "@/once-ui/components";
@@ -26,6 +31,7 @@ export const StackBox = ({
   onRefreshTags,
 }: StackBoxProps) => {
   const [exitX, setExitX] = useState(0);
+  const [tagsKey, setTagsKey] = useState(0);
 
   // 卡片尺寸增大
   const cardWidth = 300;
@@ -52,6 +58,32 @@ export const StackBox = ({
     initial: { scale: 0.6, y: 50, opacity: 0, zIndex: 1 },
     animate: { scale: 0.8, y: 50, opacity: 0.7, zIndex: 1 },
     exit: { opacity: 0, scale: 1, transition: { duration: 0.2 } },
+  };
+
+  const tagsContainerVariants = {
+    enter: { x: -30, opacity: 0 },
+    center: {
+      x: 0,
+      opacity: 1,
+      transition: { duration: 0.3, ease: "easeOut" },
+    },
+    exit: {
+      x: 30,
+      opacity: 0,
+      transition: { duration: 0.2, ease: "easeIn" },
+    },
+  };
+
+  const refreshButtonVariants = {
+    idle: { rotate: 0 },
+    refreshing: {
+      rotate: 360,
+      transition: {
+        repeat: Infinity,
+        duration: 1,
+        ease: "linear",
+      },
+    },
   };
 
   const handleDragEnd = (_: any, info: any) => {
@@ -82,16 +114,16 @@ export const StackBox = ({
     }
   };
 
-  // 右侧占位按钮的处理函数
   const handleRightButtonClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // 阻止冒泡
-    // 这里可以添加右侧按钮的功能
+    e.stopPropagation();
     console.log("Right button clicked");
   };
 
   useEffect(() => {
-    console.log(course);
-  }, [course, index]);
+    if (randomTags) {
+      setTagsKey((prev) => prev + 1);
+    }
+  }, [randomTags]);
 
   return (
     <motion.div
@@ -194,12 +226,25 @@ export const StackBox = ({
                 {course.difficulty || "beginner"} · {course.duration || 0} min
               </Text>
               {frontCard && (
-                <div className={styles.tags}>
-                  {(randomTags || course.tags?.slice(0, 4) || []).map((tag) => (
-                    <span key={tag.id} className={styles.tag}>
-                      {tag.name}
-                    </span>
-                  ))}
+                <div className={styles.tagsWrapper}>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={tagsKey}
+                      className={styles.tags}
+                      variants={tagsContainerVariants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                    >
+                      {(randomTags || course.tags?.slice(0, 4) || []).map(
+                        (tag) => (
+                          <span key={tag.id} className={styles.tag}>
+                            {tag.name}
+                          </span>
+                        )
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
               )}
             </div>
