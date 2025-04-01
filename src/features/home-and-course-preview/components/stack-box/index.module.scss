@@ -35,7 +35,36 @@
   text-align: center;
   overflow: hidden;
   user-select: none;
-  pointer-events: none;
+}
+
+.titleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 8px;
+  margin-bottom: 4px;
+}
+
+.refreshButton,
+.placeholderButton {
+  min-width: 24px;
+  height: 24px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  pointer-events: auto;
+  color: #666;
+
+  &:hover {
+    color: #3366ff;
+    background: rgba(51, 102, 255, 0.1);
+    border-radius: 50%;
+  }
 }
 
 .title {
@@ -48,6 +77,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   pointer-events: none;
+  flex: 1;
+  margin: 0 8px;
 }
 
 .subtitle {

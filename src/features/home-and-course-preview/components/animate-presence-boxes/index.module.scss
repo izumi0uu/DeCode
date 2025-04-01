@@ -9,5 +9,12 @@
 }
 
 .tooltipsContainer {
-  margin-bottom: 8px;
+  position: absolute;
+  top: 50%;
+  right: -100px;
+  transform: translateY(-50%);
+  height: 360px;
+  width: 240px;
+  z-index: 100;
+  pointer-events: none;
 }

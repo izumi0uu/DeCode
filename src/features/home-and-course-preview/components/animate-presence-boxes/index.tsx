@@ -2,28 +2,17 @@ import { AnimatePresence } from "framer-motion";
 import { StackBox } from "../stack-box";
 import { useCourseCarousel } from "../../context/courseCarouselContext";
 import { AnimatedTooltip } from "../animate-tooltip";
-import { useState, useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import styles from "./index.module.scss";
-import { shuffleArray } from "@/lib/utils/shuffleArray";
+import {
+  TagCarouselProvider,
+  useTagCarousel,
+} from "../../context/tagCarouselContext";
 
-export const AnimatePresenceBoxes = () => {
+// 内部组件，使用 TagCarouselContext
+const AnimatePresenceBoxesInner = () => {
   const { courses, currentIndex, setCurrentIndex } = useCourseCarousel();
-  const [showTooltip, setShowTooltip] = useState(false);
-
-  // 当前标签，随机选择4个
-  const randomTags = useMemo(() => {
-    const tags = courses[currentIndex]?.tags || [];
-    return shuffleArray(tags).slice(0, 4);
-  }, [courses, currentIndex]);
-
-  useEffect(() => {
-    // 当卡片切换时，短暂延迟后显示 tooltip
-    setShowTooltip(false); // 先隐藏
-    const timer = setTimeout(() => {
-      setShowTooltip(true);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [currentIndex]);
+  const { randomTags, isTooltipVisible, refreshTags } = useTagCarousel();
 
   // 确保有课程数据再渲染
   if (!courses.length || currentIndex >= courses.length) {
@@ -40,6 +29,8 @@ export const AnimatePresenceBoxes = () => {
           index={currentIndex}
           setIndex={setCurrentIndex}
           course={courses[currentIndex]}
+          randomTags={randomTags}
+          onRefreshTags={refreshTags}
         />
         <StackBox
           key={`back-${currentIndex + 1}`}
@@ -52,7 +43,7 @@ export const AnimatePresenceBoxes = () => {
           <AnimatedTooltip
             key={tag.id}
             tag={tag}
-            isVisible={showTooltip}
+            isVisible={isTooltipVisible}
             position="right"
             extraStyles={{
               top: `${index * 100}px`,
@@ -61,5 +52,14 @@ export const AnimatePresenceBoxes = () => {
         ))}
       </div>
     </div>
+  );
+};
+
+// 导出组件，提供 TagCarouselContext
+export const AnimatePresenceBoxes = () => {
+  return (
+    <TagCarouselProvider maxTags={4} defaultInterval={30000}>
+      <AnimatePresenceBoxesInner />
+    </TagCarouselProvider>
   );
 };

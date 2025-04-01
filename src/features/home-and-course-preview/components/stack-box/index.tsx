@@ -1,4 +1,5 @@
 import { Course } from "@/features/types/api/course";
+import { Tag } from "@/features/types";
 import { useTransform, useMotionValue, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Image from "next/image";
@@ -11,6 +12,8 @@ interface StackBoxProps {
   index?: number;
   setIndex?: (index: number) => void;
   course?: Course;
+  randomTags?: Tag[];
+  onRefreshTags?: () => void;
 }
 
 export const StackBox = ({
@@ -19,6 +22,8 @@ export const StackBox = ({
   index,
   setIndex,
   course,
+  randomTags,
+  onRefreshTags,
 }: StackBoxProps) => {
   const [exitX, setExitX] = useState(0);
 
@@ -67,6 +72,21 @@ export const StackBox = ({
   const preventInteraction = (e: React.SyntheticEvent) => {
     e.preventDefault();
     return false;
+  };
+
+  // 刷新标签的处理函数
+  const handleRefreshTags = (e: React.MouseEvent) => {
+    e.stopPropagation(); // 阻止冒泡，防止触发卡片拖拽
+    if (onRefreshTags) {
+      onRefreshTags();
+    }
+  };
+
+  // 右侧占位按钮的处理函数
+  const handleRightButtonClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // 阻止冒泡
+    // 这里可以添加右侧按钮的功能
+    console.log("Right button clicked");
   };
 
   useEffect(() => {
@@ -139,13 +159,33 @@ export const StackBox = ({
               draggable="false"
               onDragStart={preventInteraction}
             >
-              <Text
-                variant="body-strong-xl"
-                color="dark"
-                className={styles.title}
-              >
-                {course.title}
-              </Text>
+              <div className={styles.titleContainer}>
+                {frontCard && (
+                  <button
+                    className={styles.refreshButton}
+                    onClick={handleRefreshTags}
+                    aria-label="Refresh tags"
+                  >
+                    ↻
+                  </button>
+                )}
+                <Text
+                  variant="body-strong-xl"
+                  color="dark"
+                  className={styles.title}
+                >
+                  {course.title}
+                </Text>
+                {frontCard && (
+                  <button
+                    className={styles.placeholderButton}
+                    onClick={handleRightButtonClick}
+                    aria-label="Options"
+                  >
+                    ⋯
+                  </button>
+                )}
+              </div>
               <Text
                 variant="body-default-xs"
                 color="gray600"
@@ -153,9 +193,9 @@ export const StackBox = ({
               >
                 {course.difficulty || "beginner"} · {course.duration || 0} min
               </Text>
-              {frontCard && course.tags && course.tags.length > 0 && (
+              {frontCard && (
                 <div className={styles.tags}>
-                  {course.tags.slice(0, 4).map((tag) => (
+                  {(randomTags || course.tags?.slice(0, 4) || []).map((tag) => (
                     <span key={tag.id} className={styles.tag}>
                       {tag.name}
                     </span>
