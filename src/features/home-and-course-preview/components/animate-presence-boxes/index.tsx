@@ -2,12 +2,19 @@ import { AnimatePresence } from "framer-motion";
 import { StackBox } from "../stack-box";
 import { useCourseCarousel } from "../../context/courseCarouselContext";
 import { AnimatedTooltip } from "../animate-tooltip";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import styles from "./index.module.scss";
+import { shuffleArray } from "@/lib/utils/shuffleArray";
 
 export const AnimatePresenceBoxes = () => {
   const { courses, currentIndex, setCurrentIndex } = useCourseCarousel();
   const [showTooltip, setShowTooltip] = useState(false);
+
+  // 当前标签，随机选择4个
+  const randomTags = useMemo(() => {
+    const tags = courses[currentIndex]?.tags || [];
+    return shuffleArray(tags).slice(0, 4);
+  }, [courses, currentIndex]);
 
   useEffect(() => {
     // 当卡片切换时，短暂延迟后显示 tooltip
@@ -41,14 +48,14 @@ export const AnimatePresenceBoxes = () => {
         />
       </AnimatePresence>
       <div className={styles.tooltipsContainer}>
-        {courses[currentIndex]?.tags?.map((tag, index) => (
+        {randomTags.map((tag, index) => (
           <AnimatedTooltip
             key={tag.id}
             tag={tag}
             isVisible={showTooltip}
             position="right"
             extraStyles={{
-              top: `${index * 50}px`, // 每个tooltip垂直间隔40px
+              top: `${index * 100}px`,
             }}
           />
         ))}

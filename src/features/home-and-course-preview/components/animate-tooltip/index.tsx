@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./index.module.scss";
-import { Tag } from "@/features/home-and-course-preview/types";
+import { Tag } from "@/features/types";
 interface AnimatedTooltipProps {
   tag: Tag;
   isVisible: boolean;
