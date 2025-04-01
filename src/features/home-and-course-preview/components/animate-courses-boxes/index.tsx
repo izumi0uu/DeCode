@@ -1,14 +1,21 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Text, Flex, Button } from "@/once-ui/components";
 import styles from "./index.module.scss";
 
 export const AnimateCoursesBoxes = () => {
   const [loading, setLoading] = useState(false);
+  const coursesSectionRef = useRef<HTMLDivElement>(null);
 
   const handleExplore = useCallback(() => {
-    console.log("Exploring courses...");
-    // Implement course exploration logic here
+    if (coursesSectionRef.current) {
+      const yOffset =
+        coursesSectionRef.current.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({
+        top: yOffset,
+        behavior: "smooth",
+      });
+    }
   }, []);
 
   // Mock course data - this would typically come from an API
@@ -84,7 +91,12 @@ export const AnimateCoursesBoxes = () => {
       </div>
 
       {/* Courses Section */}
-      <Flex className={styles.coursesSection} align="center" wrap>
+      <Flex
+        ref={coursesSectionRef}
+        className={styles.coursesSection}
+        align="center"
+        wrap
+      >
         {!loading ? (
           courses.map((course) => (
             <motion.div
