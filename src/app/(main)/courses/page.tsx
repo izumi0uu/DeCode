@@ -31,6 +31,13 @@ export default function Page({ params }: { params: { locale: string } }) {
     }
   }, [popularCoursesData]);
 
+  useEffect(() => {
+    if (coursesData) {
+      // 从 CourseListResponse 转换为 Course[]
+      setCourses(coursesData.data);
+    }
+  }, [coursesData]);
+
   return (
     <>
       <CourseCarouselProvider courses={popularCourses}>
