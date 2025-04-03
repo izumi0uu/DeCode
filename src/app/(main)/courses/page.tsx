@@ -11,6 +11,8 @@ import { Course } from "@/features/types/api/course";
 import { useCourses } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
 import { usePopularCourses } from "@/features/home-and-course-preview/api/use-get-courses-popular";
 import { CourseCarouselProvider } from "@/features/home-and-course-preview/context/courseCarouselContext";
+import { CoursePopularCardSkeletons } from "@/features/home-and-course-preview/components/skeletons";
+import { CourseCardSkeletons } from "@/features/home-and-course-preview/components/skeletons/course-card-skeleton";
 
 export default function Page({ params }: { params: { locale: string } }) {
   const [tagList, setTagList] = useState<string[]>(["All"]);
@@ -42,11 +44,15 @@ export default function Page({ params }: { params: { locale: string } }) {
     <>
       <CourseCarouselProvider courses={popularCourses}>
         <BannerCarousel>
-          <AnimatePopularBoxes />
+          {popularCoursesLoading ? (
+            <CoursePopularCardSkeletons />
+          ) : (
+            <AnimatePopularBoxes />
+          )}
         </BannerCarousel>
       </CourseCarouselProvider>
       <CourseCarouselProvider courses={courses}>
-        <AnimateCoursesBoxes />
+        {coursesLoading ? <CourseCardSkeletons /> : <AnimateCoursesBoxes />}
       </CourseCarouselProvider>
     </>
   );

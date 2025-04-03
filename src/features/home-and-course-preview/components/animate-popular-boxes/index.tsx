@@ -7,6 +7,7 @@ import {
   TagCarouselProvider,
   useTagCarousel,
 } from "../../context/tagCarouselContext";
+import { CoursePopularCardSkeletons } from "../skeletons";
 
 // 内部组件，使用 TagCarouselContext
 const AnimatePopularBoxesInner = () => {
@@ -15,7 +16,7 @@ const AnimatePopularBoxesInner = () => {
 
   // 确保有课程数据再渲染
   if (!courses.length || currentIndex >= courses.length) {
-    return null;
+    return <CoursePopularCardSkeletons />;
   }
 
   return (

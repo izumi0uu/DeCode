@@ -1,5 +1,5 @@
 import { Flex, Skeleton } from "@/once-ui/components";
-import styles from "./styles.module.scss";
+import styles from "./index.module.scss";
 
 interface CourseCardSkeletonProps {
   className?: string;
