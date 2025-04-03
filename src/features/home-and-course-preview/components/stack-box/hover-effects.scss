@@ -1,0 +1,192 @@
+.stackBoxImage {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+
+.imageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 255, 0.1),
+    rgba(0, 255, 255, 0.3)
+  );
+  opacity: 0;
+  z-index: 2;
+  transition: all 0.5s ease;
+  pointer-events: none;
+  backdrop-filter: blur(0px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  transition: all 0.4s ease;
+  position: relative;
+}
+
+.card:hover {
+  box-shadow: 0 12px 40px rgba(51, 102, 255, 0.25);
+  border-color: rgba(51, 102, 255, 0.9);
+  transform: translateY(-5px);
+}
+
+.card:hover .imageOverlay {
+  opacity: 1;
+  backdrop-filter: blur(3px);
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 255, 0.3),
+    rgba(0, 255, 255, 0.5)
+  );
+}
+
+.card:hover .fullTitle {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.fullTitle {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, 20px);
+  width: 85%;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.75);
+  color: white;
+  border-radius: 8px;
+  text-align: center;
+  z-index: 3;
+  opacity: 0;
+  transition: all 0.5s ease;
+  box-shadow: 0 0 20px rgba(51, 102, 255, 0.7);
+  border: 1px solid rgba(51, 102, 255, 0.7);
+  backdrop-filter: blur(5px);
+  word-wrap: break-word;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.fullTitle::after {
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #3366ff, #00ffff);
+  transition: width 0.8s ease;
+}
+
+.card:hover .fullTitle::after {
+  width: 100%;
+}
+
+.gridEffect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(
+      rgba(51, 102, 255, 0.1) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(51, 102, 255, 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.card:hover .gridEffect {
+  opacity: 1;
+  animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 40px 40px;
+  }
+}
+
+/* 添加数字雨效果 */
+.fullTitle::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(
+    circle,
+    rgba(51, 102, 255, 0.8) 0%,
+    rgba(0, 255, 255, 0) 70%
+  );
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.card:hover .fullTitle::before {
+  opacity: 1;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: translateX(-50%) scale(0.8);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateX(-50%) scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(-50%) scale(0.8);
+    opacity: 0.5;
+  }
+}
+
+/* 添加边框发光效果 */
+.card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 26px;
+  box-shadow: 0 0 0 0 rgba(51, 102, 255, 0);
+  transition: box-shadow 0.5s ease;
+  pointer-events: none;
+}
+
+.card:hover::after {
+  box-shadow: 0 0 15px 2px rgba(51, 102, 255, 0.6);
+  animation: borderPulse 2s infinite;
+}
+
+@keyframes borderPulse {
+  0% {
+    box-shadow: 0 0 15px 2px rgba(51, 102, 255, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 25px 4px rgba(0, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 15px 2px rgba(51, 102, 255, 0.6);
+  }
+}

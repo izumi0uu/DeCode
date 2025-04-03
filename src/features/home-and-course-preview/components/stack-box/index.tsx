@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Text } from "@/once-ui/components";
 import styles from "./index.module.scss";
+import "./hover-effects.scss"; // 引入悬停效果样式
 
 interface StackBoxProps {
   frontCard?: boolean;
@@ -148,7 +149,7 @@ export const StackBox = ({
       }
     >
       <motion.div
-        className={styles.card}
+        className={`${styles.card} card`}
         style={{
           scale,
         }}
@@ -159,7 +160,7 @@ export const StackBox = ({
         {course && (
           <>
             <div
-              className={styles.stackBoxImage}
+              className={`${styles.stackBoxImage} stackBoxImage`}
               draggable="false"
               onDragStart={preventInteraction}
             >
@@ -185,6 +186,9 @@ export const StackBox = ({
                 }}
                 unoptimized
               />
+              <div className="imageOverlay"></div>
+              <div className="gridEffect"></div>
+              <div className="fullTitle">{course.title}</div>
             </div>
             <div
               className={styles.cardContent}
@@ -206,9 +210,9 @@ export const StackBox = ({
                   color="dark"
                   className={styles.title}
                   style={{
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap" as const,
+                    overflow: "hidden" as const,
+                    textOverflow: "ellipsis" as const,
                     display: "block",
                     maxWidth: "70%",
                   }}
