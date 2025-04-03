@@ -16,7 +16,11 @@ const AnimatePopularBoxesInner = () => {
 
   // 确保有课程数据再渲染
   if (!courses.length || currentIndex >= courses.length) {
-    return <CoursePopularCardSkeletons />;
+    return (
+      <div className={styles.animatePopularBoxes}>
+        <CoursePopularCardSkeletons count={2} />
+      </div>
+    );
   }
 
   return (

@@ -10,12 +10,27 @@ export const CoursePopularCardSkeleton: React.FC = () => {
   return (
     <div className={styles.skeleton}>
       <Background className={styles.card}>
-        <Flex direction="column" className={styles.content} gap={16}>
-          <div className={styles.image}></div>
-          <Flex direction="column" gap={12} className={styles.info}>
+        <Flex direction="column" className={styles.content} gap="4">
+          {/* 圆形图标区域 */}
+          <div className={styles.imageContainer}>
+            <div className={styles.circleImage}></div>
+          </div>
+
+          <Flex direction="column" gap="3" className={styles.info}>
+            {/* 标题区域 */}
             <div className={styles.title}></div>
-            <div className={styles.subtitle}></div>
+
+            {/* 难度和时长区域 */}
+            <Flex align="center" gap="2" className={styles.metaInfo}>
+              <div className={styles.difficulty}></div>
+              <div className={styles.dot}></div>
+              <div className={styles.duration}></div>
+            </Flex>
+
+            {/* 标签区域 */}
             <div className={styles.tags}>
+              <div className={styles.tag}></div>
+              <div className={styles.tag}></div>
               <div className={styles.tag}></div>
               <div className={styles.tag}></div>
             </div>
@@ -30,7 +45,7 @@ export const CoursePopularCardSkeletons: React.FC<
   CoursePopularCardSkeletonProps
 > = ({ count = 4 }) => {
   return (
-    <Flex className={styles.container} align="stretch" wrap="wrap" gap={24}>
+    <Flex className={styles.container} alignItems="flex-start" wrap gap="6">
       {Array.from({ length: count }).map((_, index) => (
         <CoursePopularCardSkeleton key={index} />
       ))}
