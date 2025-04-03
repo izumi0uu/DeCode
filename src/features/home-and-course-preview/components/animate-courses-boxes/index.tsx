@@ -5,7 +5,17 @@ import { useCoursesAndLessonsForPreview } from "@/features/home-and-course-previ
 import { CourseCardSkeletons } from "@/features/home-and-course-preview/components/skeletons";
 import styles from "./index.module.scss";
 
-export const AnimateCoursesBoxes = () => {
+interface AnimateCoursesBoxesProps {
+  tagList?: string[];
+  currentTag?: string;
+  onTagSelect?: (tag: string) => void;
+}
+
+export const AnimateCoursesBoxes = ({
+  tagList,
+  currentTag,
+  onTagSelect,
+}: AnimateCoursesBoxesProps = {}) => {
   const [loading, setLoading] = useState(true);
   const coursesSectionRef = useRef<HTMLDivElement>(null);
 
@@ -43,6 +53,12 @@ export const AnimateCoursesBoxes = () => {
     { width: "18px", height: "18px", left: "75%", top: "35%", delay: "0.8s" },
     { width: "24px", height: "24px", left: "25%", top: "70%", delay: "0.6s" },
   ];
+
+  const handleTagClick = (tag: string) => {
+    if (onTagSelect) {
+      onTagSelect(tag);
+    }
+  };
 
   return (
     <Flex direction="column" className={styles.container}>
@@ -88,6 +104,23 @@ export const AnimateCoursesBoxes = () => {
             Join our community and gain the skills needed to thrive in the
             decentralized future. Explore courses crafted by industry experts.
           </Text>
+
+          {/* Tag Filter */}
+          {tagList && tagList.length > 1 && (
+            <Flex className={styles.tagFilter} wrap gap="2">
+              {tagList.map((tag) => (
+                <Button
+                  key={tag}
+                  variant={currentTag === tag ? "primary" : "secondary"}
+                  size="s"
+                  onClick={() => handleTagClick(tag)}
+                  className={styles.tagButton}
+                >
+                  {tag}
+                </Button>
+              ))}
+            </Flex>
+          )}
 
           <motion.div
             initial={{ opacity: 0, y: 50 }}

@@ -191,7 +191,7 @@ const transformData = (
       return {
         id: courseId.toString(),
         title: course.title,
-        path: `/courses/${course.slug}`, // 使用 slug 而非标题转换
+        path: `/courses/${course.slug}`,
         type: "course",
         children: lessonNodes.length > 0 ? lessonNodes : undefined,
         sortOrder: 0,
@@ -201,7 +201,7 @@ const transformData = (
           progress: 0, // 默认值
           learners: 0, // 默认值
           studyTime: course.duration || 0,
-          status: "published", // 简化处理，默认为published
+          status: "published",
           lang: course.locale || "en",
         },
       };
