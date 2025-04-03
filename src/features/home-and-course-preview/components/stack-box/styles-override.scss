@@ -1,0 +1,43 @@
+/* 标题样式 - 单行显示并截断 */
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  display: block !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  pointer-events: none;
+  flex: 1;
+  margin: 0 8px;
+  max-width: 70%;
+}
+
+/* 标签容器 - 不换行 */
+.tags {
+  display: flex;
+  flex-wrap: nowrap !important;
+  gap: 4px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  justify-content: center;
+  pointer-events: none;
+  overflow-x: hidden !important;
+  width: 100%;
+  padding: 0 8px;
+}
+
+/* 标签 - 单行显示并截断 */
+.tag {
+  background-color: rgba(51, 102, 255, 0.1);
+  color: #3366ff;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  pointer-events: none;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  display: inline-block;
+  max-width: 100px;
+}

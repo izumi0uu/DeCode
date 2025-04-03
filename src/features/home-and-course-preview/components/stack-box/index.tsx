@@ -205,6 +205,13 @@ export const StackBox = ({
                   variant="body-strong-xl"
                   color="dark"
                   className={styles.title}
+                  style={{
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    display: "block",
+                    maxWidth: "70%",
+                  }}
                 >
                   {course.title}
                 </Text>
@@ -235,10 +242,26 @@ export const StackBox = ({
                       initial="enter"
                       animate="center"
                       exit="exit"
+                      style={{
+                        flexWrap: "nowrap" as const,
+                        overflowX: "hidden" as const,
+                        width: "100%",
+                        padding: "0 8px",
+                      }}
                     >
                       {(randomTags || course.tags?.slice(0, 4) || []).map(
                         (tag) => (
-                          <span key={tag.id} className={styles.tag}>
+                          <span
+                            key={tag.id}
+                            className={styles.tag}
+                            style={{
+                              whiteSpace: "nowrap" as const,
+                              overflow: "hidden" as const,
+                              textOverflow: "ellipsis" as const,
+                              display: "inline-block",
+                              maxWidth: "100px",
+                            }}
+                          >
                             {tag.name}
                           </span>
                         )
