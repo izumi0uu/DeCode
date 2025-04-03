@@ -20,6 +20,8 @@ const Cascader = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
   const [isChangingCourse, setIsChangingCourse] = useState(false);
   const coursesColumnRef = useRef<HTMLDivElement>(null);
 
+  console.log(navigationData);
+
   // 记录滚动位置
   const handleScroll = () => {
     if (coursesColumnRef.current && navigationData) {
