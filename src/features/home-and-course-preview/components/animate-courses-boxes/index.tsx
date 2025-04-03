@@ -1,6 +1,7 @@
 import { useCallback, useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Text, Flex, Button } from "@/once-ui/components";
+import { useCoursesAndLessonsForPreview } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
 import { CourseCardSkeletons } from "@/features/home-and-course-preview/components/skeletons";
 import styles from "./index.module.scss";
 

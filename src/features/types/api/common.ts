@@ -36,6 +36,30 @@ export interface StrapiError {
 }
 
 /**
+ * 自定义 API 钩子返回类型
+ * 用于统一处理 React Query 的返回结果
+ */
+export interface HookResponse<T> {
+  data: T | undefined;
+  isLoading: boolean;
+  isError: boolean;
+  error: unknown;
+}
+
+/**
+ * API 函数返回类型
+ * 用于统一各种 fetch 函数的返回格式
+ */
+export interface ApiDataResponse<T> {
+  data: T;
+  meta: {
+    isLoading: boolean;
+    isError: boolean;
+    error: unknown | null;
+  };
+}
+
+/**
  * 通用媒体格式
  */
 export interface MediaFormat {
