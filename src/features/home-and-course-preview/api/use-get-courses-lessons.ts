@@ -1,27 +1,29 @@
 // src/features/home-and-course-preview/api/use-get-courses-lessons.ts
 import { useQuery } from "@tanstack/react-query";
-import { CourseResponse, LessonResponse, NavNode } from "@/features/types";
 // @ts-ignore
-import qs from "qs"; // 添加ts-ignore以临时解决qs模块类型声明问题
+import qs from "qs";
+import { NavNode } from "@/features/types";
 import type {
   CourseListResponse,
-  LessonLightListResponse,
   LessonLight,
   Course,
+  ApiDataResponse,
+  HookResponse,
 } from "@/features/types";
 import {
   LESSON_LIGHT_FIELDS,
   COURSE_LIGHT_FIELDS,
   QUIZ_LIGHT_FIELDS,
-  ApiDataResponse,
-  HookResponse,
 } from "@/features/types";
 import { fetchAllPages } from "@/lib/utils/fetchAllPages";
-
 // 获取课程数据
 const fetchCourses = async (): Promise<ApiDataResponse<Course[]>> => {
   try {
-    const response = await fetch("/api/courses");
+    const queryString = qs.stringify({
+      populate: ["tags"],
+    });
+
+    const response = await fetch(`/api/courses?${queryString}`);
     if (!response.ok) {
       throw new Error("Failed to fetch courses");
     }
@@ -182,8 +184,8 @@ const transformData = (
           lessonId: lesson.id,
           progress: 0, // 默认值
           studyTime: lesson.duration || 0,
-          status: "published", // 简化处理，默认为published
-          lang: course.locale || "en", // 从课程获取
+          status: "published",
+          lang: course.locale || "en",
         },
       }));
 

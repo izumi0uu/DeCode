@@ -45,7 +45,7 @@ export const CoursePopularCardSkeletons: React.FC<
   CoursePopularCardSkeletonProps
 > = ({ count = 4 }) => {
   return (
-    <Flex className={styles.container} alignItems="flex-start" wrap gap="6">
+    <Flex className={styles.container} wrap gap="8">
       {Array.from({ length: count }).map((_, index) => (
         <CoursePopularCardSkeleton key={index} />
       ))}

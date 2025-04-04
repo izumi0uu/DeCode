@@ -39,6 +39,12 @@ export * from "./api/learning-path-config";
 // 导出所有API响应类型
 export * from "./api/responses";
 
+// 导出API原始响应类型（直接映射后端格式）
+export * from "./api/api-responses";
+
+// 导出钩子响应类型（用于前端组件）
+export * from "./api/hook-responses";
+
 // 导出UI相关类型
 export * from "./ui/nav-node";
 

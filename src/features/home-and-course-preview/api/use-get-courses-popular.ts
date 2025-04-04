@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 // @ts-ignore
 import qs from "qs"; // 添加ts-ignore以临时解决qs模块类型声明问题
 import type { CourseListResponse, Course } from "@/features/types/api/course";
-import { ApiDataResponse, HookResponse } from "@/features/types/api/common";
+import { ApiDataResponse, HookResponse } from "@/features/types";
 
 const fetchPopularCourses = async (): Promise<ApiDataResponse<Course[]>> => {
   try {

@@ -1,62 +1,15 @@
-import { StrapiError } from "./common";
-import { CourseListResponse, CourseResponse } from "./course";
-import {
-  LessonListResponse,
-  LessonResponse,
-  LessonLightListResponse,
-} from "./lesson";
-import { QuizListResponse, QuizResponse } from "./quiz";
-import {
-  QuizQuestionListResponse,
-  QuizQuestionResponse,
-} from "./quiz-question";
-import { QuizOptionListResponse, QuizOptionResponse } from "./quiz-option";
-import { QuizAnswerListResponse } from "./quiz-answer";
-import { UserQuizProgressListResponse } from "./user-quiz-progress";
-import { UserLessonProgressListResponse } from "./user-lesson-progress";
-import { UserCourseProgressListResponse } from "./user-course-progress";
-import { ContributorListResponse } from "./contributor";
-import { ResourceListResponse } from "./resource";
-import { SbtCertificationListResponse } from "./sbt-certification";
-import { UserWalletListResponse } from "./user-wallet";
-import { TokenRewardListResponse } from "./token-reward";
-import { QuizMaterialListResponse } from "./quiz-material";
-import { ThematicQueryListResponse } from "./thematic-query";
-import { ThematicResponseListResponse } from "./thematic-response";
-import { BlockchainConfigResponse } from "./blockchain-config";
-import { TokenomicsConfigResponse } from "./tokenomics-config";
-import { LearningPathConfigListResponse } from "./learning-path-config";
-import { HomePageSettingResponse } from "./home-page-setting";
-import { WebsiteConfigurationResponse } from "./website-configuration";
+/**
+ * 这是一个统一导出所有响应类型的索引文件
+ * 按照关注点分离原则，我们将响应类型分为两类：
+ * 1. API原始响应类型(api-responses.ts) - 直接映射后端返回的数据结构
+ * 2. 钩子响应类型(hook-responses.ts) - 用于前端组件与数据钩子交互
+ */
 
-export type {
-  StrapiError,
-  CourseListResponse,
-  CourseResponse,
-  LessonListResponse,
-  LessonResponse,
-  LessonLightListResponse,
-  QuizListResponse,
-  QuizResponse,
-  QuizQuestionListResponse,
-  QuizQuestionResponse,
-  QuizOptionListResponse,
-  QuizOptionResponse,
-  QuizAnswerListResponse,
-  UserQuizProgressListResponse,
-  UserLessonProgressListResponse,
-  UserCourseProgressListResponse,
-  ContributorListResponse,
-  ResourceListResponse,
-  SbtCertificationListResponse,
-  UserWalletListResponse,
-  TokenRewardListResponse,
-  QuizMaterialListResponse,
-  ThematicQueryListResponse,
-  ThematicResponseListResponse,
-  BlockchainConfigResponse,
-  TokenomicsConfigResponse,
-  LearningPathConfigListResponse,
-  HomePageSettingResponse,
-  WebsiteConfigurationResponse,
-};
+// 导出所有API原始响应类型
+export * from "./api-responses";
+
+// 导出所有钩子响应类型
+export * from "./hook-responses";
+
+// 注意：这种方式可以让导入保持向后兼容，同时改进了代码组织
+// 开发者可以选择从这里导入所有类型，或者从特定文件导入特定类型
