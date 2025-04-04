@@ -1,36 +1,44 @@
-import { useCallback, useState, useRef, useEffect, useMemo } from "react";
+import { useCallback, useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Text, Flex, Button, Background } from "@/once-ui/components";
+import { Text, Flex, Button } from "@/once-ui/components";
 import { useCoursesAndLessonsForPreview } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
-import { CourseCardSkeletons } from "@/features/home-and-course-preview/components/skeletons";
 import { LessonLight } from "@/features/types/api/lesson";
 import { Tag } from "@/features/types/api/tag";
+import { Course } from "@/features/types/api/course";
+import { Banner } from "./Banner";
+import { CategoryTags } from "./CategoryTags";
+import { TechTags } from "./TechTags";
+import { CourseDisplay } from "./CourseDisplay";
 import styles from "./index.module.scss";
 
+// 主组件接口
 interface AnimateCoursesBoxesProps {
   tagList?: string[];
   currentTag?: string;
   onTagSelect?: (tag: string) => void;
 }
 
-export const AnimateCoursesBoxes = ({
-  tagList: propTagList,
-  currentTag: propCurrentTag,
-  onTagSelect,
-}: AnimateCoursesBoxesProps = {}) => {
-  // 英文课程分类标签 - 从API动态提取
+export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
+  // 解构属性
+  const {
+    tagList: propTagList,
+    currentTag: propCurrentTag,
+    onTagSelect,
+  } = props;
+
+  // 默认标签列表
   const defaultCourseCategoryTags = [
-    "All", // All courses
-    "Web3 Basics", // Web3 & Blockchain Basics
-    "Cryptocurrency", // Cryptocurrency Principles
-    "Ethereum Development", // Ethereum Development
-    "Digital Assets", // Digital Assets & NFTs
-    "DeFi", // DeFi & DAO
-    "Web3 Applications", // Web3 Applications
+    "All",
+    "Web3 Basics",
+    "Cryptocurrency",
+    "Ethereum Development",
+    "Digital Assets",
+    "DeFi",
+    "Web3 Applications",
   ];
 
-  // 技术标签
-  const techTags = [
+  // 预定义的技术标签
+  const defaultTechTags = [
     "Web3",
     "Blockchain",
     "Web3 Infrastructure",
@@ -47,159 +55,123 @@ export const AnimateCoursesBoxes = ({
   // 获取课程数据
   const { data, isLoading } = useCoursesAndLessonsForPreview();
 
-  // 从API数据中提取课程分类标签
-  const apiCourseCategoryTags = useMemo(() => {
+  // 组件状态
+  const [internalTag, setInternalTag] = useState(propCurrentTag || "All");
+  const [selectedTechTags, setSelectedTechTags] = useState<string[]>([]);
+  const [showTechTags, setShowTechTags] = useState(false);
+  const [loading, setLoading] = useState(isLoading);
+
+  // 从API中提取课程分类标签
+  const apiTags = useMemo(() => {
     if (!data?.courses || data.courses.length === 0) {
       return defaultCourseCategoryTags;
     }
 
-    // 首先添加"All"选项
-    const categoryTags = ["All"];
+    const uniqueTags = new Set(["All"]);
 
-    // 提取课程的shortTitleTag（如果存在）或使用课程类别
-    const uniqueTags = new Set<string>();
     data.courses.forEach((course) => {
-      // 如果有shortTitleTag属性，优先使用
       if (course.shortTitleTag) {
         uniqueTags.add(course.shortTitleTag);
-      }
-      // 否则尝试使用category
-      else if (course.category?.name) {
+      } else if (course.category?.name) {
         uniqueTags.add(course.category.name);
-      }
-      // 如果都没有，可以使用title的简化版本
-      else {
+      } else {
         const shortTitle = course.title.split(" ").slice(0, 2).join(" ");
         uniqueTags.add(shortTitle);
       }
     });
 
-    // 将独特的标签添加到结果中
-    categoryTags.push(...Array.from(uniqueTags));
-    return categoryTags;
+    return Array.from(uniqueTags);
   }, [data?.courses]);
 
-  // 使用API提取的标签或提供的标签列表，否则使用默认的
-  const tagList = propTagList || apiCourseCategoryTags;
-  const [currentTag, setCurrentTag] = useState(propCurrentTag || "All");
-  const [selectedTechTags, setSelectedTechTags] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [showTechTags, setShowTechTags] = useState(false);
-  const coursesSectionRef = useRef<HTMLDivElement>(null);
-  const tagFilterRef = useRef<HTMLDivElement>(null);
+  // 用于UI显示的标签列表
+  const displayTags = useMemo(() => {
+    return propTagList || apiTags;
+  }, [propTagList, apiTags]);
 
-  useEffect(() => {
-    // 如果外部传入的currentTag变化，则更新内部状态
-    if (propCurrentTag && propCurrentTag !== currentTag) {
-      setCurrentTag(propCurrentTag);
-    }
-  }, [propCurrentTag, currentTag]);
+  // 构建课程类别到技术标签的映射
+  const categoryToTechTagsMap = useMemo(() => {
+    // 默认映射，所有类别都显示所有标签
+    const mapping: Record<string, string[]> = {
+      All: defaultTechTags,
+    };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+    // 如果没有API数据，返回默认映射
+    if (!data?.courses) return mapping;
 
-    return () => clearTimeout(timer);
-  }, []);
+    // 处理每个课程
+    data.courses.forEach((course) => {
+      let categoryKey = "All";
 
-  const handleExplore = useCallback(() => {
-    if (tagFilterRef.current) {
-      const yOffset =
-        tagFilterRef.current.getBoundingClientRect().top + window.scrollY - 20;
-      window.scrollTo({
-        top: yOffset,
-        behavior: "smooth",
-      });
-    }
-  }, []);
-
-  // 处理课程分类标签点击
-  const handleTagClick = (tag: string) => {
-    setCurrentTag(tag);
-    if (onTagSelect) {
-      onTagSelect(tag);
-    }
-
-    // 滚动到课程部分
-    if (coursesSectionRef.current) {
-      const yOffset =
-        coursesSectionRef.current.getBoundingClientRect().top +
-        window.scrollY -
-        100;
-      window.scrollTo({
-        top: yOffset,
-        behavior: "smooth",
-      });
-    }
-  };
-
-  // 技术标签点击 - 支持多选
-  const handleTechTagClick = (tag: string) => {
-    setSelectedTechTags((prev) => {
-      // 如果标签已选中，则移除它
-      if (prev.includes(tag)) {
-        return prev.filter((t) => t !== tag);
+      // 确定课程类别
+      if (course.shortTitleTag) {
+        categoryKey = course.shortTitleTag;
+      } else if (course.category?.name) {
+        categoryKey = course.category.name;
+      } else {
+        categoryKey = course.title.split(" ").slice(0, 2).join(" ");
       }
-      // 否则添加它
-      return [...prev, tag];
+
+      // 初始化类别映射
+      if (!mapping[categoryKey]) {
+        mapping[categoryKey] = [];
+      }
+
+      // 添加技术标签
+      if (course.tags && course.tags.length > 0) {
+        course.tags.forEach((tag) => {
+          if (tag.name && !mapping[categoryKey].includes(tag.name)) {
+            mapping[categoryKey].push(tag.name);
+          }
+        });
+      }
     });
-  };
 
-  // 切换显示技术标签
-  const toggleTechTags = () => {
-    setShowTechTags((prev) => !prev);
-  };
+    // 确保每个类别至少有一些标签
+    Object.keys(mapping).forEach((key) => {
+      if (key !== "All" && (!mapping[key] || mapping[key].length === 0)) {
+        mapping[key] = defaultTechTags.slice(0, 3);
+      }
+    });
 
-  // 预定义光点位置和大小
-  const dotPositions = [
-    { width: "20px", height: "20px", left: "15%", top: "20%", delay: "0.2s" },
-    { width: "16px", height: "16px", left: "35%", top: "45%", delay: "0.5s" },
-    { width: "22px", height: "22px", left: "55%", top: "15%", delay: "0.3s" },
-    { width: "18px", height: "18px", left: "75%", top: "35%", delay: "0.8s" },
-    { width: "24px", height: "24px", left: "25%", top: "70%", delay: "0.6s" },
-  ];
+    return mapping;
+  }, [data?.courses, defaultTechTags]);
 
-  // 筛选课程 - 根据标签筛选
+  // 当前类别的可见技术标签
+  const visibleTechTags = useMemo(() => {
+    return categoryToTechTagsMap[internalTag] || defaultTechTags;
+  }, [internalTag, categoryToTechTagsMap, defaultTechTags]);
+
+  // 筛选的课程列表
   const filteredCourses = useMemo(() => {
     if (!data?.courses) return [];
 
-    if (currentTag === "All") {
+    if (internalTag === "All") {
       return data.courses;
     }
 
     return data.courses.filter((course) => {
-      // 根据shortTitleTag筛选
-      if (course.shortTitleTag === currentTag) {
-        return true;
-      }
-      // 或者根据category筛选
-      if (course.category?.name === currentTag) {
-        return true;
-      }
-      // 或者根据title简化版本筛选
-      const shortTitle = course.title.split(" ").slice(0, 2).join(" ");
-      return shortTitle === currentTag;
-    });
-  }, [data?.courses, currentTag]);
+      if (course.shortTitleTag === internalTag) return true;
+      if (course.category?.name === internalTag) return true;
 
-  // 筛选课时 - 根据所选课程和技术标签筛选
+      const shortTitle = course.title.split(" ").slice(0, 2).join(" ");
+      return shortTitle === internalTag;
+    });
+  }, [data?.courses, internalTag]);
+
+  // 筛选的课时列表
   const filteredLessons = useMemo(() => {
     if (!data?.lessons || filteredCourses.length === 0) return [];
 
     const courseIds = filteredCourses.map((course) => course.id);
 
-    // 首先筛选属于所选课程的课时
-    let lessonResults = data.lessons.filter(
+    // 筛选属于所选课程的课时
+    let filtered = data.lessons.filter(
       (lesson) => lesson.course && courseIds.includes(lesson.course.id)
     );
 
-    // 由于LessonLight可能没有tags属性，先暂时不进行技术标签筛选
-    // 实际应用中可能需要扩展LessonLight类型或通过API获取完整数据
+    // 如果选择了技术标签，进一步筛选
     if (selectedTechTags.length > 0) {
-      // 假设lesson上有一个关联的tags属性，实际使用时需要更新类型定义或API
-      lessonResults = lessonResults.filter((lesson) => {
-        // 这里使用类型断言处理当前的类型问题
+      filtered = filtered.filter((lesson) => {
         const lessonWithTags = lesson as LessonLight & { tags?: Array<Tag> };
         return (
           lessonWithTags.tags?.some((tag) =>
@@ -209,109 +181,81 @@ export const AnimateCoursesBoxes = ({
       });
     }
 
-    return lessonResults;
+    return filtered;
   }, [data?.lessons, filteredCourses, selectedTechTags]);
 
+  // 同步外部propCurrentTag变化
+  useEffect(() => {
+    if (propCurrentTag && propCurrentTag !== internalTag) {
+      setInternalTag(propCurrentTag);
+      setSelectedTechTags([]);
+    }
+  }, [propCurrentTag]);
+
+  // 处理加载状态
+  useEffect(() => {
+    setLoading(isLoading);
+  }, [isLoading]);
+
+  // 处理课程分类标签点击
+  const handleTagClick = useCallback(
+    (tag: string) => {
+      if (tag !== internalTag) {
+        setInternalTag(tag);
+        setSelectedTechTags([]);
+
+        if (onTagSelect) {
+          onTagSelect(tag);
+        }
+      }
+    },
+    [internalTag, onTagSelect]
+  );
+
+  // 处理技术标签点击
+  const handleTechTagClick = useCallback((tag: string) => {
+    setSelectedTechTags((prev) => {
+      if (prev.includes(tag)) {
+        return prev.filter((t) => t !== tag);
+      }
+      return [...prev, tag];
+    });
+  }, []);
+
+  // 切换技术标签显示
+  const toggleTechTags = useCallback(() => {
+    setShowTechTags((prev) => !prev);
+  }, []);
+
+  // 处理"探索"按钮点击
+  const handleExplore = useCallback(() => {
+    const tagSection = document.querySelector(
+      `.${styles.categorySectionTitle}`
+    );
+    if (tagSection) {
+      const yOffset =
+        tagSection.getBoundingClientRect().top + window.scrollY - 20;
+      window.scrollTo({ top: yOffset, behavior: "smooth" });
+    }
+  }, []);
+
+  // 渲染组件
   return (
     <Flex direction="column" className={styles.container}>
-      {/* Banner Section */}
-      <div className={styles.banner}>
-        <div className={styles.bannerBackground}>
-          <div className={styles.glow}></div>
-          <div className={styles.decorations}>
-            {dotPositions.map((dot, i) => (
-              <div
-                key={i}
-                className={styles.dot}
-                style={{
-                  width: dot.width,
-                  height: dot.height,
-                  left: dot.left,
-                  top: dot.top,
-                  animationDelay: dot.delay,
-                }}
-              ></div>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.bannerContent}>
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut" }}
-          >
-            <Text
-              as="h1"
-              className={styles.bannerTitle}
-              variant="body-strong-xl"
-            >
-              Discover Web3 Education
-            </Text>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
-          >
-            <Text
-              as="h2"
-              className={styles.bannerSubtitle}
-              variant="body-strong-l"
-            >
-              Learn. Build. Innovate.
-            </Text>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.4, ease: "easeOut" }}
-          >
-            <Text
-              as="p"
-              className={styles.bannerDescription}
-              variant="body-default-m"
-            >
-              Join our community and gain the skills needed to thrive in the
-              decentralized future. Explore courses crafted by industry experts.
-            </Text>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.8,
-              delay: 0.6,
-              ease: [0.4, 0, 0.2, 1],
-            }}
-          >
-            <Button
-              variant="primary"
-              size="m"
-              onClick={handleExplore}
-              className={styles.exploreButton}
-            >
-              Start exploring
-            </Button>
-          </motion.div>
-        </div>
-      </div>
+      {/* Banner区域 */}
+      <Banner handleExplore={handleExplore} />
 
       {/* 课程分类区域 */}
       <div
-        ref={tagFilterRef}
         style={{
           position: "relative",
-          zIndex: 5, // 提高z-index确保显示在最前
-          marginTop: "0px", // 调整顶部间距与banner保持适当距离
+          zIndex: 5,
+          marginTop: "0px",
           marginBottom: "30px",
           width: "100%",
         }}
       >
-        {/* 课程分类标题和流光线 */}
+        {/* 课程分类标题 */}
         <motion.div
           className={styles.categorySectionTitle}
           initial={{ opacity: 0, y: 20 }}
@@ -323,50 +267,17 @@ export const AnimateCoursesBoxes = ({
             variant="body-strong-l"
             className={styles.categoryTitle}
           >
-            课程选择
+            Select a course
           </Text>
           <div className={styles.flowingLine}></div>
         </motion.div>
 
-        {/* 主要课程分类标签 */}
-        {tagList && tagList.length > 1 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2, ease: "easeInOut" }}
-            className={styles.tagFilterContainer}
-          >
-            <Flex className={styles.tagFilter} wrap>
-              {tagList.map((tag, index) => (
-                <motion.div
-                  key={tag}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.3,
-                    delay: 0.1 + index * 0.05,
-                    ease: "easeOut",
-                  }}
-                  whileHover={
-                    currentTag !== tag ? { scale: 1.05, y: -3 } : { scale: 1 }
-                  }
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button
-                    variant={currentTag === tag ? "primary" : "secondary"}
-                    size="m"
-                    onClick={() => handleTagClick(tag)}
-                    className={`${styles.tagButton} ${
-                      currentTag === tag ? styles.active : ""
-                    }`}
-                  >
-                    {tag}
-                  </Button>
-                </motion.div>
-              ))}
-            </Flex>
-          </motion.div>
-        )}
+        {/* 课程分类标签 */}
+        <CategoryTags
+          tagList={displayTags}
+          currentTag={internalTag}
+          handleTagClick={handleTagClick}
+        />
 
         {/* 技术标签切换按钮 */}
         <motion.div
@@ -381,122 +292,33 @@ export const AnimateCoursesBoxes = ({
             onClick={toggleTechTags}
             className={styles.toggleButton}
           >
-            {showTechTags ? "收起技术标签" : "展开技术标签"}
+            {showTechTags ? "Hide" : "Show"}
             {showTechTags ? " ▲" : " ▼"}
           </Button>
         </motion.div>
 
-        {/* 技术标签区域 - 可折叠 */}
+        {/* 技术标签区域 */}
         <AnimatePresence>
           {showTechTags && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
-              className={styles.techTagsContainer}
-            >
-              <Flex className={styles.techTags} wrap>
-                {techTags.map((tag, index) => (
-                  <motion.div
-                    key={tag}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{
-                      duration: 0.2,
-                      delay: 0.1 + index * 0.03,
-                      ease: "easeOut",
-                    }}
-                    whileHover={
-                      !selectedTechTags.includes(tag)
-                        ? { scale: 1.05, y: -2 }
-                        : { scale: 1 }
-                    }
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Button
-                      key={tag}
-                      variant={
-                        selectedTechTags.includes(tag) ? "primary" : "tertiary"
-                      }
-                      size="s"
-                      onClick={() => handleTechTagClick(tag)}
-                      className={`${styles.techTagButton} ${
-                        selectedTechTags.includes(tag) ? styles.active : ""
-                      }`}
-                    >
-                      {tag}
-                    </Button>
-                  </motion.div>
-                ))}
-              </Flex>
-            </motion.div>
+            <TechTags
+              visible={showTechTags}
+              tags={visibleTechTags}
+              selectedTags={selectedTechTags}
+              handleTagClick={handleTechTagClick}
+            />
           )}
         </AnimatePresence>
       </div>
 
-      {/* Content Section - 显示课程或课时 */}
-      <Flex ref={coursesSectionRef} className={styles.coursesSection}>
-        {loading || isLoading ? (
-          <CourseCardSkeletons count={3} />
-        ) : selectedTechTags.length > 0 ? (
-          // 如果选择了技术标签，显示筛选后的课时
-          filteredLessons.length > 0 ? (
-            filteredLessons.map((lesson, index) => (
-              <motion.div
-                key={lesson.id}
-                className={styles.courseCard}
-                initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{
-                  duration: 0.6,
-                  delay: 0.1 + index * 0.1,
-                  ease: "easeOut",
-                }}
-                whileHover={{
-                  y: -10,
-                  boxShadow: "0 15px 35px rgba(0, 0, 0, 0.25)",
-                  borderColor: "rgba(102, 126, 234, 0.4)",
-                }}
-              >
-                {lesson.title}
-              </motion.div>
-            ))
-          ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className={styles.noContentMessage}
-            >
-              <Text variant="body-default-m">
-                没有找到符合筛选条件的课程。请尝试其他标签组合。
-              </Text>
-            </motion.div>
-          )
-        ) : (
-          // 否则显示筛选后的课程
-          filteredCourses.map((course, index) => (
-            <motion.div
-              key={course.id}
-              className={styles.courseCard}
-              initial={{ opacity: 0, y: 30, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{
-                duration: 0.6,
-                delay: 0.1 + index * 0.1,
-                ease: "easeOut",
-              }}
-              whileHover={{
-                y: -10,
-                boxShadow: "0 15px 35px rgba(0, 0, 0, 0.25)",
-                borderColor: "rgba(102, 126, 234, 0.4)",
-              }}
-            >
-              {course.title}
-            </motion.div>
-          ))
-        )}
+      {/* 内容区域 */}
+      <Flex className={styles.coursesSection}>
+        <CourseDisplay
+          loading={loading}
+          isLoading={isLoading}
+          selectedTechTags={selectedTechTags}
+          filteredLessons={filteredLessons}
+          filteredCourses={filteredCourses}
+        />
       </Flex>
     </Flex>
   );
