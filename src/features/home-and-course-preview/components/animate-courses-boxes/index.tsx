@@ -203,6 +203,7 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
       if (tag !== internalTag) {
         setInternalTag(tag);
         setSelectedTechTags([]);
+        setShowTechTags(true);
 
         if (onTagSelect) {
           onTagSelect(tag);
@@ -246,7 +247,9 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
       <Banner handleExplore={handleExplore} />
 
       {/* 课程分类区域 */}
-      <div
+      <Flex
+        direction="column"
+        className={styles.categoryArea}
         style={{
           position: "relative",
           zIndex: 5,
@@ -308,7 +311,7 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
             />
           )}
         </AnimatePresence>
-      </div>
+      </Flex>
 
       {/* 内容区域 */}
       <Flex className={styles.coursesSection}>
