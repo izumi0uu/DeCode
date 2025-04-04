@@ -81,6 +81,11 @@
       "target": "api::tag.tag",
       "inversedBy": "lessons"
     },
+    "coverImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
     "lessonPublishedAt": {
       "type": "datetime"
     }

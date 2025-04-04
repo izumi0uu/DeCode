@@ -690,6 +690,7 @@ export interface ApiLessonLesson extends Struct.CollectionTypeSchema {
       }>;
     course: Schema.Attribute.Relation<'manyToOne', 'api::course.course'> &
       Schema.Attribute.Required;
+    coverImage: Schema.Attribute.Media<'images'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
