@@ -90,13 +90,17 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
 
   // 构建课程类别到技术标签的映射
   const categoryToTechTagsMap = useMemo(() => {
-    // 默认映射，所有类别都显示所有标签
-    const mapping: Record<string, string[]> = {
-      All: defaultTechTags,
-    };
+    // 默认空映射
+    const mapping: Record<string, string[]> = {};
 
-    // 如果没有API数据，返回默认映射
-    if (!data?.courses) return mapping;
+    // 如果没有API数据，使用默认标签
+    if (!data?.courses || data.courses.length === 0) {
+      mapping["All"] = defaultTechTags;
+      return mapping;
+    }
+
+    // 收集所有课程的技术标签
+    const allTechTags = new Set<string>();
 
     // 处理每个课程
     data.courses.forEach((course) => {
@@ -119,17 +123,35 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
       // 添加技术标签
       if (course.tags && course.tags.length > 0) {
         course.tags.forEach((tag) => {
-          if (tag.name && !mapping[categoryKey].includes(tag.name)) {
-            mapping[categoryKey].push(tag.name);
+          if (tag.name) {
+            // 添加到特定分类
+            if (!mapping[categoryKey].includes(tag.name)) {
+              mapping[categoryKey].push(tag.name);
+            }
+
+            // 同时收集到所有标签集合
+            allTechTags.add(tag.name);
           }
         });
       }
     });
 
+    // 设置All分类的标签为所有收集到的标签
+    mapping["All"] = Array.from(allTechTags);
+
+    // 如果All分类没有标签，使用默认标签
+    if (mapping["All"].length === 0) {
+      mapping["All"] = defaultTechTags;
+    }
+
     // 确保每个类别至少有一些标签
     Object.keys(mapping).forEach((key) => {
       if (key !== "All" && (!mapping[key] || mapping[key].length === 0)) {
-        mapping[key] = defaultTechTags.slice(0, 3);
+        // 如果没有标签，使用全局标签的子集
+        mapping[key] = mapping["All"].slice(
+          0,
+          Math.min(3, mapping["All"].length)
+        );
       }
     });
 
