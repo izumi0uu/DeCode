@@ -41,11 +41,7 @@
     },
     "level": {
       "type": "enumeration",
-      "enum": [
-        "beginner",
-        "intermediate",
-        "advanced"
-      ],
+      "enum": ["beginner", "intermediate", "advanced"],
       "pluginOptions": {
         "i18n": {
           "localized": true
@@ -59,12 +55,7 @@
       "type": "media",
       "multiple": false,
       "required": false,
-      "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
-      ]
+      "allowedTypes": ["images", "files", "videos", "audios"]
     },
     "tags": {
       "type": "relation",
@@ -81,11 +72,7 @@
     },
     "difficulty": {
       "type": "enumeration",
-      "enum": [
-        "easy",
-        "medium",
-        "hard"
-      ],
+      "enum": ["easy", "medium", "hard"],
       "pluginOptions": {
         "i18n": {
           "localized": true
@@ -119,6 +106,15 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::resource.resource"
+    },
+    "shortTitleTag": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "description": "用于第一层筛选按钮显示的短标题"
     }
   }
 }

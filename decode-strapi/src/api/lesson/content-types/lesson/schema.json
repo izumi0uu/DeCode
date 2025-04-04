@@ -75,6 +75,12 @@
       "relation": "manyToMany",
       "target": "api::resource.resource"
     },
+    "tags": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::tag.tag",
+      "inversedBy": "lessons"
+    },
     "lessonPublishedAt": {
       "type": "datetime"
     }

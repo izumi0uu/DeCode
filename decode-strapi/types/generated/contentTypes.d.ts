@@ -548,6 +548,12 @@ export interface ApiCourseCourse extends Struct.CollectionTypeSchema {
     resources: Schema.Attribute.Relation<'oneToMany', 'api::resource.resource'>;
     sbtContractAddress: Schema.Attribute.Text & Schema.Attribute.Unique;
     sbtEnabled: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    shortTitleTag: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     slug: Schema.Attribute.UID<'title'>;
     tags: Schema.Attribute.Relation<'manyToMany', 'api::tag.tag'>;
     title: Schema.Attribute.String &
@@ -706,6 +712,7 @@ export interface ApiLessonLesson extends Struct.CollectionTypeSchema {
     >;
     slug: Schema.Attribute.UID<'title'>;
     sortOrder: Schema.Attribute.Integer;
+    tags: Schema.Attribute.Relation<'manyToMany', 'api::tag.tag'>;
     title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.SetPluginOptions<{
@@ -1076,6 +1083,7 @@ export interface ApiTagTag extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    lessons: Schema.Attribute.Relation<'manyToMany', 'api::lesson.lesson'>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::tag.tag'>;
     name: Schema.Attribute.String &

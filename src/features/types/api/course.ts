@@ -26,6 +26,7 @@ export interface Course {
   id: number;
   title: string;
   slug: string;
+  shortTitleTag: string;
   description: string;
   content: string;
   coverImage: Relation<MediaImage>;
