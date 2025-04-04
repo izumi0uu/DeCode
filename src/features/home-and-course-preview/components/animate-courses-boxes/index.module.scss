@@ -10,12 +10,12 @@
 .banner {
   position: relative;
   width: 100%;
-  height: 280px;
+  height: 300px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   overflow: hidden;
-  margin-bottom: 40px;
+  margin-bottom: 100px;
 }
 
 .bannerBackground {
@@ -26,7 +26,7 @@
   bottom: 0;
   z-index: 1;
 
-  // 创建径向渐变效果
+  // 优化径向渐变效果
   &::after {
     content: "";
     position: absolute;
@@ -34,11 +34,10 @@
     left: 0;
     right: 0;
     bottom: 0;
-    // 创建从中心向外扩散的渐变
     background: radial-gradient(
       circle at 30% 50%,
-      rgba(102, 126, 234, 0.4),
-      transparent 50%
+      rgba(102, 126, 234, 0.5),
+      transparent 60%
     );
     z-index: 1;
   }
@@ -54,59 +53,56 @@
   z-index: 2;
 }
 
-// 光点效果
+// 光点效果优化
 .dot {
   position: absolute;
   border-radius: 50%;
-  background-color: rgba(159, 204, 255, 0.5);
-  box-shadow: 0 0 10px rgba(159, 204, 255, 0.8);
-  opacity: 0.6;
-  // 应用脉冲动画效果
-  animation: pulse 4s infinite alternate;
+  background-color: rgba(159, 204, 255, 0.6);
+  box-shadow: 0 0 15px rgba(159, 204, 255, 0.9);
+  opacity: 0.7;
+  animation: pulse 5s infinite alternate;
 }
 
-// 定义脉冲动画，在透明度和大小之间交替
+// 定义脉冲动画，更平滑的过渡
 @keyframes pulse {
   0% {
-    opacity: 0.3;
-    transform: scale(0.8);
+    opacity: 0.4;
+    transform: scale(0.85);
   }
   100% {
-    opacity: 0.7;
-    transform: scale(1.2);
+    opacity: 0.8;
+    transform: scale(1.15);
   }
 }
 
-// 发光效果
+// 发光效果优化
 .glow {
   position: absolute;
-  width: 300px;
-  height: 300px;
+  width: 350px;
+  height: 350px;
   border-radius: 50%;
   background: radial-gradient(
     circle,
-    rgba(102, 126, 234, 0.4),
+    rgba(102, 126, 234, 0.5),
     transparent 70%
   );
   top: 50%;
   left: 20%;
   transform: translate(-50%, -50%);
-  // 创建模糊发光效果
-  filter: blur(50px);
+  filter: blur(60px);
   z-index: 1;
-  opacity: 0.6;
-  // 应用呼吸动画
-  animation: glowPulse 6s infinite alternate;
+  opacity: 0.7;
+  animation: glowPulse 7s infinite alternate;
 }
 
 @keyframes glowPulse {
   0% {
-    opacity: 0.4;
-    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(0.92);
   }
   100% {
-    opacity: 0.7;
-    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.08);
   }
 }
 
@@ -120,184 +116,313 @@
 }
 
 .bannerTitle {
-  font-size: 2.8rem;
+  font-size: 3rem;
   font-weight: 700;
-  line-height: 1;
-  margin-bottom: 12px;
+  line-height: 1.1;
+  margin-bottom: 16px;
   background: linear-gradient(45deg, #fff, #a9c2ff);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  text-shadow: 0 0 40px rgba(169, 194, 255, 0.4);
+  text-shadow: 0 0 40px rgba(169, 194, 255, 0.5);
   white-space: nowrap;
+  letter-spacing: -0.02em;
 }
 
 .bannerSubtitle {
   color: #9fccff;
-  font-size: 1.25rem;
-  margin-bottom: 10px;
+  font-size: 1.35rem;
+  margin-bottom: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .bannerDescription {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 1rem;
-  line-height: 1.5;
-  margin-bottom: 20px;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin-bottom: 24px;
   max-width: 600px;
 }
 
-// 标签过滤器容器
+// 课程分类标题样式优化
+.categorySectionTitle {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0 60px;
+  margin-bottom: 28px;
+  margin-top: 0px;
+}
+
+.categoryTitle {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 12px;
+  letter-spacing: 0.01em;
+  background: linear-gradient(90deg, #ffffff, #a9c2ff);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+// 流光线效果优化
+.flowingLine {
+  width: 100%;
+  height: 1.5px;
+  background: linear-gradient(
+    90deg,
+    rgba(159, 204, 255, 0.9) 0%,
+    rgba(102, 126, 234, 0.9) 50%,
+    rgba(159, 204, 255, 0) 100%
+  );
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      rgba(159, 204, 255, 0) 0%,
+      rgba(255, 255, 255, 0.9) 50%,
+      rgba(159, 204, 255, 0) 100%
+    );
+    animation: flowLight 3.5s ease-in-out infinite;
+  }
+}
+
+@keyframes flowLight {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 200%;
+  }
+}
+
+// 标签过滤器容器 - 靠左显示优化
 .tagFilterContainer {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  margin: 0 auto 20px;
   max-width: 1000px;
-  padding: 0 20px;
+  margin: 0 0 24px 60px;
+  padding: 0;
+  display: flex;
+  justify-content: flex-start;
 }
 
-.tagFilterBackground {
-  width: 100%;
-  padding: 12px 16px;
-  border-radius: 16px;
-  background-color: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-// 标签过滤器样式
+// 标签过滤器样式 - 移除背景，简约风格
 .tagFilter {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  justify-content: center;
+  gap: 14px;
+  justify-content: flex-start;
   width: 100%;
-}
-
-.tagButton {
-  font-size: 0.9rem;
-  padding: 8px 16px;
-  transition: all 0.3s ease;
-  border-radius: 50px;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-  }
 }
 
 // 技术标签切换按钮区域
 .techTagsToggle {
+  width: 100%;
   display: flex;
-  justify-content: center;
-  margin: 0 auto 16px;
+  justify-content: flex-start;
+  margin: 0 0 20px 60px;
 }
 
-.toggleButton {
-  font-size: 0.85rem;
-  border-radius: 20px;
-  padding: 6px 14px;
-  transition: all 0.2s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-  }
-}
-
-// 技术标签容器
+// 技术标签容器 - 靠左显示
 .techTagsContainer {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  margin: 0 auto 24px;
   max-width: 1000px;
-  padding: 0 20px;
-  overflow: hidden;
+  margin: 0 0 28px 60px;
+  padding: 0;
+
+  display: flex;
+  justify-content: flex-start;
 }
 
-.techTagsBackground {
-  width: 100%;
-  padding: 12px 16px;
-  border-radius: 16px;
-  background-color: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-}
-
+// 技术标签组
 .techTags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
+  gap: 10px;
+  justify-content: flex-start;
   width: 100%;
 }
 
-.techTagButton {
-  font-size: 0.8rem;
-  padding: 4px 12px;
-  transition: all 0.2s ease;
-  border-radius: 20px;
+// 标签按钮优化
+.tagButton {
+  font-size: 0.95rem;
+  padding: 9px 18px;
+  transition: all 0.3s ease;
+  border-radius: 50px;
+  font-weight: 500;
+  border: 1px solid rgba(159, 204, 255, 0.3);
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+  }
+
+  // 选中状态样式
+  &.active {
+    border: none; // 移除边框
+    background: linear-gradient(45deg, #3366ff, #667eea);
+    transform: none !important; // 禁用浮动效果
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5); // 保持适当的阴影
+
+    &:hover {
+      transform: none !important; // 确保禁用浮动效果
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5); // 保持阴影不变
+    }
   }
 }
 
+.toggleButton {
+  font-size: 0.9rem;
+  border-radius: 20px;
+  padding: 7px 16px;
+  transition: all 0.3s ease;
+  background: linear-gradient(
+    90deg,
+    rgba(102, 126, 234, 0.2),
+    rgba(102, 126, 234, 0.1)
+  );
+  border: 1px solid rgba(159, 204, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+
+  &:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(
+      90deg,
+      rgba(102, 126, 234, 0.3),
+      rgba(102, 126, 234, 0.2)
+    );
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+  }
+}
+
+.techTagButton {
+  font-size: 0.85rem;
+  padding: 5px 14px;
+  transition: all 0.3s ease;
+  border-radius: 20px;
+  font-weight: 500;
+  border: 1px solid rgba(159, 204, 255, 0.2);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+  }
+
+  // 选中状态样式
+  &.active {
+    border: none; // 移除边框
+    background: linear-gradient(45deg, #3366ff, #667eea);
+    transform: none !important; // 禁用浮动效果
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.4); // 保持适当的阴影
+
+    &:hover {
+      transform: none !important; // 确保禁用浮动效果
+      box-shadow: 0 4px 10px rgba(102, 126, 234, 0.4); // 保持阴影不变
+    }
+  }
+}
+
+// 探索按钮优化
 .exploreButton {
   transition: all 0.3s ease !important;
-  padding: 12px 30px;
+  padding: 13px 32px;
   background: linear-gradient(45deg, #3366ff, #667eea);
   border: none;
   border-radius: 50px;
   color: white;
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 6px 18px rgba(102, 126, 234, 0.6);
+  letter-spacing: 0.01em;
 }
 
 .exploreButton:hover {
-  transform: scale(0.98);
-  box-shadow: 0 7px 20px rgba(102, 126, 234, 0.7);
+  transform: scale(0.98) translateY(-1px);
+  box-shadow: 0 8px 22px rgba(102, 126, 234, 0.8);
   background: linear-gradient(45deg, #4477ff, #7a8eee);
 }
 
 .exploreButton:active {
-  transform: scale(0.98);
-  box-shadow: 0 7px 20px rgba(102, 126, 234, 0.7);
-  background: linear-gradient(45deg, #4477ff, #7a8eee);
+  transform: scale(0.96);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.7);
 }
 
+// 课程内容区域优化
 .coursesSection {
   width: 100%;
   position: relative;
   z-index: 3;
-  padding: 0 40px;
+  padding: 20px 60px 60px;
   display: flex;
-  justify-content: center;
-  gap: 20px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 30px;
   margin-bottom: 60px;
 }
 
+// 课程卡片优化
 .courseCard {
-  width: 280px;
-  height: 320px;
-  background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
+  width: 300px;
+  height: 340px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08),
+    rgba(255, 255, 255, 0.03)
+  );
+  border-radius: 20px;
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.4s ease;
   cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: 600;
+  font-size: 1.1rem;
+  text-align: center;
+  padding: 25px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 
   &:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    border-color: rgba(102, 126, 234, 0.3);
+    transform: translateY(-10px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+    border-color: rgba(102, 126, 234, 0.4);
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.12),
+      rgba(255, 255, 255, 0.05)
+    );
   }
+}
+
+// 添加无内容提示样式
+.noContentMessage {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.1rem;
+  padding: 40px 0;
+  text-align: center;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
 }

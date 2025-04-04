@@ -102,13 +102,13 @@ export default function Page({ params }: { params: { locale: string } }) {
           <AnimatePopularBoxes />
         </BannerCarousel>
       </CourseCarouselProvider>
-      <CourseCarouselProvider courses={filteredCourses}>
-        <AnimateCoursesBoxes
-          tagList={categoryList}
-          currentTag={currentCategory}
-          onTagSelect={handleCategorySelect}
-        />
-      </CourseCarouselProvider>
+
+      {/* 课程展示区 */}
+      <AnimateCoursesBoxes
+        tagList={categoryList}
+        currentTag={currentCategory}
+        onTagSelect={handleCategorySelect}
+      />
     </>
   );
 }

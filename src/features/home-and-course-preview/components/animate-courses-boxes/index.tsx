@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Text, Flex, Button, Background } from "@/once-ui/components";
 import { useCoursesAndLessonsForPreview } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
 import { CourseCardSkeletons } from "@/features/home-and-course-preview/components/skeletons";
+import { LessonLight } from "@/features/types/api/lesson";
+import { Tag } from "@/features/types/api/tag";
 import styles from "./index.module.scss";
 
 interface AnimateCoursesBoxesProps {
@@ -192,11 +194,18 @@ export const AnimateCoursesBoxes = ({
       (lesson) => lesson.course && courseIds.includes(lesson.course.id)
     );
 
-    // 如果有选择技术标签，则继续筛选
+    // 由于LessonLight可能没有tags属性，先暂时不进行技术标签筛选
+    // 实际应用中可能需要扩展LessonLight类型或通过API获取完整数据
     if (selectedTechTags.length > 0) {
+      // 假设lesson上有一个关联的tags属性，实际使用时需要更新类型定义或API
       lessonResults = lessonResults.filter((lesson) => {
-        // 检查课时是否包含任一所选技术标签
-        return lesson.tags?.some((tag) => selectedTechTags.includes(tag.name));
+        // 这里使用类型断言处理当前的类型问题
+        const lessonWithTags = lesson as LessonLight & { tags?: Array<Tag> };
+        return (
+          lessonWithTags.tags?.some((tag) =>
+            selectedTechTags.includes(tag.name)
+          ) || false
+        );
       });
     }
 
@@ -227,33 +236,55 @@ export const AnimateCoursesBoxes = ({
         </div>
 
         <div className={styles.bannerContent}>
-          <Text as="h1" className={styles.bannerTitle} variant="body-strong-xl">
-            Discover Web3 Education
-          </Text>
-
-          <Text
-            as="h2"
-            className={styles.bannerSubtitle}
-            variant="body-strong-l"
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut" }}
           >
-            Learn. Build. Innovate.
-          </Text>
-
-          <Text
-            as="p"
-            className={styles.bannerDescription}
-            variant="body-default-m"
-          >
-            Join our community and gain the skills needed to thrive in the
-            decentralized future. Explore courses crafted by industry experts.
-          </Text>
+            <Text
+              as="h1"
+              className={styles.bannerTitle}
+              variant="body-strong-xl"
+            >
+              Discover Web3 Education
+            </Text>
+          </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+          >
+            <Text
+              as="h2"
+              className={styles.bannerSubtitle}
+              variant="body-strong-l"
+            >
+              Learn. Build. Innovate.
+            </Text>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.4, ease: "easeOut" }}
+          >
+            <Text
+              as="p"
+              className={styles.bannerDescription}
+              variant="body-default-m"
+            >
+              Join our community and gain the skills needed to thrive in the
+              decentralized future. Explore courses crafted by industry experts.
+            </Text>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
               duration: 0.8,
-              delay: 0.5,
+              delay: 0.6,
               ease: [0.4, 0, 0.2, 1],
             }}
           >
@@ -274,59 +305,75 @@ export const AnimateCoursesBoxes = ({
         ref={tagFilterRef}
         style={{
           position: "relative",
-          zIndex: 2,
-          marginTop: "-20px",
+          zIndex: 5, // 提高z-index确保显示在最前
+          marginTop: "0px", // 调整顶部间距与banner保持适当距离
           marginBottom: "30px",
           width: "100%",
         }}
       >
+        {/* 课程分类标题和流光线 */}
+        <motion.div
+          className={styles.categorySectionTitle}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
+          <Text
+            as="h2"
+            variant="body-strong-l"
+            className={styles.categoryTitle}
+          >
+            课程选择
+          </Text>
+          <div className={styles.flowingLine}></div>
+        </motion.div>
+
         {/* 主要课程分类标签 */}
         {tagList && tagList.length > 1 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            style={{
-              width: "100%",
-              maxWidth: "1000px",
-              margin: "0 auto 20px",
-              padding: "0 15px",
-            }}
+            transition={{ duration: 0.5, delay: 0.2, ease: "easeInOut" }}
+            className={styles.tagFilterContainer}
           >
-            <Background
-              position="relative"
-              className={styles.tagFilterBackground}
-            >
-              <Flex className={styles.tagFilter} wrap>
-                {tagList.map((tag) => (
-                  <motion.div
-                    key={tag}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+            <Flex className={styles.tagFilter} wrap>
+              {tagList.map((tag, index) => (
+                <motion.div
+                  key={tag}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.3,
+                    delay: 0.1 + index * 0.05,
+                    ease: "easeOut",
+                  }}
+                  whileHover={
+                    currentTag !== tag ? { scale: 1.05, y: -3 } : { scale: 1 }
+                  }
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    variant={currentTag === tag ? "primary" : "secondary"}
+                    size="m"
+                    onClick={() => handleTagClick(tag)}
+                    className={`${styles.tagButton} ${
+                      currentTag === tag ? styles.active : ""
+                    }`}
                   >
-                    <Button
-                      variant={currentTag === tag ? "primary" : "secondary"}
-                      size="m"
-                      onClick={() => handleTagClick(tag)}
-                      className={styles.tagButton}
-                    >
-                      {tag}
-                    </Button>
-                  </motion.div>
-                ))}
-              </Flex>
-            </Background>
+                    {tag}
+                  </Button>
+                </motion.div>
+              ))}
+            </Flex>
           </motion.div>
         )}
 
         {/* 技术标签切换按钮 */}
-        <div
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            margin: "0 auto 16px",
-          }}
+        <motion.div
+          className={styles.techTagsToggle}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.4 }}
         >
           <Button
             variant="secondary"
@@ -334,10 +381,10 @@ export const AnimateCoursesBoxes = ({
             onClick={toggleTechTags}
             className={styles.toggleButton}
           >
-            {showTechTags ? "Hide Tech Tags" : "Show Tech Tags"}
+            {showTechTags ? "收起技术标签" : "展开技术标签"}
             {showTechTags ? " ▲" : " ▼"}
           </Button>
-        </div>
+        </motion.div>
 
         {/* 技术标签区域 - 可折叠 */}
         <AnimatePresence>
@@ -346,21 +393,27 @@ export const AnimateCoursesBoxes = ({
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              style={{
-                width: "100%",
-                maxWidth: "1000px",
-                margin: "0 auto 24px",
-                padding: "0 15px",
-                overflow: "hidden",
-              }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              className={styles.techTagsContainer}
             >
-              <Background
-                position="relative"
-                className={styles.techTagsBackground}
-              >
-                <Flex className={styles.techTags} wrap>
-                  {techTags.map((tag) => (
+              <Flex className={styles.techTags} wrap>
+                {techTags.map((tag, index) => (
+                  <motion.div
+                    key={tag}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{
+                      duration: 0.2,
+                      delay: 0.1 + index * 0.03,
+                      ease: "easeOut",
+                    }}
+                    whileHover={
+                      !selectedTechTags.includes(tag)
+                        ? { scale: 1.05, y: -2 }
+                        : { scale: 1 }
+                    }
+                    whileTap={{ scale: 0.95 }}
+                  >
                     <Button
                       key={tag}
                       variant={
@@ -368,55 +421,77 @@ export const AnimateCoursesBoxes = ({
                       }
                       size="s"
                       onClick={() => handleTechTagClick(tag)}
-                      className={styles.techTagButton}
+                      className={`${styles.techTagButton} ${
+                        selectedTechTags.includes(tag) ? styles.active : ""
+                      }`}
                     >
                       {tag}
                     </Button>
-                  ))}
-                </Flex>
-              </Background>
+                  </motion.div>
+                ))}
+              </Flex>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
       {/* Content Section - 显示课程或课时 */}
-      <Flex
-        ref={coursesSectionRef}
-        className={styles.coursesSection}
-        align="center"
-        wrap
-      >
+      <Flex ref={coursesSectionRef} className={styles.coursesSection}>
         {loading || isLoading ? (
           <CourseCardSkeletons count={3} />
         ) : selectedTechTags.length > 0 ? (
           // 如果选择了技术标签，显示筛选后的课时
           filteredLessons.length > 0 ? (
-            filteredLessons.map((lesson) => (
+            filteredLessons.map((lesson, index) => (
               <motion.div
                 key={lesson.id}
                 className={styles.courseCard}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 * lesson.id }}
+                initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{
+                  duration: 0.6,
+                  delay: 0.1 + index * 0.1,
+                  ease: "easeOut",
+                }}
+                whileHover={{
+                  y: -10,
+                  boxShadow: "0 15px 35px rgba(0, 0, 0, 0.25)",
+                  borderColor: "rgba(102, 126, 234, 0.4)",
+                }}
               >
                 {lesson.title}
               </motion.div>
             ))
           ) : (
-            <Text variant="body-default-m">
-              No lessons found with the selected filters.
-            </Text>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              className={styles.noContentMessage}
+            >
+              <Text variant="body-default-m">
+                没有找到符合筛选条件的课程。请尝试其他标签组合。
+              </Text>
+            </motion.div>
           )
         ) : (
           // 否则显示筛选后的课程
-          filteredCourses.map((course) => (
+          filteredCourses.map((course, index) => (
             <motion.div
               key={course.id}
               className={styles.courseCard}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 * course.id }}
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{
+                duration: 0.6,
+                delay: 0.1 + index * 0.1,
+                ease: "easeOut",
+              }}
+              whileHover={{
+                y: -10,
+                boxShadow: "0 15px 35px rgba(0, 0, 0, 0.25)",
+                borderColor: "rgba(102, 126, 234, 0.4)",
+              }}
             >
               {course.title}
             </motion.div>
