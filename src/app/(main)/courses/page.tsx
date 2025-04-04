@@ -12,8 +12,8 @@ import { usePopularCourses } from "@/features/home-and-course-preview/api/use-ge
 import { CourseCarouselProvider } from "@/features/home-and-course-preview/context/courseCarouselContext";
 
 export default function Page({ params }: { params: { locale: string } }) {
-  const [tagList, setTagList] = useState<string[]>(["All"]);
-  const [currentTag, setCurrentTag] = useState<string>("All");
+  const [categoryList, setCategoryList] = useState<string[]>(["All"]);
+  const [currentCategory, setCurrentCategory] = useState<string>("All");
 
   const [popularCourses, setPopularCourses] = useState<Course[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
@@ -25,33 +25,31 @@ export default function Page({ params }: { params: { locale: string } }) {
   const { data: coursesData, isLoading: coursesLoading } =
     useCoursesAndLessonsForPreview();
 
-  // 从课程数据中提取标签
+  // 从课程数据中提取分类
   useEffect(() => {
     if (coursesData) {
-      const tags = new Set<string>();
-      tags.add("All");
+      const categories = new Set<string>();
+      categories.add("All");
 
-      // 仅从常规课程中提取标签
+      // 从课程中提取分类标签
       coursesData.courses.forEach((course) => {
-        if (course.tags && Array.isArray(course.tags)) {
-          course.tags.forEach((tag) => {
-            if (tag && tag.name) {
-              tags.add(tag.name);
-            }
-          });
+        // 优先使用 shortTitleTag
+        if (course.shortTitleTag) {
+          categories.add(course.shortTitleTag);
+        }
+        // 其次使用 category name
+        else if (course.category?.name) {
+          categories.add(course.category.name);
+        }
+        // 最后使用标题的简化版本
+        else {
+          const shortTitle = course.title.split(" ").slice(0, 2).join(" ");
+          categories.add(shortTitle);
         }
       });
 
-      setTagList(Array.from(tags));
+      setCategoryList(Array.from(categories));
     }
-  }, [coursesData]);
-
-  useEffect(() => {
-    console.log(tagList);
-  }, [tagList]);
-
-  useEffect(() => {
-    console.log(coursesData);
   }, [coursesData]);
 
   // 设置热门课程数据
@@ -69,25 +67,32 @@ export default function Page({ params }: { params: { locale: string } }) {
     }
   }, [coursesData]);
 
-  // 根据当前选中的标签筛选课程
+  // 根据当前选中的分类筛选课程
   useEffect(() => {
-    if (currentTag === "All") {
+    if (currentCategory === "All") {
       setFilteredCourses(courses);
     } else {
-      const filtered = courses.filter(
-        (course) =>
-          course.tags &&
-          Array.isArray(course.tags) &&
-          course.tags.some((tag) => tag && tag.name === currentTag)
-      );
+      const filtered = courses.filter((course) => {
+        // 优先匹配 shortTitleTag
+        if (course.shortTitleTag === currentCategory) {
+          return true;
+        }
+        // 其次匹配 category name
+        if (course.category?.name === currentCategory) {
+          return true;
+        }
+        // 最后匹配标题的简化版本
+        const shortTitle = course.title.split(" ").slice(0, 2).join(" ");
+        return shortTitle === currentCategory;
+      });
 
       setFilteredCourses(filtered);
     }
-  }, [currentTag, courses]);
+  }, [currentCategory, courses]);
 
-  // 标签选择处理函数
-  const handleTagSelect = (tag: string) => {
-    setCurrentTag(tag);
+  // 分类选择处理函数
+  const handleCategorySelect = (category: string) => {
+    setCurrentCategory(category);
   };
 
   return (
@@ -99,9 +104,9 @@ export default function Page({ params }: { params: { locale: string } }) {
       </CourseCarouselProvider>
       <CourseCarouselProvider courses={filteredCourses}>
         <AnimateCoursesBoxes
-          tagList={tagList}
-          currentTag={currentTag}
-          onTagSelect={handleTagSelect}
+          tagList={categoryList}
+          currentTag={currentCategory}
+          onTagSelect={handleCategorySelect}
         />
       </CourseCarouselProvider>
     </>
