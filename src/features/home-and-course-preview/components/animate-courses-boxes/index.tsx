@@ -145,44 +145,118 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
   const filteredCourses = useMemo(() => {
     if (!data?.courses) return [];
 
+    // 如果是All标签，返回所有课程
     if (internalTag === "All") {
+      // 如果选择了技术标签，进行组合筛选（必须同时包含所有选中的标签）
+      if (selectedTechTags.length > 0) {
+        return data.courses.filter((course) => {
+          if (!course.tags || course.tags.length === 0) return false;
+
+          // 检查课程是否包含所有选定的标签
+          return selectedTechTags.every((selectedTag) =>
+            course.tags.some((tag) => tag.name === selectedTag)
+          );
+        });
+      }
+      // 否则返回所有课程
       return data.courses;
     }
 
-    return data.courses.filter((course) => {
+    // 首先基于课程分类筛选
+    let filtered = data.courses.filter((course) => {
       if (course.shortTitleTag === internalTag) return true;
       if (course.category?.name === internalTag) return true;
 
       const shortTitle = course.title.split(" ").slice(0, 2).join(" ");
       return shortTitle === internalTag;
     });
-  }, [data?.courses, internalTag]);
 
-  // 筛选的课时列表
-  const filteredLessons = useMemo(() => {
-    if (!data?.lessons || filteredCourses.length === 0) return [];
-
-    const courseIds = filteredCourses.map((course) => course.id);
-
-    // 筛选属于所选课程的课时
-    let filtered = data.lessons.filter(
-      (lesson) => lesson.course && courseIds.includes(lesson.course.id)
-    );
-
-    // 如果选择了技术标签，进一步筛选
+    // 如果选择了技术标签，进行组合筛选
     if (selectedTechTags.length > 0) {
-      filtered = filtered.filter((lesson) => {
-        const lessonWithTags = lesson as LessonLight & { tags?: Array<Tag> };
-        return (
-          lessonWithTags.tags?.some((tag) =>
-            selectedTechTags.includes(tag.name)
-          ) || false
+      filtered = filtered.filter((course) => {
+        if (!course.tags || course.tags.length === 0) return false;
+
+        // 检查课程是否包含所有选定的标签
+        return selectedTechTags.every((selectedTag) =>
+          course.tags.some((tag) => tag.name === selectedTag)
         );
       });
     }
 
     return filtered;
-  }, [data?.lessons, filteredCourses, selectedTechTags]);
+  }, [data?.courses, internalTag, selectedTechTags]);
+
+  // 获取所有课时
+  const allLessons = useMemo(() => {
+    return data?.lessons || [];
+  }, [data?.lessons]);
+
+  // 根据选中课程筛选课时
+  const filteredLessons = useMemo(() => {
+    if (!allLessons.length || !data?.courses) return [];
+
+    // 如果是All标签且没有选择技术标签，显示所有课时
+    if (internalTag === "All" && selectedTechTags.length === 0) {
+      return allLessons;
+    }
+
+    // 如果选择了特定分类
+    let courseIds: Array<string | number> = [];
+
+    // 根据课程分类筛选课程ID
+    if (internalTag !== "All") {
+      courseIds = data.courses
+        .filter((course) => {
+          if (course.shortTitleTag === internalTag) return true;
+          if (course.category?.name === internalTag) return true;
+
+          const shortTitle = course.title.split(" ").slice(0, 2).join(" ");
+          return shortTitle === internalTag;
+        })
+        .map((course) => course.id);
+    } else {
+      // 对于All分类，使用所有课程
+      courseIds = data.courses.map((course) => course.id);
+    }
+
+    // 筛选属于这些课程的课时
+    let filtered = allLessons.filter(
+      (lesson) => lesson.course && courseIds.includes(lesson.course.id)
+    );
+
+    // 如果选择了技术标签，进行组合筛选
+    if (selectedTechTags.length > 0) {
+      filtered = filtered.filter((lesson) => {
+        // 类型转换以处理课时标签
+        const lessonWithTags = lesson as LessonLight & { tags?: Array<Tag> };
+
+        // 检查课时标签
+        if (lessonWithTags.tags && lessonWithTags.tags.length > 0) {
+          // 必须包含所有选中的标签
+          const hasTags = selectedTechTags.every((selectedTag) => {
+            return lessonWithTags.tags!.some((tag) => tag.name === selectedTag);
+          });
+          if (hasTags) return true;
+        }
+
+        // 检查所属课程标签
+        if (
+          lesson.course &&
+          lesson.course.tags &&
+          lesson.course.tags.length > 0
+        ) {
+          // 必须包含所有选中的标签
+          return selectedTechTags.every((selectedTag) =>
+            lesson.course!.tags!.some((tag) => tag.name === selectedTag)
+          );
+        }
+
+        return false;
+      });
+    }
+
+    return filtered;
+  }, [allLessons, data?.courses, internalTag, selectedTechTags]);
 
   // 同步外部propCurrentTag变化
   useEffect(() => {
@@ -221,6 +295,11 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
       }
       return [...prev, tag];
     });
+  }, []);
+
+  // 清除所有选中的技术标签
+  const clearSelectedTags = useCallback(() => {
+    setSelectedTechTags([]);
   }, []);
 
   // 切换技术标签显示
@@ -308,12 +387,13 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
               tags={visibleTechTags}
               selectedTags={selectedTechTags}
               handleTagClick={handleTechTagClick}
+              clearSelectedTags={clearSelectedTags}
             />
           )}
         </AnimatePresence>
       </Flex>
 
-      {/* 内容区域 */}
+      {/* 内容区域 - 展示课程和课时 */}
       <Flex className={styles.coursesSection}>
         <CourseDisplay
           loading={loading}

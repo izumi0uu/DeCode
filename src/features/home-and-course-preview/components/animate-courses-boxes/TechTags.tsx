@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { Flex, Button } from "@/once-ui/components";
+import { Flex, Button, Icon } from "@/once-ui/components";
+import React from "react";
 import styles from "./index.module.scss";
 
 interface TechTagsProps {
@@ -7,6 +8,7 @@ interface TechTagsProps {
   tags: string[];
   selectedTags: string[];
   handleTagClick: (tag: string) => void;
+  clearSelectedTags?: () => void;
 }
 
 export const TechTags = ({
@@ -14,6 +16,7 @@ export const TechTags = ({
   tags,
   selectedTags,
   handleTagClick,
+  clearSelectedTags,
 }: TechTagsProps) => {
   if (!visible) return null;
 
@@ -56,6 +59,25 @@ export const TechTags = ({
             </Button>
           </motion.div>
         ))}
+
+        {selectedTags.length > 0 && clearSelectedTags && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <Button
+              variant="primary"
+              size="s"
+              onClick={clearSelectedTags}
+              className={styles.clearTagsButton}
+              aria-label="Clear all selected tags"
+            >
+              <Icon name="close" size="xs" color="white" />
+            </Button>
+          </motion.div>
+        )}
       </Flex>
     </motion.div>
   );

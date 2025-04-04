@@ -25,6 +25,10 @@ export default function Page({ params }: { params: { locale: string } }) {
   const { data: coursesData, isLoading: coursesLoading } =
     useCoursesAndLessonsForPreview();
 
+  useEffect(() => {
+    console.log(coursesData);
+  }, [coursesData]);
+
   // 从课程数据中提取分类
   useEffect(() => {
     if (coursesData) {
