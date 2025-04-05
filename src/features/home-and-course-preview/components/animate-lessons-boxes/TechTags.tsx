@@ -17,6 +17,12 @@ const tagVariants = {
   tap: { scale: 0.95 },
 };
 
+// 标签项接口
+export interface TagItem {
+  id: number;
+  name: string;
+}
+
 // 优化清除按钮组件
 const ClearButton = memo(
   ({ onClick, visible }: { onClick: () => void; visible: boolean }) => {
@@ -44,14 +50,14 @@ const TagButton = memo(
     index,
     onClick,
   }: {
-    tag: string;
+    tag: TagItem;
     isSelected: boolean;
     index: number;
-    onClick: (tag: string) => void;
+    onClick: (tagId: number, tagName: string) => void;
   }) => {
     // 使用回调避免闭包问题
     const handleClick = useCallback(() => {
-      onClick(tag);
+      onClick(tag.id, tag.name);
     }, [onClick, tag]);
 
     // 动画延迟，营造交错效果
@@ -59,7 +65,7 @@ const TagButton = memo(
 
     return (
       <motion.div
-        key={tag}
+        key={tag.id}
         initial="hidden"
         animate="visible"
         transition={{
@@ -79,7 +85,7 @@ const TagButton = memo(
             isSelected ? styles.active : ""
           }`}
         >
-          {tag}
+          {tag.name}
         </Button>
       </motion.div>
     );
@@ -89,23 +95,23 @@ const TagButton = memo(
 // 主组件
 interface TechTagsProps {
   visible: boolean;
-  tags: string[];
-  selectedTags: string[];
-  handleTagClick: (tag: string) => void;
+  tags: TagItem[];
+  selectedTagIds: number[];
+  handleTagClick: (tagId: number, tagName: string) => void;
   clearSelectedTags: () => void;
 }
 
 const TechTags = ({
   visible,
   tags,
-  selectedTags,
+  selectedTagIds,
   handleTagClick,
   clearSelectedTags,
 }: TechTagsProps) => {
   // 计算是否显示清除按钮
   const showClearButton = useMemo(
-    () => selectedTags.length > 0,
-    [selectedTags.length]
+    () => selectedTagIds.length > 0,
+    [selectedTagIds.length]
   );
 
   return (
@@ -125,9 +131,9 @@ const TechTags = ({
         {/* 标签列表 */}
         {tags.map((tag, index) => (
           <TagButton
-            key={tag}
+            key={tag.id}
             tag={tag}
-            isSelected={selectedTags.includes(tag)}
+            isSelected={selectedTagIds.includes(tag.id)}
             index={index}
             onClick={handleTagClick}
           />
