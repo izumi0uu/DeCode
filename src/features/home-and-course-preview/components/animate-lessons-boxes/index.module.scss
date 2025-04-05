@@ -377,8 +377,100 @@
   margin-bottom: 60px;
 }
 
+// 新增 lessonsSection 类，保持与 coursesSection 相同的样式
+.lessonsSection {
+  width: 100%;
+  position: relative;
+  z-index: 3;
+  padding: 20px 60px 60px;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-bottom: 60px;
+}
+
 // 课程卡片优化
 .courseCard {
+  position: relative;
+  width: 300px;
+  min-height: 340px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .imageWrapper {
+    width: 100%;
+    height: 160px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  .cardContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.95);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .description {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .cardFooter {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+    span {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.875rem;
+    }
+  }
+
+  .courseName {
+    color: rgba(159, 204, 255, 0.9);
+    font-size: 0.85rem;
+    font-style: italic;
+    margin-top: 4px;
+    padding-left: 4px;
+    border-left: 2px solid rgba(159, 204, 255, 0.5);
+  }
+
+  &:hover {
+    border-color: rgba(102, 126, 234, 0.4);
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+// 添加课时卡片样式，与课程卡片相同
+.lessonCard {
   position: relative;
   width: 300px;
   min-height: 340px;

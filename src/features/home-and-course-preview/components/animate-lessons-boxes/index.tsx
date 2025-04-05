@@ -2,13 +2,10 @@ import React, { useCallback, useState, useEffect, useMemo, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Text, Flex, Button } from "@/once-ui/components";
 import { useCoursesAndLessonsForPreview } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
-import { LessonLight } from "@/features/types/api/lesson";
-import { Tag } from "@/features/types/api/tag";
-import { Course } from "@/features/types/api/course";
 import { Banner } from "./Banner";
 import { CategoryTags } from "./CategoryTags";
 import { TechTags, TagItem } from "./TechTags"; // 导入新的TagItem接口
-import { CourseDisplay } from "./LessonDisplay";
+import { LessonDisplay } from "./LessonDisplay";
 import styles from "./index.module.scss";
 
 // 主组件接口
@@ -58,7 +55,7 @@ const DEFAULT_TECH_TAGS: TagItem[] = [
 const MemoizedBanner = memo(Banner);
 const MemoizedCategoryTags = memo(CategoryTags);
 const MemoizedTechTags = memo(TechTags);
-const MemoizedCourseDisplay = memo(CourseDisplay);
+const MemoizedLessonDisplay = memo(LessonDisplay);
 
 export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
   // 解构属性
@@ -403,8 +400,8 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
       </Flex>
 
       {/* 内容区域 - 始终展示课时 */}
-      <Flex className={styles.coursesSection}>
-        <MemoizedCourseDisplay
+      <Flex className={styles.lessonsSection}>
+        <MemoizedLessonDisplay
           loading={isLoading}
           isLoading={isLoading}
           selectedTechTags={selectedTagNames}

@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { Text, Flex, Skeleton } from "@/once-ui/components";
 import { CourseCardSkeletons } from "@/features/home-and-course-preview/components/skeletons";
 import { LessonLight } from "@/features/types/api/lesson";
-import { Course } from "@/features/types/api/course";
 import Image from "next/image";
 import styles from "./index.module.scss";
 
@@ -30,8 +29,8 @@ const ImageSkeleton = memo(() => (
   />
 ));
 
-// 课程卡片图片组件
-const CourseImage = memo(({ src, alt }: { src: string; alt: string }) => {
+// 课时卡片图片组件
+const LessonImage = memo(({ src, alt }: { src: string; alt: string }) => {
   return (
     <div className={styles.imageWrapper}>
       <Image
@@ -54,21 +53,14 @@ const CourseImage = memo(({ src, alt }: { src: string; alt: string }) => {
 // 课时卡片组件
 const LessonCard = memo(
   ({ lesson, index = 0 }: { lesson: LessonLight; index?: number }) => {
-    // 构建图片URL - 优先使用课时的coverImage
-    const imageUrl = lesson.coverImage?.url
-      ? `${process.env.NEXT_PUBLIC_STRAPI_URL || ""}${lesson.coverImage.url}`
-      : lesson.course?.coverImage?.url
-      ? `${process.env.NEXT_PUBLIC_STRAPI_URL || ""}${
-          lesson.course.coverImage.url
-        }`
-      : "/placeholder.jpg";
+    const imageUrl = "/placeholder.jpg";
 
     // 使用索引延迟动画以创建交错效果
     const transitionDelay = 0.05 + (index % 10) * 0.05;
 
     return (
       <motion.div
-        className={styles.courseCard}
+        className={styles.lessonCard}
         variants={cardVariants}
         initial="hidden"
         animate="visible"
@@ -81,7 +73,7 @@ const LessonCard = memo(
         layout
       >
         {imageUrl ? (
-          <CourseImage src={imageUrl} alt={lesson.title} />
+          <LessonImage src={imageUrl} alt={lesson.title} />
         ) : (
           <ImageSkeleton />
         )}
@@ -116,60 +108,6 @@ const LessonCard = memo(
   }
 );
 
-// 课程卡片组件
-const CourseCard = memo(
-  ({ course, index = 0 }: { course: Course; index?: number }) => {
-    const imageUrl = course.coverImage?.url
-      ? `${process.env.NEXT_PUBLIC_STRAPI_URL || ""}${course.coverImage.url}`
-      : "/placeholder.jpg";
-
-    // 使用索引延迟动画以创建交错效果
-    const transitionDelay = 0.05 + (index % 10) * 0.05;
-
-    return (
-      <motion.div
-        className={styles.courseCard}
-        variants={cardVariants}
-        initial="hidden"
-        animate="visible"
-        whileHover="hover"
-        transition={{
-          duration: 0.6,
-          delay: transitionDelay,
-          ease: "easeOut",
-        }}
-        layout
-      >
-        {imageUrl ? (
-          <CourseImage src={imageUrl} alt={course.title} />
-        ) : (
-          <ImageSkeleton />
-        )}
-
-        <Flex direction="column" gap="m" className={styles.cardContent}>
-          <Text variant="body-strong-l" className={styles.title}>
-            {course.title}
-          </Text>
-
-          <Text variant="body-default-m" className={styles.description}>
-            {course.description}
-          </Text>
-
-          <Flex
-            className={styles.cardFooter}
-            style={{ justifyContent: "space-between", alignItems: "center" }}
-          >
-            <Text variant="body-strong-s">
-              {course.difficulty || "Beginner"}
-            </Text>
-            <Text variant="body-default-s">{course.duration || "N/A"} min</Text>
-          </Flex>
-        </Flex>
-      </motion.div>
-    );
-  }
-);
-
 // 空内容提示组件
 const NoContentMessage = memo(() => (
   <div className={styles.noContentMessage}>
@@ -180,12 +118,11 @@ const NoContentMessage = memo(() => (
   </div>
 ));
 
-interface CourseDisplayProps {
+interface LessonDisplayProps {
   loading: boolean;
   isLoading: boolean;
   selectedTechTags: string[];
   filteredLessons: LessonLight[];
-  filteredCourses: Course[];
 }
 
 // 实现虚拟化列表，只渲染可见区域的项目
@@ -228,18 +165,11 @@ const VirtualizedList = memo(
 );
 
 // 主组件使用memo优化
-export const CourseDisplay = memo(
-  ({
-    loading,
-    isLoading,
-    selectedTechTags,
-    filteredLessons,
-    filteredCourses,
-  }: CourseDisplayProps) => {
+export const LessonDisplay = memo(
+  ({ loading, isLoading, filteredLessons }: LessonDisplayProps) => {
     // 避免不必要的计算
     const isDataLoading = loading || isLoading;
     const hasLessons = filteredLessons && filteredLessons.length > 0;
-    const hasCourses = filteredCourses && filteredCourses.length > 0;
 
     // 根据数据状态渲染相应内容
     if (isDataLoading) {
@@ -253,18 +183,6 @@ export const CourseDisplay = memo(
           items={filteredLessons}
           renderItem={(lesson, index) => (
             <LessonCard key={lesson.id} lesson={lesson} index={index} />
-          )}
-        />
-      );
-    }
-
-    // 显示课程
-    if (hasCourses) {
-      return (
-        <VirtualizedList
-          items={filteredCourses}
-          renderItem={(course, index) => (
-            <CourseCard key={course.id} course={course} index={index} />
           )}
         />
       );
