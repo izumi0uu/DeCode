@@ -7,7 +7,7 @@ import { Background, Column, Flex, ToastProvider } from "@/once-ui/components";
 import localFont from "next/font/local";
 import { Raleway, Sora } from "next/font/google";
 
-import { Header, Footer } from "@/components";
+import { Header } from "@/components";
 
 import { style, effects } from "@/resources/index";
 

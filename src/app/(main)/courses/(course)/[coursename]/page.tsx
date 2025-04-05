@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Flex, Text, Skeleton, Button } from "@/once-ui/components";
+import { Flex, Text, Button } from "@/once-ui/components";
 import { useCoursesAndLessonsForPreview } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
 import { Course } from "@/features/types/api/course";
 import { LessonLight } from "@/features/types/api/lesson";
@@ -15,7 +15,7 @@ export default function CoursePage() {
   const coursename = segments[segments.length - 1];
   const router = useRouter();
 
-  const { data, isLoading, isError } = useCoursesAndLessonsForPreview();
+  const { data } = useCoursesAndLessonsForPreview();
   const [course, setCourse] = useState<Course | null>(null);
   const [lessons, setLessons] = useState<LessonLight[]>([]);
 
@@ -53,55 +53,6 @@ export default function CoursePage() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <Flex direction="column" padding="xl" gap="l">
-        <Skeleton shape="block" style={{ height: "40px", width: "60%" }} />
-        <Skeleton shape="block" style={{ height: "24px", width: "80%" }} />
-        <Skeleton shape="block" style={{ height: "24px", width: "40%" }} />
-
-        <Flex direction="column" gap="m" style={{ marginTop: "32px" }}>
-          <Skeleton shape="block" style={{ height: "32px", width: "30%" }} />
-          {[1, 2, 3].map((i) => (
-            <Skeleton
-              key={i}
-              shape="block"
-              style={{
-                height: "80px",
-                width: "100%",
-                marginTop: "16px",
-              }}
-            />
-          ))}
-        </Flex>
-      </Flex>
-    );
-  }
-
-  if (isError) {
-    return (
-      <Flex
-        direction="column"
-        padding="xl"
-        style={{
-          alignItems: "center",
-          minHeight: "50vh",
-        }}
-      >
-        <Text variant="heading-strong-l" color="error">
-          Error loading course
-        </Text>
-        <Text
-          variant="body-default-m"
-          color="light"
-          style={{ marginTop: "16px" }}
-        >
-          There was a problem loading this course. Please try again later.
-        </Text>
-      </Flex>
-    );
-  }
-
   if (!course) {
     return (
       <Flex
@@ -123,6 +74,13 @@ export default function CoursePage() {
         >
           The requested course could not be found.
         </Text>
+        <Button
+          variant="secondary"
+          onClick={() => router.push("/courses")}
+          style={{ marginTop: "24px" }}
+        >
+          Back to courses
+        </Button>
       </Flex>
     );
   }
