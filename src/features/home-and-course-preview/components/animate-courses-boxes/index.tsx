@@ -280,6 +280,17 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
     return filtered;
   }, [allLessons, data?.courses, internalTag, selectedTechTags]);
 
+  // 决定显示课程还是课时
+  const shouldShowLessons = useMemo(() => {
+    // 两种情况下显示课时：
+    // 1. 选择了非"All"的课程分类
+    // 2. 选择了任何技术标签且有匹配的课时
+    return (
+      (internalTag !== "All" || selectedTechTags.length > 0) &&
+      filteredLessons.length > 0
+    );
+  }, [internalTag, selectedTechTags, filteredLessons]);
+
   // 同步外部propCurrentTag变化
   useEffect(() => {
     if (propCurrentTag && propCurrentTag !== internalTag) {
@@ -421,8 +432,8 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
           loading={loading}
           isLoading={isLoading}
           selectedTechTags={selectedTechTags}
-          filteredLessons={filteredLessons}
-          filteredCourses={filteredCourses}
+          filteredLessons={shouldShowLessons ? filteredLessons : []}
+          filteredCourses={shouldShowLessons ? [] : filteredCourses}
         />
       </Flex>
     </Flex>
