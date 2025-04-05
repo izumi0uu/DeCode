@@ -128,7 +128,7 @@ const CourseSidebar = ({ coursePath }: { coursePath: string }) => {
     <Flex
       direction="column"
       style={{
-        width: "320px",
+        width: "400px",
         height: "100vh",
         borderRight: "1px solid rgba(51, 102, 255, 0.3)",
         background: "rgba(18, 18, 40, 0.95)",

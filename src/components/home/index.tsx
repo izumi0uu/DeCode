@@ -70,7 +70,7 @@ const Home = () => {
         </Column>
 
         {/* Featured Courses and Lessons Section */}
-        <Column fillWidth gap="xl" marginTop="xl">
+        <Column fillWidth gap="xl" marginTop="xl" center>
           <RevealFx translateY="16" delay={0.6}>
             <Flex direction="column" style={{ textAlign: "center" }}>
               <Heading variant="display-default-m">
