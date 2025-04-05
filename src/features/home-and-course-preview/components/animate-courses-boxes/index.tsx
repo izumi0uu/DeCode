@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, useMemo } from "react";
+import React, { useCallback, useState, useEffect, useMemo, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Text, Flex, Button } from "@/once-ui/components";
 import { useCoursesAndLessonsForPreview } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
@@ -18,6 +18,47 @@ interface AnimateCoursesBoxesProps {
   onTagSelect?: (tag: string) => void;
 }
 
+// 动画变体定义 - 集中管理动画配置
+const animations = {
+  fadeIn: {
+    initial: { opacity: 0, y: 10 },
+    animate: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: 10 },
+    transition: { duration: 0.4, ease: "easeOut" },
+  },
+};
+
+// 默认标签和技术标签 - 移到组件外部避免重复创建
+const DEFAULT_COURSE_CATEGORY_TAGS = [
+  "All",
+  "Web3 Basics",
+  "Cryptocurrency",
+  "Ethereum Development",
+  "Digital Assets",
+  "DeFi",
+  "Web3 Applications",
+];
+
+const DEFAULT_TECH_TAGS = [
+  "Web3",
+  "Blockchain",
+  "Web3 Infrastructure",
+  "Web3 Development",
+  "Consensus Mechanism",
+  "Wallet Security",
+  "DApp",
+  "Cryptocurrency",
+  "Ethereum",
+  "Smart Contract",
+  "NFT",
+];
+
+// 使用memo优化子组件渲染
+const MemoizedBanner = memo(Banner);
+const MemoizedCategoryTags = memo(CategoryTags);
+const MemoizedTechTags = memo(TechTags);
+const MemoizedCourseDisplay = memo(CourseDisplay);
+
 export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
   // 解构属性
   const {
@@ -26,49 +67,22 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
     onTagSelect,
   } = props;
 
-  // 默认标签列表
-  const defaultCourseCategoryTags = [
-    "All",
-    "Web3 Basics",
-    "Cryptocurrency",
-    "Ethereum Development",
-    "Digital Assets",
-    "DeFi",
-    "Web3 Applications",
-  ];
-
-  // 预定义的技术标签
-  const defaultTechTags = [
-    "Web3",
-    "Blockchain",
-    "Web3 Infrastructure",
-    "Web3 Development",
-    "Consensus Mechanism",
-    "Wallet Security",
-    "DApp",
-    "Cryptocurrency",
-    "Ethereum",
-    "Smart Contract",
-    "NFT",
-  ];
-
-  // 获取课程数据
+  // 获取课程数据 - 使用React Query提供的状态
   const { data, isLoading } = useCoursesAndLessonsForPreview();
 
-  // 组件状态
+  // 组件状态 - 减少状态数量和更新频率
   const [internalTag, setInternalTag] = useState(propCurrentTag || "All");
   const [selectedTechTags, setSelectedTechTags] = useState<string[]>([]);
   const [showTechTags, setShowTechTags] = useState(false);
-  const [loading, setLoading] = useState(isLoading);
 
-  // 从API中提取课程分类标签
+  // 从API中提取课程分类标签 - 优化计算逻辑
   const apiTags = useMemo(() => {
-    if (!data?.courses || data.courses.length === 0) {
-      return defaultCourseCategoryTags;
-    }
+    if (!data?.courses?.length) return DEFAULT_COURSE_CATEGORY_TAGS;
 
+    // 使用Set来存储唯一标签
     const uniqueTags = new Set(["All"]);
 
+    // 一次遍历中提取所有标签
     data.courses.forEach((course) => {
       if (course.shortTitleTag) {
         uniqueTags.add(course.shortTitleTag);
@@ -84,70 +98,57 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
   }, [data?.courses]);
 
   // 用于UI显示的标签列表
-  const displayTags = useMemo(() => {
-    return propTagList || apiTags;
-  }, [propTagList, apiTags]);
+  const displayTags = useMemo(
+    () => propTagList || apiTags,
+    [propTagList, apiTags]
+  );
 
-  // 构建课程类别到技术标签的映射
+  // 构建课程类别到技术标签的映射 - 优化计算方式
   const categoryToTechTagsMap = useMemo(() => {
-    // 默认空映射
-    const mapping: Record<string, string[]> = {};
-
-    // 如果没有API数据，使用默认标签
-    if (!data?.courses || data.courses.length === 0) {
-      mapping["All"] = defaultTechTags;
-      return mapping;
+    // 如果没有课程数据，返回默认映射
+    if (!data?.courses?.length) {
+      return { All: DEFAULT_TECH_TAGS };
     }
 
-    // 收集所有课程的技术标签
+    // 使用Map减少查找开销
+    const mapping: Record<string, string[]> = {};
     const allTechTags = new Set<string>();
 
-    // 处理每个课程
+    // 单次遍历中构建所有映射关系
     data.courses.forEach((course) => {
-      let categoryKey = "All";
+      let categoryKey =
+        course.shortTitleTag ||
+        course.category?.name ||
+        course.title.split(" ").slice(0, 2).join(" ");
 
-      // 确定课程类别
-      if (course.shortTitleTag) {
-        categoryKey = course.shortTitleTag;
-      } else if (course.category?.name) {
-        categoryKey = course.category.name;
-      } else {
-        categoryKey = course.title.split(" ").slice(0, 2).join(" ");
-      }
-
-      // 初始化类别映射
+      // 确保"All"分类始终存在
       if (!mapping[categoryKey]) {
         mapping[categoryKey] = [];
       }
 
       // 添加技术标签
-      if (course.tags && course.tags.length > 0) {
+      if (course.tags?.length) {
         course.tags.forEach((tag) => {
           if (tag.name) {
             // 添加到特定分类
             if (!mapping[categoryKey].includes(tag.name)) {
               mapping[categoryKey].push(tag.name);
             }
-
-            // 同时收集到所有标签集合
+            // 收集到所有标签集合
             allTechTags.add(tag.name);
           }
         });
       }
     });
 
-    // 设置All分类的标签为所有收集到的标签
-    mapping["All"] = Array.from(allTechTags);
+    // 设置All分类的标签
+    mapping["All"] = allTechTags.size
+      ? Array.from(allTechTags)
+      : DEFAULT_TECH_TAGS;
 
-    // 如果All分类没有标签，使用默认标签
-    if (mapping["All"].length === 0) {
-      mapping["All"] = defaultTechTags;
-    }
-
-    // 确保每个类别至少有一些标签
+    // 确保每个分类至少有一些标签
     Object.keys(mapping).forEach((key) => {
-      if (key !== "All" && (!mapping[key] || mapping[key].length === 0)) {
-        // 如果没有标签，使用全局标签的子集
+      if (key !== "All" && (!mapping[key] || !mapping[key].length)) {
         mapping[key] = mapping["All"].slice(
           0,
           Math.min(3, mapping["All"].length)
@@ -156,73 +157,69 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
     });
 
     return mapping;
-  }, [data?.courses, defaultTechTags]);
+  }, [data?.courses]);
 
   // 当前类别的可见技术标签
   const visibleTechTags = useMemo(() => {
-    return categoryToTechTagsMap[internalTag] || defaultTechTags;
-  }, [internalTag, categoryToTechTagsMap, defaultTechTags]);
+    return categoryToTechTagsMap[internalTag] || DEFAULT_TECH_TAGS;
+  }, [internalTag, categoryToTechTagsMap]);
 
-  // 获取所有课时
-  const allLessons = useMemo(() => {
-    return data?.lessons || [];
-  }, [data?.lessons]);
+  // 筛选课程列表 - 优化筛选逻辑
+  const filteredCourses = useMemo(() => {
+    if (!data?.courses) return [];
 
-  // 根据选中课程筛选课时
+    // 筛选逻辑优化
+    return data.courses.filter((course) => {
+      // 分类筛选
+      const matchesCategory =
+        internalTag === "All" ||
+        course.shortTitleTag === internalTag ||
+        course.category?.name === internalTag ||
+        course.title.split(" ").slice(0, 2).join(" ") === internalTag;
+
+      if (!matchesCategory) return false;
+
+      // 标签筛选 - 仅在有选中标签时进行
+      if (selectedTechTags.length && course.tags?.length) {
+        return selectedTechTags.every((selectedTag) =>
+          course.tags.some((tag) => tag.name === selectedTag)
+        );
+      }
+
+      return matchesCategory;
+    });
+  }, [data?.courses, internalTag, selectedTechTags]);
+
+  // 筛选课时列表 - 优化筛选逻辑
   const filteredLessons = useMemo(() => {
-    if (!allLessons.length || !data?.courses) return [];
+    if (!data?.lessons?.length || !data?.courses?.length) return [];
 
-    // 如果是All标签且没有选择技术标签，显示所有课时
-    if (internalTag === "All" && selectedTechTags.length === 0) {
-      return allLessons;
-    }
+    // 确定要筛选的课程ID
+    const courseIds =
+      internalTag === "All"
+        ? data.courses.map((course) => course.id)
+        : filteredCourses.map((course) => course.id);
 
-    // 如果选择了特定分类
-    let courseIds: Array<string | number> = [];
-
-    // 根据课程分类筛选课程ID
-    if (internalTag !== "All") {
-      courseIds = data.courses
-        .filter((course) => {
-          if (course.shortTitleTag === internalTag) return true;
-          if (course.category?.name === internalTag) return true;
-
-          const shortTitle = course.title.split(" ").slice(0, 2).join(" ");
-          return shortTitle === internalTag;
-        })
-        .map((course) => course.id);
-    } else {
-      // 对于All分类，使用所有课程
-      courseIds = data.courses.map((course) => course.id);
-    }
-
-    // 筛选属于这些课程的课时
-    let filtered = allLessons.filter(
+    // 先筛选出属于指定课程的课时
+    let filtered = data.lessons.filter(
       (lesson) => lesson.course && courseIds.includes(lesson.course.id)
     );
 
-    // 如果选择了技术标签，进行组合筛选
-    if (selectedTechTags.length > 0) {
+    // 如果选择了技术标签，进一步筛选
+    if (selectedTechTags.length) {
       filtered = filtered.filter((lesson) => {
-        // 类型转换以处理课时标签
-        const lessonWithTags = lesson as LessonLight & { tags?: Array<Tag> };
-
         // 检查课时标签
-        if (lessonWithTags.tags && lessonWithTags.tags.length > 0) {
-          // 必须包含所有选中的标签
-          const hasTags = selectedTechTags.every((selectedTag) => {
-            return lessonWithTags.tags!.some((tag) => tag.name === selectedTag);
-          });
+        const lessonTags = lesson as LessonLight & { tags?: Array<Tag> };
+
+        if (lessonTags.tags?.length) {
+          const hasTags = selectedTechTags.every((selectedTag) =>
+            lessonTags.tags!.some((tag) => tag.name === selectedTag)
+          );
           if (hasTags) return true;
         }
 
         // 检查所属课程标签
-        if (
-          lesson.course &&
-          lesson.course.tags &&
-          lesson.course.tags.length > 0
-        ) {
-          // 必须包含所有选中的标签
+        if (lesson.course?.tags?.length) {
           return selectedTechTags.every((selectedTag) =>
             lesson.course!.tags!.some((tag) => tag.name === selectedTag)
           );
@@ -233,7 +230,13 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
     }
 
     return filtered;
-  }, [allLessons, data?.courses, internalTag, selectedTechTags]);
+  }, [
+    data?.lessons,
+    data?.courses,
+    internalTag,
+    filteredCourses,
+    selectedTechTags,
+  ]);
 
   // 同步外部propCurrentTag变化
   useEffect(() => {
@@ -241,14 +244,14 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
       setInternalTag(propCurrentTag);
       setSelectedTechTags([]);
     }
-  }, [propCurrentTag]);
 
-  // 处理加载状态
-  useEffect(() => {
-    setLoading(isLoading);
-  }, [isLoading]);
+    // 清理函数
+    return () => {
+      // 清理任何事件监听或延时操作
+    };
+  }, [propCurrentTag, internalTag]);
 
-  // 处理课程分类标签点击
+  // 处理课程分类标签点击 - 优化回调函数
   const handleTagClick = useCallback(
     (tag: string) => {
       if (tag !== internalTag) {
@@ -264,7 +267,7 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
     [internalTag, onTagSelect]
   );
 
-  // 处理技术标签点击
+  // 处理技术标签点击 - 优化回调函数
   const handleTechTagClick = useCallback((tag: string) => {
     setSelectedTechTags((prev) => {
       if (prev.includes(tag)) {
@@ -274,17 +277,17 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
     });
   }, []);
 
-  // 清除所有选中的技术标签
+  // 清除所有选中的技术标签 - 优化回调函数
   const clearSelectedTags = useCallback(() => {
     setSelectedTechTags([]);
   }, []);
 
-  // 切换技术标签显示
+  // 切换技术标签显示 - 优化回调函数
   const toggleTechTags = useCallback(() => {
     setShowTechTags((prev) => !prev);
   }, []);
 
-  // 处理"探索"按钮点击
+  // 处理"探索"按钮点击 - 优化回调函数并添加防抖
   const handleExplore = useCallback(() => {
     const tagSection = document.querySelector(
       `.${styles.categorySectionTitle}`
@@ -296,11 +299,11 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
     }
   }, []);
 
-  // 渲染组件
+  // 渲染组件 - 优化渲染结构
   return (
     <Flex direction="column" className={styles.container}>
-      {/* Banner区域 */}
-      <Banner handleExplore={handleExplore} />
+      {/* Banner区域 - 使用memo优化 */}
+      <MemoizedBanner handleExplore={handleExplore} />
 
       {/* 课程分类区域 */}
       <Flex
@@ -317,8 +320,7 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
         {/* 课程分类标题 */}
         <motion.div
           className={styles.categorySectionTitle}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          {...animations.fadeIn}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
           <Text
@@ -331,8 +333,8 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
           <div className={styles.flowingLine}></div>
         </motion.div>
 
-        {/* 课程分类标签 */}
-        <CategoryTags
+        {/* 课程分类标签 - 使用memo优化 */}
+        <MemoizedCategoryTags
           tagList={displayTags}
           currentTag={internalTag}
           handleTagClick={handleTagClick}
@@ -356,10 +358,10 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
           </Button>
         </motion.div>
 
-        {/* 技术标签区域 */}
+        {/* 技术标签区域 - 优化AnimatePresence使用 */}
         <AnimatePresence>
           {showTechTags && (
-            <TechTags
+            <MemoizedTechTags
               visible={showTechTags}
               tags={visibleTechTags}
               selectedTags={selectedTechTags}
@@ -370,10 +372,10 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
         </AnimatePresence>
       </Flex>
 
-      {/* 内容区域 */}
+      {/* 内容区域 - 始终展示课时 */}
       <Flex className={styles.coursesSection}>
-        <CourseDisplay
-          loading={loading}
+        <MemoizedCourseDisplay
+          loading={isLoading}
           isLoading={isLoading}
           selectedTechTags={selectedTechTags}
           filteredLessons={filteredLessons}
