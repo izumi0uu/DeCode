@@ -6,13 +6,14 @@ import { useCoursesAndLessonsForPreview } from "@/features/home-and-course-previ
 import { Course } from "@/features/types/api/course";
 import { LessonLight } from "@/features/types/api/lesson";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function CoursePage() {
   // Use the URL directly instead of params
   const pathname = usePathname();
   const segments = pathname.split("/");
   const coursename = segments[segments.length - 1];
+  const router = useRouter();
 
   const { data, isLoading, isError } = useCoursesAndLessonsForPreview();
   const [course, setCourse] = useState<Course | null>(null);
@@ -37,6 +38,20 @@ export default function CoursePage() {
       }
     }
   }, [data, coursename]);
+
+  // 处理课程导航，使用客户端路由
+  const handleLessonClick = (lessonSlug: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    router.push(`/courses/${coursename}/${lessonSlug}`);
+  };
+
+  // 处理"开始学习"按钮点击
+  const handleStartLearningClick = (e: React.MouseEvent) => {
+    if (lessons.length > 0) {
+      e.preventDefault();
+      router.push(`/courses/${coursename}/${lessons[0].slug || lessons[0].id}`);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -178,6 +193,7 @@ export default function CoursePage() {
           <Link
             href={firstLessonPath}
             style={{ textDecoration: "none", marginTop: "24px" }}
+            onClick={handleStartLearningClick}
           >
             <Button variant="primary" size="l">
               Start Learning
@@ -203,6 +219,9 @@ export default function CoursePage() {
                 key={lesson.id}
                 href={`/courses/${coursename}/${lesson.slug || lesson.id}`}
                 style={{ textDecoration: "none" }}
+                onClick={(e) =>
+                  handleLessonClick(lesson.slug || lesson.id.toString(), e)
+                }
               >
                 <Flex
                   direction="column"

@@ -119,12 +119,10 @@ const CourseSidebar = ({ coursePath }: { coursePath: string }) => {
     },
   };
 
-  const getImageUrl = (course: Course) =>
-    course?.coverImage?.formats?.small?.url
-      ? `${process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337"}${
-          course.coverImage.formats.small.url
-        }`
-      : "/images/cover1.jpg";
+  const getPlaceholderImage = (courseId: number) => {
+    const imageIndex = (courseId % 5) + 1;
+    return `/images/cover${imageIndex}.jpg`;
+  };
 
   return (
     <Flex
@@ -220,7 +218,14 @@ const CourseSidebar = ({ coursePath }: { coursePath: string }) => {
                     }}
                   >
                     <SmartImage
-                      src={getImageUrl(course)}
+                      src={
+                        course.coverImage?.formats?.small?.url
+                          ? `${
+                              process.env.NEXT_PUBLIC_STRAPI_API_URL ||
+                              "http://localhost:1337"
+                            }${course.coverImage.formats.small.url}`
+                          : getPlaceholderImage(course.id)
+                      }
                       alt={course.title}
                       style={{
                         objectFit: "cover",
