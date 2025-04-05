@@ -7,6 +7,7 @@ import { NavNode } from "@/features/types/ui/nav-node";
 import styles from "./index.module.scss";
 import { useCoursesAndLessons } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
 import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export interface CascaderProps {
   data?: NavNode[];
@@ -19,6 +20,7 @@ const Cascader = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
   const [activeCourse, setActiveCourse] = useState<NavNode | null>(null);
   const [isChangingCourse, setIsChangingCourse] = useState(false);
   const coursesColumnRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   console.log(navigationData);
 
@@ -97,6 +99,18 @@ const Cascader = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
   const handleCourseClick = (course: NavNode) => {
     setActiveCourse(course);
     scrollToCourse(course.id);
+
+    // 如果有路径就跳转到指定路由
+    if (course.path) {
+      router.push(course.path);
+    }
+  };
+
+  // 处理课时点击
+  const handleLessonClick = (lessonPath: string) => {
+    if (lessonPath) {
+      router.push(lessonPath);
+    }
   };
 
   // 骨架屏加载状态
@@ -207,7 +221,7 @@ const Cascader = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
                 className={styles.lessonItem}
                 paddingY="8"
                 paddingX="12"
-                onClick={() => navigateTo(lesson.path)}
+                onClick={() => handleLessonClick(lesson.path)}
               >
                 {/* 添加指针高亮区域 */}
                 <div className={styles.pointerHighlight}></div>
