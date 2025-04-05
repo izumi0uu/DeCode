@@ -10,6 +10,7 @@ import { Course } from "@/features/types/api/course";
 import { useCoursesAndLessonsForPreview } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
 import { usePopularCourses } from "@/features/home-and-course-preview/api/use-get-courses-popular";
 import { CourseCarouselProvider } from "@/features/home-and-course-preview/context/courseCarouselContext";
+import { Footer } from "@/components";
 
 export default function Page({ params }: { params: { locale: string } }) {
   const [categoryList, setCategoryList] = useState<string[]>(["All"]);
@@ -113,6 +114,7 @@ export default function Page({ params }: { params: { locale: string } }) {
         currentTag={currentCategory}
         onTagSelect={handleCategorySelect}
       />
+      <Footer />
     </>
   );
 }
