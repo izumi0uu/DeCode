@@ -55,7 +55,6 @@ const LessonImage = memo(({ src, alt }: { src: string; alt: string }) => {
 // 课时卡片组件
 const LessonCard = memo(
   ({ lesson, index = 0 }: { lesson: LessonLight; index?: number }) => {
-    console.log(lesson);
     const imageUrl = lesson?.coverImage?.formats?.small?.url
       ? `${process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337"}${
           lesson.coverImage.formats.small.url

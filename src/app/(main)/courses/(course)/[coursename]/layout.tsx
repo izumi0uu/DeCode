@@ -8,32 +8,61 @@ import {
   Scroller,
   SmartImage,
 } from "@/once-ui/components";
-import { Metadata } from "next";
-import { ReactNode, Suspense, useState, useEffect } from "react";
-import { useCoursesAndLessonsForPreview } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
+import {
+  ReactNode,
+  Suspense,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
+import { usePopularCourses } from "@/features/home-and-course-preview/api/use-get-courses-popular";
+import { usePathname, useRouter } from "next/navigation";
 import { Course } from "@/features/types/api/course";
-import { LessonLight } from "@/features/types/api/lesson";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
+
+// 创建一个Context来保持课程数据
+import { createContext, useContext } from "react";
+
+// 创建一个课程数据Context
+const CourseContext = createContext<{
+  courses: Course[] | undefined;
+  activeCourseId: number | null;
+  setActiveCourseId: (id: number | null) => void;
+}>({
+  courses: undefined,
+  activeCourseId: null,
+  setActiveCourseId: () => {},
+});
 
 // Course Sidebar component
 const CourseSidebar = ({ coursePath }: { coursePath: string }) => {
-  const { data, isLoading } = useCoursesAndLessonsForPreview();
-  const [activeCourse, setActiveCourse] = useState<Course | null>(null);
-  const pathname = usePathname();
+  const { data, isLoading } = usePopularCourses();
+  const { courses, activeCourseId, setActiveCourseId } =
+    useContext(CourseContext);
+  const router = useRouter();
 
-  // Find the active course and set it
+  // 当路径变化时更新活动课程，但不会重新渲染整个列表
   useEffect(() => {
-    if (data?.courses && coursePath) {
-      const course = data.courses.find(
+    if (data && coursePath) {
+      const course = data.find(
         (c: Course) => c.slug === coursePath || c.id.toString() === coursePath
       );
       if (course) {
-        setActiveCourse(course);
+        setActiveCourseId(course.id);
       }
     }
-  }, [data, coursePath]);
+  }, [data, coursePath, setActiveCourseId]);
+
+  // 处理课程点击，使用客户端路由进行导航而不是重新加载
+  const handleCourseClick = useCallback(
+    (course: Course, e: React.MouseEvent) => {
+      e.preventDefault();
+      setActiveCourseId(course.id);
+      router.push(`/courses/${course.slug || course.id}`);
+    },
+    [router, setActiveCourseId]
+  );
 
   if (isLoading) {
     return <CourseSidebarSkeleton />;
@@ -76,15 +105,26 @@ const CourseSidebar = ({ coursePath }: { coursePath: string }) => {
         damping: 10,
       },
     },
-    exit: {
-      opacity: 0,
-      y: -20,
-      scale: 0.9,
+    active: {
+      y: 0,
+      scale: 1,
+      backgroundColor: "rgba(51, 102, 255, 0.15)",
+      borderColor: "rgba(51, 102, 255, 0.5)",
+      boxShadow: "0 8px 16px rgba(0, 0, 255, 0.1)",
       transition: {
-        duration: 0.2,
+        type: "spring",
+        stiffness: 300,
+        damping: 15,
       },
     },
   };
+
+  const getImageUrl = (course: Course) =>
+    course?.coverImage?.formats?.small?.url
+      ? `${process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337"}${
+          course.coverImage.formats.small.url
+        }`
+      : "/images/cover1.jpg";
 
   return (
     <Flex
@@ -130,42 +170,40 @@ const CourseSidebar = ({ coursePath }: { coursePath: string }) => {
           overflowY: "auto",
         }}
       >
-        <AnimatePresence>
-          {data?.courses?.map((course: Course, index: number) => (
-            <Link
-              href={`/courses/${course.slug || course.id}`}
-              key={course.id}
-              style={{ textDecoration: "none" }}
-            >
+        <LayoutGroup id="course-list">
+          <AnimatePresence initial={false} mode="sync">
+            {courses?.map((course: Course, index: number) => (
               <motion.div
+                key={course.id}
+                layout="position"
+                layoutId={`course-${course.id}`}
                 custom={index}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
+                initial={false}
+                animate={activeCourseId === course.id ? "active" : "visible"}
                 whileHover="hover"
                 whileTap="tap"
                 variants={cardVariants}
-                layout
+                onClick={(e) => handleCourseClick(course, e)}
+                style={{ marginBottom: "16px", cursor: "pointer" }}
               >
                 <Flex
                   direction="column"
                   padding="m"
                   style={{
                     borderRadius: "12px",
-                    marginBottom: "16px",
                     background:
-                      activeCourse?.id === course.id
+                      activeCourseId === course.id
                         ? "rgba(51, 102, 255, 0.15)"
                         : "rgba(30, 30, 60, 0.4)",
                     cursor: "pointer",
                     transition: "all 0.3s ease",
                     border: "1px solid",
                     borderColor:
-                      activeCourse?.id === course.id
+                      activeCourseId === course.id
                         ? "rgba(51, 102, 255, 0.5)"
                         : "rgba(51, 102, 255, 0.1)",
                     boxShadow:
-                      activeCourse?.id === course.id
+                      activeCourseId === course.id
                         ? "0 8px 16px rgba(0, 0, 255, 0.1)"
                         : "none",
                     overflow: "hidden",
@@ -178,14 +216,11 @@ const CourseSidebar = ({ coursePath }: { coursePath: string }) => {
                       borderRadius: "8px",
                       overflow: "hidden",
                       marginBottom: "12px",
+                      position: "relative",
                     }}
                   >
                     <SmartImage
-                      src={
-                        course.coverImage
-                          ? course.coverImage.url
-                          : `/images/course-placeholder-${(index % 5) + 1}.jpg`
-                      }
+                      src={getImageUrl(course)}
                       alt={course.title}
                       style={{
                         objectFit: "cover",
@@ -292,9 +327,9 @@ const CourseSidebar = ({ coursePath }: { coursePath: string }) => {
                   </Flex>
                 </Flex>
               </motion.div>
-            </Link>
-          ))}
-        </AnimatePresence>
+            ))}
+          </AnimatePresence>
+        </LayoutGroup>
       </Scroller>
     </Flex>
   );
@@ -371,38 +406,54 @@ const CourseSidebarSkeleton = () => {
   );
 };
 
+// Course Layout wrapper component that provides the context
 const CourseLayout = ({ children }: { children: ReactNode }) => {
   // Use the URL directly instead of params
   const pathname = usePathname();
   const segments = pathname.split("/");
   const coursename = segments[segments.length - 1];
 
+  const { data } = usePopularCourses();
+  const [activeCourseId, setActiveCourseId] = useState<number | null>(null);
+
+  // 使用useMemo缓存课程数据，防止重新渲染时重新创建
+  const courseContextValue = useMemo(
+    () => ({
+      courses: data,
+      activeCourseId,
+      setActiveCourseId,
+    }),
+    [data, activeCourseId, setActiveCourseId]
+  );
+
   return (
-    <Flex
-      style={{
-        width: "100%",
-        maxWidth: "1920px",
-        height: "100vh",
-        margin: "0 auto",
-        overflow: "hidden",
-      }}
-    >
-      <Suspense fallback={<CourseSidebarSkeleton />}>
-        <div className="hidden md:block">
-          <CourseSidebar coursePath={coursename} />
-        </div>
-      </Suspense>
+    <CourseContext.Provider value={courseContextValue}>
       <Flex
         style={{
-          flex: 1,
+          width: "100%",
+          maxWidth: "1920px",
           height: "100vh",
-          overflowY: "auto",
-          background: "var(--bg-surface)",
+          margin: "0 auto",
+          overflow: "hidden",
         }}
       >
-        {children}
+        <Suspense fallback={<CourseSidebarSkeleton />}>
+          <div className="hidden md:block">
+            <CourseSidebar coursePath={coursename} />
+          </div>
+        </Suspense>
+        <Flex
+          style={{
+            flex: 1,
+            height: "100vh",
+            overflowY: "auto",
+            background: "var(--bg-surface)",
+          }}
+        >
+          {children}
+        </Flex>
       </Flex>
-    </Flex>
+    </CourseContext.Provider>
   );
 };
 
