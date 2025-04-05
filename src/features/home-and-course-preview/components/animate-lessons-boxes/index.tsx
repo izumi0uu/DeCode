@@ -68,6 +68,8 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
   // 获取课程数据 - 使用React Query提供的状态
   const { data, isLoading } = useCoursesAndLessonsForPreview();
 
+  console.log(data);
+
   // 组件状态 - 减少状态数量和更新频率
   const [internalTag, setInternalTag] = useState(propCurrentTag || "All");
   // 存储标签ID而不是名称
@@ -406,7 +408,6 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
           isLoading={isLoading}
           selectedTechTags={selectedTagNames}
           filteredLessons={filteredLessons}
-          filteredCourses={[]} // 始终传递空数组，因为不需要显示课程
         />
       </Flex>
     </Flex>

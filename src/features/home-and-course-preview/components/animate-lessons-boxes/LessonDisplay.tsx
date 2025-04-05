@@ -53,7 +53,12 @@ const LessonImage = memo(({ src, alt }: { src: string; alt: string }) => {
 // 课时卡片组件
 const LessonCard = memo(
   ({ lesson, index = 0 }: { lesson: LessonLight; index?: number }) => {
-    const imageUrl = "/placeholder.jpg";
+    console.log(lesson);
+    const imageUrl = lesson?.coverImage?.formats?.small?.url
+      ? `${process.env.NEXT_PUBLIC_STRAPI_API_URL || "http://localhost:1337"}${
+          lesson.coverImage.formats.small.url
+        }`
+      : "/images/cover1.jpg";
 
     // 使用索引延迟动画以创建交错效果
     const transitionDelay = 0.05 + (index % 10) * 0.05;
@@ -167,7 +172,6 @@ const VirtualizedList = memo(
 // 主组件使用memo优化
 export const LessonDisplay = memo(
   ({ loading, isLoading, filteredLessons }: LessonDisplayProps) => {
-    // 避免不必要的计算
     const isDataLoading = loading || isLoading;
     const hasLessons = filteredLessons && filteredLessons.length > 0;
 
@@ -176,7 +180,6 @@ export const LessonDisplay = memo(
       return <CourseCardSkeletons count={6} />;
     }
 
-    // 优先显示课时（如果有的话）
     if (hasLessons) {
       return (
         <VirtualizedList

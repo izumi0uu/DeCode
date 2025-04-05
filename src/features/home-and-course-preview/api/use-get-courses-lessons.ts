@@ -64,7 +64,8 @@ const fetchLessonsLight = async (): Promise<ApiDataResponse<LessonLight[]>> => {
         quizzes: {
           fields: QUIZ_LIGHT_FIELDS,
         },
-        tags: true, // 使用tags: true简化查询
+        tags: true, // 使用tags: true简化查询,
+        coverImage: true,
       },
     };
 
