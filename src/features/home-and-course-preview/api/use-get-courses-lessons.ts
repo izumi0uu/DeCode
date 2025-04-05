@@ -1,4 +1,3 @@
-// src/features/home-and-course-preview/api/use-get-courses-lessons.ts
 import { useQuery } from "@tanstack/react-query";
 // @ts-ignore
 import qs from "qs";
@@ -16,9 +15,11 @@ import {
   QUIZ_LIGHT_FIELDS,
 } from "@/features/types";
 import { fetchAllPages } from "@/lib/utils/fetchAllPages";
+
 // 获取课程数据
 const fetchCourses = async (): Promise<ApiDataResponse<Course[]>> => {
   try {
+    // 使用Strapi v5 qs格式
     const queryString = qs.stringify({
       populate: ["tags"],
     });
@@ -57,10 +58,12 @@ const fetchLessonsLight = async (): Promise<ApiDataResponse<LessonLight[]>> => {
       populate: {
         course: {
           fields: COURSE_LIGHT_FIELDS,
+          populate: ["tags"],
         },
         quizzes: {
           fields: QUIZ_LIGHT_FIELDS,
         },
+        tags: true, // 使用tags: true简化查询
       },
     };
 

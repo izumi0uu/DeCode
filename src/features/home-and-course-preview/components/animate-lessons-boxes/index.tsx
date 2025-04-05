@@ -75,6 +75,8 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
   const [selectedTechTags, setSelectedTechTags] = useState<string[]>([]);
   const [showTechTags, setShowTechTags] = useState(false);
 
+  console.log("data", data);
+
   // 从API中提取课程分类标签 - 优化计算逻辑
   const apiTags = useMemo(() => {
     if (!data?.courses?.length) return DEFAULT_COURSE_CATEGORY_TAGS;
