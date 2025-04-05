@@ -172,6 +172,11 @@ export const StackBox = ({
                         process.env.NEXT_PUBLIC_STRAPI_API_URL ||
                         "http://localhost:1337"
                       }${course.coverImage.formats.small.url}`
+                    : course?.coverImage?.url
+                    ? `${
+                        process.env.NEXT_PUBLIC_STRAPI_API_URL ||
+                        "http://localhost:1337"
+                      }${course.coverImage.url}`
                     : "/images/cover1.jpg"
                 }
                 fill
