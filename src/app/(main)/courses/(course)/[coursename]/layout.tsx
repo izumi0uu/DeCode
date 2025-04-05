@@ -8,13 +8,11 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Course } from "@/features/types/api/course";
 import { LessonLight } from "@/features/types/api/lesson";
-import { use } from "react";
 
 // Course Sidebar component
 const CourseSidebar = ({ coursePath }: { coursePath: string }) => {
   const { data, isLoading } = useCoursesAndLessonsForPreview();
   const [activeCourse, setActiveCourse] = useState<Course | null>(null);
-  const [activeLesson, setActiveLesson] = useState<string | null>(null);
   const pathname = usePathname();
 
   // Find the active course and set it
@@ -29,24 +27,9 @@ const CourseSidebar = ({ coursePath }: { coursePath: string }) => {
     }
   }, [data, coursePath]);
 
-  // Extract lesson slug from path
-  useEffect(() => {
-    if (pathname) {
-      const pathParts = pathname.split("/");
-      const lessonSlug = pathParts[pathParts.length - 1];
-      setActiveLesson(lessonSlug);
-    }
-  }, [pathname]);
-
   if (isLoading) {
     return <CourseSidebarSkeleton />;
   }
-
-  // Filter lessons for the current course
-  const courseLessons =
-    data?.lessons?.filter(
-      (lesson: LessonLight) => lesson.course?.id === activeCourse?.id
-    ) || [];
 
   return (
     <Flex
@@ -61,7 +44,7 @@ const CourseSidebar = ({ coursePath }: { coursePath: string }) => {
         top: 0,
       }}
     >
-      {/* Course Title */}
+      {/* Sidebar Header */}
       <Flex
         direction="column"
         padding="l"
@@ -70,20 +53,18 @@ const CourseSidebar = ({ coursePath }: { coursePath: string }) => {
         }}
       >
         <Text variant="heading-strong-s" color="light">
-          {activeCourse?.title || "Course Navigation"}
+          Course Navigation
         </Text>
-        {activeCourse?.description && (
-          <Text
-            variant="body-default-s"
-            color="light"
-            style={{ opacity: 0.7, marginTop: "8px" }}
-          >
-            {activeCourse.description}
-          </Text>
-        )}
+        <Text
+          variant="body-default-s"
+          color="light"
+          style={{ opacity: 0.7, marginTop: "8px" }}
+        >
+          Browse all available courses
+        </Text>
       </Flex>
 
-      {/* Lessons List */}
+      {/* Courses List */}
       <Flex
         direction="column"
         style={{
@@ -92,10 +73,10 @@ const CourseSidebar = ({ coursePath }: { coursePath: string }) => {
           padding: "8px",
         }}
       >
-        {courseLessons.map((lesson: LessonLight, index: number) => (
+        {data?.courses?.map((course: Course, index: number) => (
           <Link
-            href={`/courses/${coursePath}/${lesson.slug || lesson.id}`}
-            key={lesson.id}
+            href={`/courses/${course.slug || course.id}`}
+            key={course.id}
             style={{ textDecoration: "none" }}
           >
             <Flex
@@ -105,30 +86,22 @@ const CourseSidebar = ({ coursePath }: { coursePath: string }) => {
                 borderRadius: "8px",
                 marginBottom: "8px",
                 background:
-                  activeLesson === (lesson.slug || lesson.id.toString())
+                  activeCourse?.id === course.id
                     ? "rgba(51, 102, 255, 0.2)"
                     : "transparent",
                 cursor: "pointer",
                 transition: "all 0.2s ease",
                 border: "1px solid",
                 borderColor:
-                  activeLesson === (lesson.slug || lesson.id.toString())
+                  activeCourse?.id === course.id
                     ? "rgba(51, 102, 255, 0.5)"
                     : "transparent",
               }}
             >
-              <Flex
-                gap="s"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
-                <Text variant="body-strong-s" color="light">
-                  {index + 1}. {lesson.title}
-                </Text>
-              </Flex>
-              {lesson.description && (
+              <Text variant="body-strong-s" color="light">
+                {course.title}
+              </Text>
+              {course.description && (
                 <Text
                   variant="body-default-xs"
                   color="light"
@@ -142,7 +115,7 @@ const CourseSidebar = ({ coursePath }: { coursePath: string }) => {
                     textOverflow: "ellipsis",
                   }}
                 >
-                  {lesson.description}
+                  {course.description}
                 </Text>
               )}
               <Flex
@@ -153,14 +126,14 @@ const CourseSidebar = ({ coursePath }: { coursePath: string }) => {
                   opacity: 0.6,
                 }}
               >
-                {lesson.duration && (
+                {course.difficulty && (
                   <Text variant="body-default-xs" color="light">
-                    {lesson.duration} min
+                    {course.difficulty}
                   </Text>
                 )}
-                {lesson.type && (
+                {course.duration && (
                   <Text variant="body-default-xs" color="light">
-                    {lesson.type}
+                    {course.duration} min
                   </Text>
                 )}
               </Flex>
