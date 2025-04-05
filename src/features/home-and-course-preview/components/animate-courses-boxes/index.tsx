@@ -163,51 +163,6 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
     return categoryToTechTagsMap[internalTag] || defaultTechTags;
   }, [internalTag, categoryToTechTagsMap, defaultTechTags]);
 
-  // 筛选的课程列表
-  const filteredCourses = useMemo(() => {
-    if (!data?.courses) return [];
-
-    // 如果是All标签，返回所有课程
-    if (internalTag === "All") {
-      // 如果选择了技术标签，进行组合筛选（必须同时包含所有选中的标签）
-      if (selectedTechTags.length > 0) {
-        return data.courses.filter((course) => {
-          if (!course.tags || course.tags.length === 0) return false;
-
-          // 检查课程是否包含所有选定的标签
-          return selectedTechTags.every((selectedTag) =>
-            course.tags.some((tag) => tag.name === selectedTag)
-          );
-        });
-      }
-      // 否则返回所有课程
-      return data.courses;
-    }
-
-    // 首先基于课程分类筛选
-    let filtered = data.courses.filter((course) => {
-      if (course.shortTitleTag === internalTag) return true;
-      if (course.category?.name === internalTag) return true;
-
-      const shortTitle = course.title.split(" ").slice(0, 2).join(" ");
-      return shortTitle === internalTag;
-    });
-
-    // 如果选择了技术标签，进行组合筛选
-    if (selectedTechTags.length > 0) {
-      filtered = filtered.filter((course) => {
-        if (!course.tags || course.tags.length === 0) return false;
-
-        // 检查课程是否包含所有选定的标签
-        return selectedTechTags.every((selectedTag) =>
-          course.tags.some((tag) => tag.name === selectedTag)
-        );
-      });
-    }
-
-    return filtered;
-  }, [data?.courses, internalTag, selectedTechTags]);
-
   // 获取所有课时
   const allLessons = useMemo(() => {
     return data?.lessons || [];
@@ -279,17 +234,6 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
 
     return filtered;
   }, [allLessons, data?.courses, internalTag, selectedTechTags]);
-
-  // 决定显示课程还是课时
-  const shouldShowLessons = useMemo(() => {
-    // 两种情况下显示课时：
-    // 1. 选择了非"All"的课程分类
-    // 2. 选择了任何技术标签且有匹配的课时
-    return (
-      (internalTag !== "All" || selectedTechTags.length > 0) &&
-      filteredLessons.length > 0
-    );
-  }, [internalTag, selectedTechTags, filteredLessons]);
 
   // 同步外部propCurrentTag变化
   useEffect(() => {
@@ -426,14 +370,14 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
         </AnimatePresence>
       </Flex>
 
-      {/* 内容区域 - 展示课程和课时 */}
+      {/* 内容区域 */}
       <Flex className={styles.coursesSection}>
         <CourseDisplay
           loading={loading}
           isLoading={isLoading}
           selectedTechTags={selectedTechTags}
-          filteredLessons={shouldShowLessons ? filteredLessons : []}
-          filteredCourses={shouldShowLessons ? [] : filteredCourses}
+          filteredLessons={filteredLessons}
+          filteredCourses={[]} // 始终传递空数组，因为不需要显示课程
         />
       </Flex>
     </Flex>
