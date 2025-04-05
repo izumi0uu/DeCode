@@ -70,7 +70,6 @@ export default function CoursePage() {
         padding="xl"
         style={{
           alignItems: "center",
-          justifyContent: "center",
           minHeight: "50vh",
         }}
       >
