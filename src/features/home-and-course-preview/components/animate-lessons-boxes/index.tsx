@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useCallback, useState, useEffect, useMemo, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Text, Flex, Button } from "@/once-ui/components";
@@ -9,7 +11,7 @@ import { LessonDisplay } from "./LessonDisplay";
 import styles from "./index.module.scss";
 
 // 主组件接口
-interface AnimateCoursesBoxesProps {
+interface AnimateLessonsBoxesProps {
   tagList?: string[];
   currentTag?: string;
   onTagSelect?: (tag: string) => void;
@@ -57,7 +59,7 @@ const MemoizedCategoryTags = memo(CategoryTags);
 const MemoizedTechTags = memo(TechTags);
 const MemoizedLessonDisplay = memo(LessonDisplay);
 
-export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
+export const AnimateLessonsBoxes = (props: AnimateLessonsBoxesProps = {}) => {
   // 解构属性
   const {
     tagList: propTagList,
@@ -67,8 +69,6 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
 
   // 获取课程数据 - 使用React Query提供的状态
   const { data, isLoading } = useCoursesAndLessonsForPreview();
-
-  console.log(data);
 
   // 组件状态 - 减少状态数量和更新频率
   const [internalTag, setInternalTag] = useState(propCurrentTag || "All");

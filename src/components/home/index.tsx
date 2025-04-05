@@ -8,9 +8,9 @@ import {
   Button,
   Avatar,
 } from "@/once-ui/components";
-import { CoursePlay } from "@/components/coursePlay";
-import styles from "./index.module.scss";
 import { courses, website } from "@/resources/content";
+import { AnimateLessonsBoxes } from "@/features/home-and-course-preview/components/animate-lessons-boxes";
+import { Footer } from "../footer";
 
 const Home = () => {
   const cover1 = "/images/cover1.jpg";
@@ -66,10 +66,43 @@ const Home = () => {
             </Button>
           </RevealFx>
         </Column>
-        <RevealFx translateY="16" delay={0.6}>
-          <CoursePlay />
-        </RevealFx>
+
+        {/* Featured Courses and Lessons Section */}
+        <Column fillWidth gap="xl" marginTop="xl">
+          <RevealFx translateY="16" delay={0.6}>
+            <Flex direction="column" style={{ textAlign: "center" }}>
+              <Heading variant="display-default-m">
+                Featured Courses & Lessons
+              </Heading>
+              <Text
+                variant="body-default-l"
+                style={{
+                  maxWidth: "800px",
+                  margin: "1rem auto 2rem",
+                  textAlign: "center",
+                }}
+              >
+                Explore our curated selection of Web3 courses and interactive
+                lessons
+              </Text>
+            </Flex>
+          </RevealFx>
+
+          <RevealFx translateY="20" delay={0.8}>
+            <AnimateLessonsBoxes
+              tagList={[
+                "All",
+                "Web3 Basics",
+                "Blockchain",
+                "Smart Contracts",
+                "NFTs",
+              ]}
+              currentTag="All"
+            />
+          </RevealFx>
+        </Column>
       </Column>
+      <Footer />
     </Column>
   );
 };

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import {
   BannerCarousel,
-  AnimateCoursesBoxes,
+  AnimateLessonsBoxes,
   AnimatePopularBoxes,
 } from "@/features/home-and-course-preview/components";
 import { Course } from "@/features/types/api/course";
@@ -107,8 +107,8 @@ export default function Page({ params }: { params: { locale: string } }) {
         </BannerCarousel>
       </CourseCarouselProvider>
 
-      {/* 课程展示区 */}
-      <AnimateCoursesBoxes
+      {/* lesson展示区 */}
+      <AnimateLessonsBoxes
         tagList={categoryList}
         currentTag={currentCategory}
         onTagSelect={handleCategorySelect}

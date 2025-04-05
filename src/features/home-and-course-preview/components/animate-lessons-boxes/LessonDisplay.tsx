@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef, memo, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Text, Flex, Skeleton } from "@/once-ui/components";

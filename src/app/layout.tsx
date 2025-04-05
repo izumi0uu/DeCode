@@ -125,7 +125,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <Flex horizontal="center" fillWidth flex={1} minHeight="0">
               {children}
             </Flex>
-            <Footer />
           </Flex>
         </Column>
       </Providers>
