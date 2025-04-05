@@ -235,9 +235,6 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
         // 获取课时和课程的标签ID
         const lessonAny = lesson as any;
         const lessonTagIds = extractTagIds(lessonAny.tags);
-        const courseTagIds = lesson.course
-          ? extractTagIds(lesson.course.tags)
-          : [];
 
         // 检查课时自身的标签 - 组合查询逻辑(AND)
         if (lessonTagIds.length > 0) {
@@ -245,26 +242,10 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
           const matchesAllTags = selectedTagIds.every((tagId) =>
             lessonTagIds.includes(tagId)
           );
-          console.log("lessonTagIds", lessonTagIds);
-          console.log("selectedTagIds", selectedTagIds);
-          console.log("matchesAllTags", matchesAllTags);
-
           if (matchesAllTags) {
             return true;
           }
         }
-
-        // // 检查所属课程标签 - 组合查询逻辑(AND)
-        // if (courseTagIds.length > 0) {
-        //   // 每个选中的标签ID都必须在课程标签中找到
-        //   const matchesAllTags = selectedTagIds.every((tagId) =>
-        //     courseTagIds.includes(tagId)
-        //   );
-
-        //   if (matchesAllTags) {
-        //     return true;
-        //   }
-        // }
 
         return false;
       });
