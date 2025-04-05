@@ -75,8 +75,6 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
   const [selectedTechTags, setSelectedTechTags] = useState<string[]>([]);
   const [showTechTags, setShowTechTags] = useState(false);
 
-  console.log("data", data);
-
   // 从API中提取课程分类标签 - 优化计算逻辑
   const apiTags = useMemo(() => {
     if (!data?.courses?.length) return DEFAULT_COURSE_CATEGORY_TAGS;
@@ -192,9 +190,34 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
     });
   }, [data?.courses, internalTag, selectedTechTags]);
 
-  // 筛选课时列表 - 优化筛选逻辑
+  // 筛选课时列表 - 组合查询逻辑
   const filteredLessons = useMemo(() => {
     if (!data?.lessons?.length || !data?.courses?.length) return [];
+
+    // 辅助函数：从任意格式的标签中提取标签名称并转小写
+    const extractTagNames = (tagData: any): string[] => {
+      if (!tagData) return [];
+
+      // 处理 Strapi v5 格式 (data属性)
+      if (tagData.data && Array.isArray(tagData.data)) {
+        return tagData.data
+          .map((tag: any) =>
+            (tag.attributes?.name || tag.name || "").toLowerCase()
+          )
+          .filter(Boolean);
+      }
+
+      // 处理直接数组
+      if (Array.isArray(tagData)) {
+        return tagData
+          .map((tag: any) =>
+            (tag.attributes?.name || tag.name || "").toLowerCase()
+          )
+          .filter(Boolean);
+      }
+
+      return [];
+    };
 
     // 确定要筛选的课程ID
     const courseIds =
@@ -209,22 +232,44 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
 
     // 如果选择了技术标签，进一步筛选
     if (selectedTechTags.length) {
-      filtered = filtered.filter((lesson) => {
-        // 检查课时标签
-        const lessonTags = lesson as LessonLight & { tags?: Array<Tag> };
+      // 将选中的标签转为小写以进行不区分大小写的比较
+      const lowerCaseSelectedTags = selectedTechTags.map((tag) =>
+        tag.toLowerCase()
+      );
 
-        if (lessonTags.tags?.length) {
-          const hasTags = selectedTechTags.every((selectedTag) =>
-            lessonTags.tags!.some((tag) => tag.name === selectedTag)
+      filtered = filtered.filter((lesson) => {
+        // 获取课时/课程标签并转小写
+        const lessonAny = lesson as any;
+        const lessonTagNames = extractTagNames(lessonAny.tags);
+        const courseTagNames = lesson.course
+          ? extractTagNames(lesson.course.tags)
+          : [];
+
+        // 检查课时自身的标签 - 组合查询逻辑(AND)
+        if (lessonTagNames.length > 0) {
+          // 每个选中的标签都必须在课时标签中找到
+          const matchesAllTags = lowerCaseSelectedTags.every((tag) =>
+            lessonTagNames.includes(tag)
           );
-          if (hasTags) return true;
+
+          if (matchesAllTags) {
+            return true;
+          }
         }
 
-        // 检查所属课程标签
-        if (lesson.course?.tags?.length) {
-          return selectedTechTags.every((selectedTag) =>
-            lesson.course!.tags!.some((tag) => tag.name === selectedTag)
+        // 检查所属课程标签 - 组合查询逻辑(AND)
+        if (courseTagNames.length > 0) {
+          // 每个选中的标签都必须在课程标签中找到
+          const matchesAllTags = lowerCaseSelectedTags.every((tag) =>
+            courseTagNames.includes(tag)
           );
+
+          console.log("lesson", lesson);
+          console.log("matchesAllTags", matchesAllTags);
+
+          if (matchesAllTags) {
+            return true;
+          }
         }
 
         return false;

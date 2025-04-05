@@ -29,6 +29,7 @@ const fetchCourses = async (): Promise<ApiDataResponse<Course[]>> => {
       throw new Error("Failed to fetch courses");
     }
     const result = (await response.json()) as CourseListResponse;
+
     return {
       data: result.data,
       meta: {
@@ -72,6 +73,7 @@ const fetchLessonsLight = async (): Promise<ApiDataResponse<LessonLight[]>> => {
       "/api/lessons",
       queryParams
     );
+
     return {
       data: result.data,
       meta: {
