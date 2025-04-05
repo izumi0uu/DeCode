@@ -8,7 +8,7 @@ import { Course } from "@/features/types/api/course";
 import { Banner } from "./Banner";
 import { CategoryTags } from "./CategoryTags";
 import { TechTags } from "./TechTags";
-import { CourseDisplay } from "./CourseDisplay";
+import { CourseDisplay } from "./LessonDisplay";
 import styles from "./index.module.scss";
 
 // 主组件接口
@@ -328,7 +328,7 @@ export const AnimateCoursesBoxes = (props: AnimateCoursesBoxesProps = {}) => {
             variant="body-strong-l"
             className={styles.categoryTitle}
           >
-            Select a course
+            Select a lesson
           </Text>
           <div className={styles.flowingLine}></div>
         </motion.div>
