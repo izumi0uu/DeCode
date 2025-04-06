@@ -2,10 +2,10 @@
 
 import React from "react";
 import { Flex } from "@/once-ui/components";
-import { useCurrentLesson } from "@/features/lesson/api/use-get-lesson-preview";
-import { LessonHeader } from "@/features/lesson/components/lesson-header";
-import { LessonContent } from "@/features/lesson/components/lesson-content";
-import { LessonNavigation } from "@/features/lesson/components/lesson-navigation";
+import { useCurrentLesson } from "../../api/use-get-lesson-preview";
+import LessonHeader from "../lesson-header";
+import LessonContent from "../lesson-content";
+import LessonNavigation from "../lesson-navigation";
 
 interface LessonPageProps {
   coursename: string;
