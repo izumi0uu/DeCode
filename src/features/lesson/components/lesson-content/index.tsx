@@ -28,6 +28,27 @@ export const LessonContent: React.FC<LessonContentProps> = ({ content }) => {
     );
   }
 
+  // 确保content是字符串类型
+  const safeContent = React.useMemo(() => {
+    if (typeof content === "string") {
+      return content;
+    }
+
+    // 如果是数组，可能是Strapi Blocks格式
+    if (Array.isArray(content)) {
+      try {
+        // 尝试转换为可读性更好的格式
+        return JSON.stringify(content, null, 2);
+      } catch (e) {
+        console.error("Error processing content:", e);
+        return "Error processing content";
+      }
+    }
+
+    // 其他对象类型
+    return JSON.stringify(content, null, 2);
+  }, [content]);
+
   return (
     <Flex
       direction="column"
@@ -38,7 +59,7 @@ export const LessonContent: React.FC<LessonContentProps> = ({ content }) => {
         border: "1px solid rgba(51, 102, 255, 0.2)",
       }}
     >
-      <Markdown>{content}</Markdown>
+      <Markdown>{safeContent}</Markdown>
     </Flex>
   );
 };

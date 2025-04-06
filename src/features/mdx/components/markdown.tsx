@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import React from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
@@ -8,11 +8,19 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import { escapeBrackets, escapeMhchem, fixMarkdownBold } from "../utils";
 import { PhotoProvider, PhotoView } from "react-photo-view";
-import Image from "next/image";
 import "react-photo-view/dist/react-photo-view.css";
 import CodeBlock from "./code/code-block";
-import PreSingleLine from "./code/pre-single-line";
 import { Text, Flex, InlineCode } from "@/once-ui/components";
+
+// 创建一个预处理Unicode字符的函数，特别是处理弯引号
+const preprocessUnicode = (text: string): string => {
+  // 替换弯引号为直引号以解决LaTeX警告
+  return text
+    .replace(/[']/g, "'")
+    .replace(/["]/g, '"')
+    .replace(/["]/g, '"')
+    .replace(/[–—]/g, "-");
+};
 
 export default function Markdown({
   children,
@@ -21,12 +29,25 @@ export default function Markdown({
   children: string;
   mode?: "normal" | "quiz";
 }) {
-  const escapedContent = useMemo(() => {
-    return fixMarkdownBold(escapeMhchem(escapeBrackets(children || "")));
-  }, [children]);
+  // 确保输入为字符串
+  const markdownText =
+    typeof children === "string" ? children : String(children || "");
 
-  const components = useMemo(() => {
-    return {
+  // 处理内容
+  const processedContent = React.useMemo(() => {
+    try {
+      // 先处理Unicode字符，然后应用其他转换
+      const unicodeFixed = preprocessUnicode(markdownText);
+      return fixMarkdownBold(escapeMhchem(escapeBrackets(unicodeFixed)));
+    } catch (error) {
+      console.error("Error processing markdown:", error);
+      return markdownText;
+    }
+  }, [markdownText]);
+
+  // 定义自定义渲染组件
+  const components = React.useMemo(
+    () => ({
       a: (props: any) => (
         <Text
           as="a"
@@ -91,7 +112,7 @@ export default function Markdown({
       },
       p: (props: any) => (
         <Text
-          as="div"
+          as="div" // 使用div而不是p，避免嵌套问题
           style={{
             marginBottom: "16px",
             color: "#F8F9FA",
@@ -199,8 +220,27 @@ export default function Markdown({
           {props.children}
         </Text>
       ),
-    };
-  }, []);
+      // 添加一个通用处理程序用于处理未知标签
+      "*": (props: any) => {
+        // 获取标签名和其他属性
+        const { node, ...rest } = props;
+        const tagName = node.tagName || "span";
+
+        // 针对常见问题标签的处理
+        if (tagName.toLowerCase() === "mining") {
+          return (
+            <Text as="div" style={{ color: "#F8F9FA" }}>
+              {props.children}
+            </Text>
+          );
+        }
+
+        // 对于其他未识别的标签，包装在div中
+        return <div>{props.children}</div>;
+      },
+    }),
+    []
+  );
 
   const articleStyle = {
     color: "#F8F9FA",
@@ -210,11 +250,21 @@ export default function Markdown({
   return (
     <article style={articleStyle}>
       <ReactMarkdown
-        rehypePlugins={[rehypeRaw, [rehypeKatex, { output: "mathml" }]]}
+        rehypePlugins={[
+          rehypeRaw,
+          [
+            rehypeKatex,
+            {
+              output: "html",
+              strict: false, // 禁用严格模式以减少警告
+            },
+          ],
+        ]}
         remarkPlugins={[remarkMath, remarkGfm]}
         components={components}
+        remarkRehypeOptions={{ allowDangerousHtml: true }}
       >
-        {escapedContent}
+        {processedContent}
       </ReactMarkdown>
     </article>
   );
