@@ -46,6 +46,22 @@ export const LessonContent: React.FC<LessonContentProps> = ({
       ? "blocks"
       : contentType;
 
+  console.log(effectiveContentType);
+
+  // 添加调试信息，检查具体内容格式
+  if (Array.isArray(content) && content.length > 0) {
+    console.log("First block structure:", JSON.stringify(content[0], null, 2));
+    // 检查是否包含纯文本的markdown标记
+    if (
+      typeof content === "string" &&
+      ((content as string).includes("##") || (content as string).includes("- "))
+    ) {
+      console.log(
+        "Content appears to be markdown text, not Strapi Blocks format"
+      );
+    }
+  }
+
   return (
     <Flex
       direction="column"
@@ -60,12 +76,27 @@ export const LessonContent: React.FC<LessonContentProps> = ({
         <BlocksRenderer
           content={content}
           modifiers={{
-            bold: ({ children }) => <strong>{children}</strong>,
-            italic: ({ children }) => <em>{children}</em>,
-            underline: ({ children }) => <u>{children}</u>,
-            strikethrough: ({ children }) => <s>{children}</s>,
+            bold: ({ children }) => (
+              <strong style={{ color: "var(--color-light)" }}>
+                {children}
+              </strong>
+            ),
+            italic: ({ children }) => (
+              <em style={{ color: "var(--color-light)" }}>{children}</em>
+            ),
+            underline: ({ children }) => (
+              <u style={{ color: "var(--color-light)" }}>{children}</u>
+            ),
+            strikethrough: ({ children }) => (
+              <s style={{ color: "var(--color-light)" }}>{children}</s>
+            ),
             code: ({ children }) => (
-              <code className="inline-code">{children}</code>
+              <code
+                className="inline-code"
+                style={{ color: "var(--color-light)" }}
+              >
+                {children}
+              </code>
             ),
           }}
           blocks={{

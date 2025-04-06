@@ -1,0 +1,16 @@
+.codeContainer {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  overflow-x: auto;
+}
+
+.codeContent {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.copyButtonWrapper {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
