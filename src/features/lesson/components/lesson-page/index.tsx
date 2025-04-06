@@ -2,22 +2,21 @@
 
 import React from "react";
 import { Flex } from "@/once-ui/components";
-import { useCurrentLesson } from "../../api/use-get-lesson-preview";
+import { useGetLessonContent } from "../../api/use-get-lesson";
 import LessonHeader from "../lesson-header";
 import LessonContent from "../lesson-content";
 import LessonNavigation from "../lesson-navigation";
 
 interface LessonPageProps {
-  coursename: string;
-  lessonname: string;
+  coursename?: string;
+  lessonSlug: string;
 }
 
-export const LessonPage: React.FC<LessonPageProps> = ({
-  coursename,
-  lessonname,
-}) => {
+export const LessonPage: React.FC<LessonPageProps> = ({ lessonSlug }) => {
   // 使用自定义hook获取课程和章节数据
-  const { data, isLoading, isError } = useCurrentLesson(coursename, lessonname);
+  const { data, isLoading, isError } = useGetLessonContent(lessonSlug);
+
+  console.log(data);
 
   // 处理加载状态 - 这应该由 loading.tsx 处理
   if (isLoading) {
@@ -32,14 +31,15 @@ export const LessonPage: React.FC<LessonPageProps> = ({
   const { currentCourse, currentLesson, prevLesson, nextLesson } = data;
 
   if (!currentCourse) {
-    throw new Error(`Course '${coursename}' not found`);
+    throw new Error(`Course not found for lesson ${lessonSlug}`);
   }
 
   if (!currentLesson) {
-    throw new Error(
-      `Lesson '${lessonname}' not found in course '${coursename}'`
-    );
+    throw new Error(`Lesson with slug ${lessonSlug} not found`);
   }
+
+  // 使用从API获取的coursename，而不是props中的
+  const courseSlug = currentCourse.slug || currentCourse.id.toString();
 
   return (
     <Flex direction="column" padding="xl">
@@ -50,7 +50,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({
         type={currentLesson.type}
       />
 
-      <LessonContent content="This is where the lesson content would be displayed. In a real application, this would be populated with rich text content, interactive elements, videos, code samples, and other educational materials." />
+      <LessonContent content={currentLesson.content} />
 
       <hr
         style={{
@@ -61,7 +61,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({
       />
 
       <LessonNavigation
-        courseName={currentCourse.slug || currentCourse.id.toString()}
+        courseName={courseSlug}
         prevLesson={
           prevLesson
             ? {

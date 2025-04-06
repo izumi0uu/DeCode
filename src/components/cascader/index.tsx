@@ -22,8 +22,6 @@ const Cascader = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
   const coursesColumnRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  console.log(navigationData);
-
   // 记录滚动位置
   const handleScroll = () => {
     if (coursesColumnRef.current && navigationData) {

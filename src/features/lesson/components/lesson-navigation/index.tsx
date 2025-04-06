@@ -33,7 +33,9 @@ export const LessonNavigation: React.FC<LessonNavigationProps> = ({
 
       {nextLesson && (
         <Link href={`/courses/${courseName}/${nextLesson.slug}`} passHref>
-          <Button variant="primary">Next: {nextLesson.title}</Button>
+          <Button variant="primary" arrowIcon>
+            Next: {nextLesson.title}
+          </Button>
         </Link>
       )}
     </Flex>

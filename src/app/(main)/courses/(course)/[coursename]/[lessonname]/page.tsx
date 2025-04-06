@@ -8,8 +8,7 @@ export default function LessonPageRoute({
 }) {
   // 使用 React.use() 解包params参数
   const unwrappedParams = React.use(params);
-  const coursename = unwrappedParams.coursename;
-  const lessonname = unwrappedParams.lessonname;
+  const lessonSlug = unwrappedParams.lessonname;
 
-  return <LessonPage coursename={coursename} lessonname={lessonname} />;
+  return <LessonPage lessonSlug={lessonSlug} />;
 }
