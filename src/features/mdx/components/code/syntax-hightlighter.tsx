@@ -10,7 +10,6 @@ export interface SyntaxHighlighterProps {
 const SyntaxHighlighter = memo<SyntaxHighlighterProps>(
   ({ children, language }) => {
     const { data, isLoading } = useHighlight(children.trim(), language);
-    );
 
     return (
       <>
@@ -37,6 +36,5 @@ const SyntaxHighlighter = memo<SyntaxHighlighterProps>(
     );
   }
 );
-
 
 export default SyntaxHighlighter;

@@ -1,6 +1,7 @@
 import React from "react";
 import { Flex } from "@/once-ui/components";
-import { BlocksRenderer } from "@strapi/blocks-react-renderer";
+import Markdown from "@/features/mdx/components/markdown";
+import { blocksToMarkdown } from "@/features/mdx/utils/blocks-to-markdown";
 
 interface LessonContentProps {
   content?: any; // 适配Strapi Blocks格式
@@ -46,21 +47,20 @@ export const LessonContent: React.FC<LessonContentProps> = ({
       ? "blocks"
       : contentType;
 
-  console.log(effectiveContentType);
-
-  // 添加调试信息，检查具体内容格式
-  if (Array.isArray(content) && content.length > 0) {
-    console.log("First block structure:", JSON.stringify(content[0], null, 2));
-    // 检查是否包含纯文本的markdown标记
-    if (
-      typeof content === "string" &&
-      ((content as string).includes("##") || (content as string).includes("- "))
-    ) {
-      console.log(
-        "Content appears to be markdown text, not Strapi Blocks format"
-      );
+  // 将Strapi Blocks格式转换为Markdown文本
+  const markdownContent = React.useMemo(() => {
+    if (effectiveContentType === "blocks" && isBlocksContent) {
+      try {
+        return blocksToMarkdown(content);
+      } catch (error) {
+        console.error("Error converting blocks to markdown:", error);
+        return "Error converting content";
+      }
     }
-  }
+
+    // 如果已经是markdown文本，或其他文本，直接返回
+    return typeof content === "string" ? content : JSON.stringify(content);
+  }, [content, effectiveContentType, isBlocksContent]);
 
   return (
     <Flex
@@ -73,148 +73,16 @@ export const LessonContent: React.FC<LessonContentProps> = ({
       }}
     >
       {effectiveContentType === "blocks" ? (
-        <BlocksRenderer
-          content={content}
-          modifiers={{
-            bold: ({ children }) => (
-              <strong style={{ color: "var(--color-light)" }}>
-                {children}
-              </strong>
-            ),
-            italic: ({ children }) => (
-              <em style={{ color: "var(--color-light)" }}>{children}</em>
-            ),
-            underline: ({ children }) => (
-              <u style={{ color: "var(--color-light)" }}>{children}</u>
-            ),
-            strikethrough: ({ children }) => (
-              <s style={{ color: "var(--color-light)" }}>{children}</s>
-            ),
-            code: ({ children }) => (
-              <code
-                className="inline-code"
-                style={{ color: "var(--color-light)" }}
-              >
-                {children}
-              </code>
-            ),
-          }}
-          blocks={{
-            paragraph: ({ children }) => (
-              <p style={{ color: "var(--color-light)", marginBottom: "1rem" }}>
-                {children}
-              </p>
-            ),
-            heading: ({ children, level }) => {
-              const Tag = `h${level}` as keyof JSX.IntrinsicElements;
-              return (
-                <Tag
-                  style={{ color: "var(--color-light)", marginBottom: "1rem" }}
-                >
-                  {children}
-                </Tag>
-              );
-            },
-            list: ({ children, format }) => {
-              if (format === "ordered") {
-                return (
-                  <ol
-                    style={{
-                      paddingLeft: "1.5rem",
-                      marginBottom: "1rem",
-                      color: "var(--color-light)",
-                    }}
-                  >
-                    {children}
-                  </ol>
-                );
-              }
-              return (
-                <ul
-                  style={{
-                    paddingLeft: "1.5rem",
-                    marginBottom: "1rem",
-                    color: "var(--color-light)",
-                  }}
-                >
-                  {children}
-                </ul>
-              );
-            },
-            code: ({ children }) => (
-              <pre
-                style={{
-                  background: "rgba(0, 0, 0, 0.3)",
-                  padding: "1rem",
-                  borderRadius: "4px",
-                  overflowX: "auto",
-                  marginBottom: "1rem",
-                  color: "var(--color-light)",
-                }}
-              >
-                <code>{children}</code>
-              </pre>
-            ),
-            quote: ({ children }) => (
-              <blockquote
-                style={{
-                  borderLeft: "4px solid rgba(51, 102, 255, 0.5)",
-                  paddingLeft: "1rem",
-                  fontStyle: "italic",
-                  marginBottom: "1rem",
-                  color: "var(--color-light)",
-                }}
-              >
-                {children}
-              </blockquote>
-            ),
-            image: ({ image }) => (
-              <div style={{ marginBottom: "1rem" }}>
-                <img
-                  src={image.url}
-                  alt={image.alternativeText || ""}
-                  style={{
-                    maxWidth: "100%",
-                    height: "auto",
-                    borderRadius: "4px",
-                  }}
-                />
-                {image.caption && (
-                  <p
-                    style={{
-                      fontSize: "0.875rem",
-                      color: "var(--color-light)",
-                      marginTop: "0.5rem",
-                    }}
-                  >
-                    {image.caption}
-                  </p>
-                )}
-              </div>
-            ),
-            link: ({ children, url }) => (
-              <a
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  color: "var(--color-primary)",
-                  textDecoration: "underline",
-                }}
-              >
-                {children}
-              </a>
-            ),
-          }}
-        />
+        <Markdown>{markdownContent}</Markdown>
       ) : effectiveContentType === "mdx" ? (
-        <div
-          dangerouslySetInnerHTML={{ __html: content }}
-          style={{ color: "var(--color-light)" }}
-        />
+        <Markdown>{typeof content === "string" ? content : ""}</Markdown>
       ) : (
         <div style={{ color: "var(--color-light)" }}>
-          {typeof content === "object" ? JSON.stringify(content) : content}
+          {typeof content === "string" ? (
+            <Markdown>{content}</Markdown>
+          ) : (
+            JSON.stringify(content)
+          )}
         </div>
       )}
     </Flex>
