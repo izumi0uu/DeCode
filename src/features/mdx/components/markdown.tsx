@@ -91,7 +91,7 @@ export default function Markdown({
       },
       p: (props: any) => (
         <Text
-          as="p"
+          as="div"
           style={{
             marginBottom: "16px",
             color: "#F8F9FA",

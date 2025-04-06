@@ -16,8 +16,6 @@ export const LessonPage: React.FC<LessonPageProps> = ({ lessonSlug }) => {
   // 使用自定义hook获取课程和章节数据
   const { data, isLoading, isError } = useGetLessonContent(lessonSlug);
 
-  console.log(data);
-
   // 处理加载状态 - 这应该由 loading.tsx 处理
   if (isLoading) {
     return null; // 返回null让Next.js使用loading.tsx
@@ -49,12 +47,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({ lessonSlug }) => {
         type={currentLesson.type}
       />
 
-      <LessonContent
-        content={currentLesson.content}
-        contentType={
-          typeof currentLesson.content === "string" ? "text" : "blocks"
-        }
-      />
+      <LessonContent content={currentLesson.content} />
 
       <hr
         style={{
