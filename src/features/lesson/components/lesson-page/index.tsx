@@ -50,7 +50,7 @@ export const LessonPage: React.FC<LessonPageProps> = ({ lessonSlug }) => {
         type={currentLesson.type}
       />
 
-      <LessonContent content={currentLesson.content} />
+      <LessonContent content={currentLesson.content} contentType="blocks" />
 
       <hr
         style={{
