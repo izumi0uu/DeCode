@@ -38,25 +38,6 @@ export const LessonPage: React.FC<LessonPageProps> = ({ lessonSlug }) => {
     throw new Error(`Lesson with slug ${lessonSlug} not found`);
   }
 
-  // 打印内容类型和格式，帮助调试
-  console.log("Content type:", typeof currentLesson.content);
-  console.log("Is array?", Array.isArray(currentLesson.content));
-  if (typeof currentLesson.content === "string") {
-    console.log(
-      "Content preview (string):",
-      currentLesson.content.substring(0, 100)
-    );
-  } else if (
-    Array.isArray(currentLesson.content) &&
-    (currentLesson.content as any[]).length > 0
-  ) {
-    console.log(
-      "First block of content array:",
-      JSON.stringify((currentLesson.content as any[])[0], null, 2)
-    );
-  }
-
-  // 使用从API获取的coursename，而不是props中的
   const courseSlug = currentCourse.slug || currentCourse.id.toString();
 
   return (
