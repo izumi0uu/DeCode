@@ -1,7 +1,7 @@
 import React from "react";
-import LessonPageClient from "./client";
+import { LessonPage } from "@/features/lesson/components/lesson-page";
 
-export default function LessonPage({
+export default function LessonPageRoute({
   params,
 }: {
   params: Promise<{ coursename: string; lessonname: string }>;
@@ -11,6 +11,6 @@ export default function LessonPage({
   const coursename = unwrappedParams.coursename;
   const lessonname = unwrappedParams.lessonname;
 
-  // 使用客户端组件包装器来使用useCoursesAndLessonsForPreview钩子
-  return <LessonPageClient coursename={coursename} lessonname={lessonname} />;
+  // 使用新的组件结构
+  return <LessonPage coursename={coursename} lessonname={lessonname} />;
 }

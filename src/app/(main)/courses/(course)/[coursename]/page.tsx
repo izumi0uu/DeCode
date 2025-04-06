@@ -1,86 +1,292 @@
 "use client";
 
-import React from "react";
-import { Flex } from "@/once-ui/components";
-import { useCurrentLesson } from "@/features/lesson/api/use-get-lesson-preview";
-import { LessonHeader } from "@/features/lesson/components/lesson-header";
-import { LessonContent } from "@/features/lesson/components/lesson-content";
-import { LessonNavigation } from "@/features/lesson/components/lesson-navigation";
+import React, { useEffect, useState } from "react";
+import { Flex, Text, Button } from "@/once-ui/components";
+import { useCoursesAndLessonsForPreview } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
+import { Course } from "@/features/types/api/course";
+import { LessonLight } from "@/features/types/api/lesson";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
-interface LessonPageProps {
-  coursename: string;
-  lessonname: string;
-}
+export default function CoursePage() {
+  // Use the URL directly instead of params
+  const pathname = usePathname();
+  const segments = pathname.split("/");
+  const coursename = segments[segments.length - 1];
+  const router = useRouter();
 
-export const LessonPage: React.FC<LessonPageProps> = ({
-  coursename,
-  lessonname,
-}) => {
-  // 使用自定义hook获取课程和章节数据
-  const { data, isLoading, isError } = useCurrentLesson(coursename, lessonname);
+  const { data } = useCoursesAndLessonsForPreview();
+  const [course, setCourse] = useState<Course | null>(null);
+  const [lessons, setLessons] = useState<LessonLight[]>([]);
 
-  // 处理加载状态 - 这应该由 loading.tsx 处理
-  if (isLoading) {
-    return null; // 返回null让Next.js使用loading.tsx
-  }
+  useEffect(() => {
+    if (data && coursename) {
+      // Find the current course
+      const currentCourse = data.courses.find(
+        (c) => c.slug === coursename || c.id.toString() === coursename
+      );
 
-  // 处理错误状态 - 这应该由 error.tsx 处理
-  if (isError || !data) {
-    throw new Error("Failed to load lesson data");
-  }
+      if (currentCourse) {
+        setCourse(currentCourse);
 
-  const { currentCourse, currentLesson, prevLesson, nextLesson } = data;
+        // Find lessons for this course
+        const courseLessons = data.lessons.filter(
+          (l) => l.course?.id === currentCourse.id
+        );
 
-  if (!currentCourse) {
-    throw new Error(`Course '${coursename}' not found`);
-  }
+        setLessons(courseLessons);
+      }
+    }
+  }, [data, coursename]);
 
-  if (!currentLesson) {
-    throw new Error(
-      `Lesson '${lessonname}' not found in course '${coursename}'`
+  // 处理课程导航，使用客户端路由
+  const handleLessonClick = (lessonSlug: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    router.push(`/courses/${coursename}/${lessonSlug}`);
+  };
+
+  // 处理"开始学习"按钮点击
+  const handleStartLearningClick = (e: React.MouseEvent) => {
+    if (lessons.length > 0) {
+      e.preventDefault();
+      router.push(`/courses/${coursename}/${lessons[0].slug || lessons[0].id}`);
+    }
+  };
+
+  if (!course) {
+    return (
+      <Flex
+        direction="column"
+        padding="xl"
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "50vh",
+        }}
+      >
+        <Text variant="heading-strong-l" color="light">
+          Course not found
+        </Text>
+        <Text
+          variant="body-default-m"
+          color="light"
+          style={{ marginTop: "16px" }}
+        >
+          The requested course could not be found.
+        </Text>
+        <Button
+          variant="secondary"
+          onClick={() => router.push("/courses")}
+          style={{ marginTop: "24px" }}
+        >
+          Back to courses
+        </Button>
+      </Flex>
     );
   }
 
+  // Calculate first lesson path for "Start Learning" button
+  const firstLessonPath =
+    lessons.length > 0
+      ? `/courses/${coursename}/${lessons[0].slug || lessons[0].id}`
+      : null;
+
   return (
     <Flex direction="column" padding="xl">
-      <LessonHeader
-        title={currentLesson.title}
-        description={currentLesson.description}
-        duration={currentLesson.duration}
-        type={currentLesson.type}
-      />
-
-      <LessonContent content="This is where the lesson content would be displayed. In a real application, this would be populated with rich text content, interactive elements, videos, code samples, and other educational materials." />
-
-      <hr
+      {/* Course Header */}
+      <Flex
+        direction="column"
+        gap="s"
         style={{
-          margin: "32px 0 16px",
-          border: "none",
-          borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+          marginBottom: "32px",
+          borderBottom: "1px solid rgba(51, 102, 255, 0.2)",
+          paddingBottom: "24px",
         }}
-      />
+      >
+        <Text variant="heading-strong-xl" color="light">
+          {course.title}
+        </Text>
 
-      <LessonNavigation
-        courseName={currentCourse.slug || currentCourse.id.toString()}
-        prevLesson={
-          prevLesson
-            ? {
-                slug: prevLesson.slug || prevLesson.id.toString(),
-                title: prevLesson.title,
-              }
-            : undefined
-        }
-        nextLesson={
-          nextLesson
-            ? {
-                slug: nextLesson.slug || nextLesson.id.toString(),
-                title: nextLesson.title,
-              }
-            : undefined
-        }
-      />
+        {course.description && (
+          <Text
+            variant="body-default-l"
+            color="light"
+            style={{ opacity: 0.8, marginTop: "8px", maxWidth: "800px" }}
+          >
+            {course.description}
+          </Text>
+        )}
+
+        <Flex gap="m" style={{ marginTop: "16px" }}>
+          {course.difficulty && (
+            <Text
+              variant="body-default-s"
+              color="light"
+              style={{ opacity: 0.7 }}
+            >
+              Difficulty: {course.difficulty}
+            </Text>
+          )}
+          {course.duration && (
+            <Text
+              variant="body-default-s"
+              color="light"
+              style={{ opacity: 0.7 }}
+            >
+              Duration: {course.duration} min
+            </Text>
+          )}
+          {course.locale && (
+            <Text
+              variant="body-default-s"
+              color="light"
+              style={{ opacity: 0.7 }}
+            >
+              Language: {course.locale}
+            </Text>
+          )}
+        </Flex>
+
+        {firstLessonPath && (
+          <Link
+            href={firstLessonPath}
+            style={{ textDecoration: "none", marginTop: "24px" }}
+            onClick={handleStartLearningClick}
+          >
+            <Button variant="primary" size="l">
+              Start Learning
+            </Button>
+          </Link>
+        )}
+      </Flex>
+
+      {/* Lessons Section */}
+      <Flex direction="column">
+        <Text
+          variant="heading-strong-m"
+          color="light"
+          style={{ marginBottom: "16px" }}
+        >
+          Course Content
+        </Text>
+
+        {lessons.length > 0 ? (
+          <Flex direction="column" gap="m">
+            {lessons.map((lesson, index) => (
+              <Link
+                key={lesson.id}
+                href={`/courses/${coursename}/${lesson.slug || lesson.id}`}
+                style={{ textDecoration: "none" }}
+                onClick={(e) =>
+                  handleLessonClick(lesson.slug || lesson.id.toString(), e)
+                }
+              >
+                <Flex
+                  direction="column"
+                  style={{
+                    padding: "16px",
+                    borderRadius: "8px",
+                    background: "rgba(51, 102, 255, 0.05)",
+                    border: "1px solid rgba(51, 102, 255, 0.15)",
+                    transition: "all 0.2s ease",
+                    cursor: "pointer",
+                    marginBottom: "8px",
+                  }}
+                  className="hover:border-blue-500 hover:bg-opacity-10"
+                >
+                  <Flex
+                    gap="s"
+                    style={{
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text
+                      variant="body-strong-m"
+                      color="primary"
+                      style={{
+                        width: "24px",
+                        height: "24px",
+                        borderRadius: "50%",
+                        background: "rgba(51, 102, 255, 0.1)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {index + 1}
+                    </Text>
+                    <Text variant="body-strong-m" color="light">
+                      {lesson.title}
+                    </Text>
+                  </Flex>
+
+                  {lesson.description && (
+                    <Text
+                      variant="body-default-s"
+                      color="light"
+                      style={{
+                        opacity: 0.7,
+                        marginTop: "8px",
+                        marginLeft: "32px",
+                      }}
+                    >
+                      {lesson.description}
+                    </Text>
+                  )}
+
+                  <Flex
+                    gap="m"
+                    style={{
+                      marginTop: "8px",
+                      marginLeft: "32px",
+                    }}
+                  >
+                    {lesson.duration && (
+                      <Text
+                        variant="body-default-xs"
+                        color="light"
+                        style={{ opacity: 0.6 }}
+                      >
+                        {lesson.duration} min
+                      </Text>
+                    )}
+                    {lesson.type && (
+                      <Text
+                        variant="body-default-xs"
+                        color="light"
+                        style={{ opacity: 0.6 }}
+                      >
+                        {lesson.type}
+                      </Text>
+                    )}
+                  </Flex>
+                </Flex>
+              </Link>
+            ))}
+          </Flex>
+        ) : (
+          <Flex
+            direction="column"
+            style={{
+              padding: "24px",
+              borderRadius: "12px",
+              background: "rgba(51, 102, 255, 0.05)",
+              border: "1px solid rgba(51, 102, 255, 0.2)",
+              alignItems: "center",
+              justifyContent: "center",
+              minHeight: "200px",
+            }}
+          >
+            <Text
+              variant="body-default-m"
+              color="light"
+              style={{ opacity: 0.7 }}
+            >
+              No lessons available for this course yet.
+            </Text>
+          </Flex>
+        )}
+      </Flex>
     </Flex>
   );
-};
-
-export default LessonPage;
+}
