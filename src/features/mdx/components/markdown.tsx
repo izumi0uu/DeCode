@@ -8,12 +8,11 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import { escapeBrackets, escapeMhchem, fixMarkdownBold } from "../utils";
 import { PhotoProvider, PhotoView } from "react-photo-view";
-import Image from "@/components/image";
+import Image from "next/image";
 import "react-photo-view/dist/react-photo-view.css";
 import CodeBlock from "./code/code-block";
 import PreSingleLine from "./code/pre-single-line";
 import { Text, Flex, InlineCode } from "@/once-ui/components";
-import styles from "./markdown.module.scss";
 
 export default function Markdown({
   children,
@@ -32,8 +31,23 @@ export default function Markdown({
         <Text
           as="a"
           {...props}
-          style={{ color: "var(--color-function-link)" }}
-          className="mdx-link"
+          style={{
+            color: "#3366FF",
+            position: "relative",
+            display: "inline-block",
+          }}
+          onMouseEnter={(e: React.MouseEvent<HTMLElement>) => {
+            const target = e.currentTarget as HTMLElement;
+            if (target.style) {
+              target.style.textDecoration = "underline";
+            }
+          }}
+          onMouseLeave={(e: React.MouseEvent<HTMLElement>) => {
+            const target = e.currentTarget as HTMLElement;
+            if (target.style) {
+              target.style.textDecoration = "none";
+            }
+          }}
         >
           {props.children}
         </Text>
@@ -43,19 +57,25 @@ export default function Markdown({
           <PhotoView key={props.src} src={props.src}>
             <Flex
               direction="row"
-              align="center"
-              justify="center"
-              className="image-container"
+              vertical="center"
+              style={{
+                cursor: "zoom-in",
+                margin: "16px 0",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
-              <Image
+              <img
                 src={props.src}
                 alt={props.alt || ""}
-                width={1200}
-                height={800}
-                className="object-contain w-full h-auto max-h-[500px] rounded overflow-hidden"
-                priority={false}
-                quality={75}
-                sizes="100vw"
+                style={{
+                  objectFit: "contain",
+                  width: "100%",
+                  height: "auto",
+                  maxHeight: "500px",
+                  borderRadius: "4px",
+                  overflow: "hidden",
+                }}
               />
             </Flex>
           </PhotoView>
@@ -73,9 +93,9 @@ export default function Markdown({
         <Text
           as="p"
           style={{
-            marginBottom: "var(--spacing-m)",
-            color: "var(--color-light)",
-            fontSize: "var(--font-size-m)",
+            marginBottom: "16px",
+            color: "#F8F9FA",
+            fontSize: "16px",
             lineHeight: 1.6,
           }}
         >
@@ -86,10 +106,10 @@ export default function Markdown({
         <Text
           as="h1"
           style={{
-            marginTop: "var(--spacing-xl)",
-            marginBottom: "var(--spacing-l)",
-            color: "var(--color-light)",
-            fontSize: "var(--font-size-xl)",
+            marginTop: "32px",
+            marginBottom: "16px",
+            color: "#F8F9FA",
+            fontSize: "32px",
             fontWeight: 600,
           }}
         >
@@ -100,10 +120,10 @@ export default function Markdown({
         <Text
           as="h2"
           style={{
-            marginTop: "var(--spacing-xl)",
-            marginBottom: "var(--spacing-l)",
-            color: "var(--color-light)",
-            fontSize: "var(--font-size-l)",
+            marginTop: "32px",
+            marginBottom: "16px",
+            color: "#F8F9FA",
+            fontSize: "24px",
             fontWeight: 600,
           }}
         >
@@ -114,10 +134,10 @@ export default function Markdown({
         <Text
           as="h3"
           style={{
-            marginTop: "var(--spacing-xl)",
-            marginBottom: "var(--spacing-l)",
-            color: "var(--color-light)",
-            fontSize: "var(--font-size-m)",
+            marginTop: "32px",
+            marginBottom: "16px",
+            color: "#F8F9FA",
+            fontSize: "20px",
             fontWeight: 600,
           }}
         >
@@ -129,11 +149,11 @@ export default function Markdown({
           as="blockquote"
           direction="column"
           style={{
-            borderLeft: "4px solid var(--color-primary-alpha-medium)",
-            paddingLeft: "var(--spacing-m)",
-            margin: "var(--spacing-m) 0",
+            borderLeft: "4px solid rgba(51, 102, 255, 0.5)",
+            paddingLeft: "16px",
+            margin: "16px 0",
             fontStyle: "italic",
-            color: "var(--color-light)",
+            color: "#F8F9FA",
           }}
         >
           {props.children}
@@ -144,9 +164,9 @@ export default function Markdown({
           as="ul"
           direction="column"
           style={{
-            margin: "var(--spacing-m) 0",
-            paddingLeft: "var(--spacing-xl)",
-            color: "var(--color-light)",
+            margin: "16px 0",
+            paddingLeft: "24px",
+            color: "#F8F9FA",
             gap: "8px",
           }}
         >
@@ -158,9 +178,9 @@ export default function Markdown({
           as="ol"
           direction="column"
           style={{
-            margin: "var(--spacing-m) 0",
-            paddingLeft: "var(--spacing-xl)",
-            color: "var(--color-light)",
+            margin: "16px 0",
+            paddingLeft: "24px",
+            color: "#F8F9FA",
             gap: "8px",
           }}
         >
@@ -171,9 +191,9 @@ export default function Markdown({
         <Text
           as="li"
           style={{
-            color: "var(--color-light)",
-            fontSize: "var(--font-size-m)",
-            marginBottom: "var(--spacing-s)",
+            color: "#F8F9FA",
+            fontSize: "16px",
+            marginBottom: "8px",
           }}
         >
           {props.children}
@@ -182,10 +202,13 @@ export default function Markdown({
     };
   }, []);
 
+  const articleStyle = {
+    color: "#F8F9FA",
+    ...(mode === "quiz" ? { fontSize: "14px" } : {}),
+  };
+
   return (
-    <article
-      className={mode === "normal" ? styles.normalMode : styles.quizMode}
-    >
+    <article style={articleStyle}>
       <ReactMarkdown
         rehypePlugins={[rehypeRaw, [rehypeKatex, { output: "mathml" }]]}
         remarkPlugins={[remarkMath, remarkGfm]}

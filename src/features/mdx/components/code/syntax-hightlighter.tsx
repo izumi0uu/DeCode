@@ -1,7 +1,6 @@
-import { memo } from 'react';
-import { useTheme } from 'next-themes';
-import { Icons } from '@/components/icons';
-import { useHighlight } from '../../hooks/use-highlight';
+import { memo } from "react";
+import { Icon } from "@/once-ui/components";
+import { useHighlight } from "../../hooks/use-highlight";
 
 export interface SyntaxHighlighterProps {
   children: string;
@@ -10,8 +9,8 @@ export interface SyntaxHighlighterProps {
 
 const SyntaxHighlighter = memo<SyntaxHighlighterProps>(
   ({ children, language }) => {
-    const { theme } = useTheme();
-    const { data, isLoading } = useHighlight(children.trim(), language, theme === 'dark');
+    const { data, isLoading } = useHighlight(children.trim(), language);
+    );
 
     return (
       <>
@@ -31,14 +30,13 @@ const SyntaxHighlighter = memo<SyntaxHighlighterProps>(
         )}
         {isLoading && (
           <div className="flex items-center justify-center">
-            <Icons.loading className='animate-spin' />
+            <Icon name="loading" className="animate-spin" />
           </div>
         )}
       </>
     );
-  },
+  }
 );
 
-SyntaxHighlighter.displayName = 'SyntaxHighlighter';
 
 export default SyntaxHighlighter;

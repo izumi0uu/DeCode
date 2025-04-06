@@ -16,11 +16,11 @@ const Pre = ({
       position="relative"
       className={styles.codeContainer}
       style={{
-        backgroundColor: "var(--color-background-code)",
-        border: "1px solid var(--color-border-outline)",
-        borderRadius: "var(--radius-s)",
-        padding: "var(--spacing-m)",
-        margin: "var(--spacing-m) 0",
+        backgroundColor: "#1E1E1E",
+        border: "1px solid #333333",
+        borderRadius: "4px",
+        padding: "16px",
+        margin: "16px 0",
       }}
     >
       <div className={styles.codeContent}>
