@@ -6,6 +6,7 @@ import { Text, Flex, Skeleton } from "@/once-ui/components";
 import { CourseCardSkeletons } from "@/features/home-and-course-preview/components/skeletons";
 import { LessonLight } from "@/features/types/api/lesson";
 import Image from "next/image";
+import Link from "next/link";
 import styles from "./index.module.scss";
 
 // 定义动画变体 - 抽出来复用
@@ -64,52 +65,65 @@ const LessonCard = memo(
     // 使用索引延迟动画以创建交错效果
     const transitionDelay = 0.05 + (index % 10) * 0.05;
 
+    // 构建课时URL
+    const courseSlug =
+      lesson.course?.slug || lesson.course?.id.toString() || "";
+    const lessonSlug = lesson.slug || lesson.id.toString();
+    const lessonUrl = `/courses/${courseSlug}/${lessonSlug}`;
+
     return (
-      <motion.div
-        className={styles.lessonCard}
-        variants={cardVariants}
-        initial="hidden"
-        animate="visible"
-        whileHover="hover"
-        transition={{
-          duration: 0.6,
-          delay: transitionDelay,
-          ease: "easeOut",
-        }}
-        layout
+      <Link
+        href={lessonUrl}
+        style={{ textDecoration: "none", cursor: "pointer" }}
       >
-        {imageUrl ? (
-          <LessonImage src={imageUrl} alt={lesson.title} />
-        ) : (
-          <ImageSkeleton />
-        )}
-
-        <Flex direction="column" gap="m" className={styles.cardContent}>
-          <Text variant="body-strong-l" className={styles.title}>
-            {lesson.title}
-          </Text>
-
-          <Text variant="body-default-m" className={styles.description}>
-            {lesson.description || "No description available"}
-          </Text>
-
-          {lesson.course && (
-            <Text variant="body-default-s" className={styles.courseName}>
-              Course: {lesson.course.title || "Unknown"}
-            </Text>
+        <motion.div
+          className={styles.lessonCard}
+          variants={cardVariants}
+          initial="hidden"
+          animate="visible"
+          whileHover="hover"
+          transition={{
+            duration: 0.6,
+            delay: transitionDelay,
+            ease: "easeOut",
+          }}
+          layout
+        >
+          {imageUrl ? (
+            <LessonImage src={imageUrl} alt={lesson.title} />
+          ) : (
+            <ImageSkeleton />
           )}
 
-          <Flex
-            className={styles.cardFooter}
-            style={{ justifyContent: "space-between", alignItems: "center" }}
-          >
-            <Text variant="body-strong-s">
-              Lesson {lesson.sortOrder || "-"}
+          <Flex direction="column" gap="m" className={styles.cardContent}>
+            <Text variant="body-strong-l" className={styles.title}>
+              {lesson.title}
             </Text>
-            <Text variant="body-default-s">{lesson.duration || "N/A"} min</Text>
+
+            <Text variant="body-default-m" className={styles.description}>
+              {lesson.description || "No description available"}
+            </Text>
+
+            {lesson.course && (
+              <Text variant="body-default-s" className={styles.courseName}>
+                Course: {lesson.course.title || "Unknown"}
+              </Text>
+            )}
+
+            <Flex
+              className={styles.cardFooter}
+              style={{ justifyContent: "space-between", alignItems: "center" }}
+            >
+              <Text variant="body-strong-s">
+                Lesson {lesson.sortOrder || "-"}
+              </Text>
+              <Text variant="body-default-s">
+                {lesson.duration || "N/A"} min
+              </Text>
+            </Flex>
           </Flex>
-        </Flex>
-      </motion.div>
+        </motion.div>
+      </Link>
     );
   }
 );
