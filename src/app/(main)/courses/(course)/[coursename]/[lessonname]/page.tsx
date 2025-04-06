@@ -1,159 +1,209 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Flex, Text, Skeleton } from "@/once-ui/components";
-import { useCoursesAndLessonsForPreview } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
+import React from "react";
+import { Flex, Text, Button } from "@/once-ui/components";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { Course } from "@/features/types/api/course";
 import { LessonLight } from "@/features/types/api/lesson";
-import { usePathname } from "next/navigation";
+import { useCoursesAndLessonsForPreview } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
+
+// Course header component
+const LessonHeader = ({
+  title,
+  description,
+  duration,
+  type,
+}: {
+  title: string;
+  description?: string;
+  duration?: number;
+  type?: string;
+}) => {
+  return (
+    <Flex direction="column" gap="s" style={{ marginBottom: "32px" }}>
+      <Text variant="heading-strong-l" color="light">
+        {title}
+      </Text>
+      {description && (
+        <Text variant="body-default-m" color="light" style={{ opacity: 0.8 }}>
+          {description}
+        </Text>
+      )}
+      <Flex gap="m" style={{ marginTop: "16px" }}>
+        {duration && (
+          <Text variant="body-default-s" color="light" style={{ opacity: 0.6 }}>
+            Duration: {duration} min
+          </Text>
+        )}
+        {type && (
+          <Text variant="body-default-s" color="light" style={{ opacity: 0.6 }}>
+            Type: {type}
+          </Text>
+        )}
+      </Flex>
+    </Flex>
+  );
+};
+
+// Lesson content component
+const LessonContent = ({ content }: { content?: string }) => {
+  return (
+    <Flex
+      direction="column"
+      style={{
+        padding: "24px",
+        borderRadius: "12px",
+        background: "rgba(51, 102, 255, 0.05)",
+        border: "1px solid rgba(51, 102, 255, 0.2)",
+      }}
+    >
+      <Text variant="body-default-m" color="light">
+        {content ||
+          "This is where the lesson content would be displayed. In a real application, this would be populated with rich text content, interactive elements, videos, code samples, and other educational materials."}
+      </Text>
+    </Flex>
+  );
+};
+
+// Navigation component
+const LessonNavigation = ({
+  courseName,
+  prevLesson,
+  nextLesson,
+}: {
+  courseName: string;
+  prevLesson?: { slug: string; title: string };
+  nextLesson?: { slug: string; title: string };
+}) => {
+  return (
+    <Flex
+      style={{
+        marginTop: "48px",
+        padding: "24px 0",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+      {prevLesson ? (
+        <Link href={`/courses/${courseName}/${prevLesson.slug}`} passHref>
+          <Button variant="secondary">Previous: {prevLesson.title}</Button>
+        </Link>
+      ) : (
+        <div></div>
+      )}
+
+      {nextLesson && (
+        <Link href={`/courses/${courseName}/${nextLesson.slug}`} passHref>
+          <Button variant="primary">Next: {nextLesson.title}</Button>
+        </Link>
+      )}
+    </Flex>
+  );
+};
 
 export default function LessonPage() {
-  // Use the URL directly
+  // Get path parameters
   const pathname = usePathname();
   const segments = pathname.split("/");
-  // Get coursename and lessonname from URL segments
   const coursename = segments[segments.length - 2];
   const lessonname = segments[segments.length - 1];
 
-  const { data, isLoading, isError } = useCoursesAndLessonsForPreview();
-  const [course, setCourse] = useState<Course | null>(null);
-  const [lesson, setLesson] = useState<LessonLight | null>(null);
+  // 获取课程和章节数据
+  const {
+    data: coursesData,
+    isLoading,
+    isError,
+  } = useCoursesAndLessonsForPreview();
 
-  useEffect(() => {
-    if (data && coursename && lessonname) {
-      // Find the current course
-      const currentCourse = data.courses.find(
-        (c) => c.slug === coursename || c.id.toString() === coursename
-      );
-
-      if (currentCourse) {
-        setCourse(currentCourse);
-
-        // Find the current lesson
-        const currentLesson = data.lessons.find(
-          (l) =>
-            (l.slug === lessonname || l.id.toString() === lessonname) &&
-            l.course?.id === currentCourse.id
-        );
-
-        if (currentLesson) {
-          setLesson(currentLesson);
-        }
-      }
-    }
-  }, [data, coursename, lessonname]);
-
+  // 处理加载状态 - 这应该由 loading.tsx 处理
   if (isLoading) {
-    return (
-      <Flex direction="column" padding="xl" gap="l">
-        <Skeleton shape="block" style={{ height: "40px", width: "60%" }} />
-        <Skeleton shape="block" style={{ height: "24px", width: "40%" }} />
-        <Skeleton shape="block" style={{ height: "300px", width: "100%" }} />
-        <Skeleton shape="block" style={{ height: "200px", width: "100%" }} />
-      </Flex>
+    return null; // 返回null让Next.js使用loading.tsx
+  }
+
+  // 处理错误状态 - 这应该由 error.tsx 处理
+  if (isError || !coursesData) {
+    throw new Error("Failed to load course data");
+  }
+
+  // Find current course
+  const currentCourse = coursesData.courses.find(
+    (c) => c.slug === coursename || c.id.toString() === coursename
+  );
+
+  if (!currentCourse) {
+    // This will trigger error.tsx
+    throw new Error(`Course '${coursename}' not found`);
+  }
+
+  // Find current lesson
+  const currentLesson = coursesData.lessons.find(
+    (l) =>
+      (l.slug === lessonname || l.id.toString() === lessonname) &&
+      l.course?.id === currentCourse.id
+  );
+
+  if (!currentLesson) {
+    // This will trigger error.tsx
+    throw new Error(
+      `Lesson '${lessonname}' not found in course '${coursename}'`
     );
   }
 
-  if (isError) {
-    return (
-      <Flex
-        direction="column"
-        padding="xl"
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "50vh",
-        }}
-      >
-        <Text variant="heading-strong-l" color="error">
-          Error loading lesson
-        </Text>
-        <Text
-          variant="body-default-m"
-          color="light"
-          style={{ marginTop: "16px" }}
-        >
-          There was a problem loading this lesson. Please try again later.
-        </Text>
-      </Flex>
-    );
-  }
+  // Find previous and next lessons
+  const courseLessons = coursesData.lessons
+    .filter((l) => l.course?.id === currentCourse.id)
+    .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
-  if (!course || !lesson) {
-    return (
-      <Flex
-        direction="column"
-        padding="xl"
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "50vh",
-        }}
-      >
-        <Text variant="heading-strong-l" color="light">
-          Lesson not found
-        </Text>
-        <Text
-          variant="body-default-m"
-          color="light"
-          style={{ marginTop: "16px" }}
-        >
-          The requested lesson could not be found.
-        </Text>
-      </Flex>
-    );
-  }
+  const currentIndex = courseLessons.findIndex(
+    (l) => l.id === currentLesson.id
+  );
+  const prevLesson =
+    currentIndex > 0 ? courseLessons[currentIndex - 1] : undefined;
+  const nextLesson =
+    currentIndex >= 0 && currentIndex < courseLessons.length - 1
+      ? courseLessons[currentIndex + 1]
+      : undefined;
 
   return (
     <Flex direction="column" padding="xl">
-      <Flex direction="column" gap="s" style={{ marginBottom: "32px" }}>
-        <Text variant="heading-strong-l" color="light">
-          {lesson.title}
-        </Text>
-        {lesson.description && (
-          <Text variant="body-default-m" color="light" style={{ opacity: 0.8 }}>
-            {lesson.description}
-          </Text>
-        )}
-        <Flex gap="m" style={{ marginTop: "16px" }}>
-          {lesson.duration && (
-            <Text
-              variant="body-default-s"
-              color="light"
-              style={{ opacity: 0.6 }}
-            >
-              Duration: {lesson.duration} min
-            </Text>
-          )}
-          {lesson.type && (
-            <Text
-              variant="body-default-s"
-              color="light"
-              style={{ opacity: 0.6 }}
-            >
-              Type: {lesson.type}
-            </Text>
-          )}
-        </Flex>
-      </Flex>
+      <LessonHeader
+        title={currentLesson.title}
+        description={currentLesson.description}
+        duration={currentLesson.duration}
+        type={currentLesson.type}
+      />
 
-      {/* Lesson Content Placeholder */}
-      <Flex
-        direction="column"
+      <LessonContent content="This is where the lesson content would be displayed. In a real application, this would be populated with rich text content, interactive elements, videos, code samples, and other educational materials." />
+
+      <hr
         style={{
-          padding: "24px",
-          borderRadius: "12px",
-          background: "rgba(51, 102, 255, 0.05)",
-          border: "1px solid rgba(51, 102, 255, 0.2)",
+          margin: "32px 0 16px",
+          border: "none",
+          borderTop: "1px solid rgba(255, 255, 255, 0.1)",
         }}
-      >
-        <Text variant="body-default-m" color="light">
-          This is where the lesson content would be displayed. In a real
-          application, this would be populated with rich text content,
-          interactive elements, videos, code samples, and other educational
-          materials.
-        </Text>
-      </Flex>
+      />
+
+      <LessonNavigation
+        courseName={currentCourse.slug || currentCourse.id.toString()}
+        prevLesson={
+          prevLesson
+            ? {
+                slug: prevLesson.slug || prevLesson.id.toString(),
+                title: prevLesson.title,
+              }
+            : undefined
+        }
+        nextLesson={
+          nextLesson
+            ? {
+                slug: nextLesson.slug || nextLesson.id.toString(),
+                title: nextLesson.title,
+              }
+            : undefined
+        }
+      />
     </Flex>
   );
 }

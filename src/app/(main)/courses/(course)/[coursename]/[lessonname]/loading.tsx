@@ -18,7 +18,6 @@ export default function LessonLoading() {
             shape="block"
             style={{
               height: "20px",
-              width: "140px",
               borderRadius: "4px",
               opacity: 0.6,
             }}
@@ -27,7 +26,7 @@ export default function LessonLoading() {
             shape="block"
             style={{
               height: "20px",
-              width: "100px",
+              width: "100%",
               borderRadius: "4px",
               opacity: 0.6,
             }}
