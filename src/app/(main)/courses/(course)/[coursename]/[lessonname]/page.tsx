@@ -1,12 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Flex, Text, Button } from "@/once-ui/components";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Course } from "@/features/types/api/course";
-import { LessonLight } from "@/features/types/api/lesson";
 import { useCoursesAndLessonsForPreview } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
+import LessonLoading from "./loading";
 
 // Course header component
 const LessonHeader = ({
@@ -104,6 +103,13 @@ const LessonNavigation = ({
 };
 
 export default function LessonPage() {
+  // 确保只在客户端运行
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   // Get path parameters
   const pathname = usePathname();
   const segments = pathname.split("/");
@@ -117,14 +123,27 @@ export default function LessonPage() {
     isError,
   } = useCoursesAndLessonsForPreview();
 
-  // 处理加载状态 - 这应该由 loading.tsx 处理
-  if (isLoading) {
-    return null; // 返回null让Next.js使用loading.tsx
+  // 在服务端或加载中时显示加载骨架
+  if (!isClient || isLoading) {
+    return <LessonLoading />;
   }
 
-  // 处理错误状态 - 这应该由 error.tsx 处理
+  // 处理错误状态
   if (isError || !coursesData) {
-    throw new Error("Failed to load course data");
+    return (
+      <Flex direction="column" padding="xl">
+        <Text variant="heading-strong-l" color="error">
+          Failed to load course data
+        </Text>
+        <Text
+          variant="body-default-m"
+          color="light"
+          style={{ marginTop: "16px" }}
+        >
+          Please try refreshing the page.
+        </Text>
+      </Flex>
+    );
   }
 
   // Find current course
@@ -133,8 +152,23 @@ export default function LessonPage() {
   );
 
   if (!currentCourse) {
-    // This will trigger error.tsx
-    throw new Error(`Course '${coursename}' not found`);
+    return (
+      <Flex direction="column" padding="xl">
+        <Text variant="heading-strong-l" color="error">
+          Course not found
+        </Text>
+        <Text
+          variant="body-default-m"
+          color="light"
+          style={{ marginTop: "16px" }}
+        >
+          The course {coursename} could not be found.
+        </Text>
+        <Link href="/courses" style={{ marginTop: "24px" }} passHref>
+          <Button variant="primary">Browse All Courses</Button>
+        </Link>
+      </Flex>
+    );
   }
 
   // Find current lesson
@@ -145,9 +179,27 @@ export default function LessonPage() {
   );
 
   if (!currentLesson) {
-    // This will trigger error.tsx
-    throw new Error(
-      `Lesson '${lessonname}' not found in course '${coursename}'`
+    return (
+      <Flex direction="column" padding="xl">
+        <Text variant="heading-strong-l" color="error">
+          Lesson not found
+        </Text>
+        <Text
+          variant="body-default-m"
+          color="light"
+          style={{ marginTop: "16px" }}
+        >
+          The lesson {lessonname} could not be found in course{" "}
+          {currentCourse.title}.
+        </Text>
+        <Link
+          href={`/courses/${currentCourse.slug || currentCourse.id}`}
+          style={{ marginTop: "24px" }}
+          passHref
+        >
+          <Button variant="primary">Back to Course</Button>
+        </Link>
+      </Flex>
     );
   }
 
