@@ -11,6 +11,5 @@ export default function LessonPageRoute({
   const coursename = unwrappedParams.coursename;
   const lessonname = unwrappedParams.lessonname;
 
-  // 使用新的组件结构
   return <LessonPage coursename={coursename} lessonname={lessonname} />;
 }

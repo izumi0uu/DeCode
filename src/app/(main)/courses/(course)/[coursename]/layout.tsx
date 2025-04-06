@@ -31,6 +31,7 @@ const PageContainer = ({ children, sidebar }: PageContainerProps) => (
         flex: 1,
         height: "100vh",
         overflowY: "auto",
+        width: "1200px",
         background: "var(--bg-surface)",
       }}
     >
