@@ -3,33 +3,39 @@ import { Flex, Skeleton } from "@/once-ui/components";
 
 export const LessonSkeleton: React.FC = () => {
   return (
-    <Flex direction="column" padding="xl">
-      <Flex direction="column" gap="s" style={{ marginBottom: "32px" }}>
-        {/* 课程标题 - 更改宽度为70% */}
-        <Skeleton shape="block" style={{ height: "40px", width: "70%" }} />
+    <Flex direction="column" padding="xl" style={{ width: "100%" }}>
+      <Flex
+        direction="column"
+        gap="s"
+        style={{ marginBottom: "32px", width: "100%" }}
+      >
+        {/* 课程标题 - 使用100%宽度 */}
+        <Skeleton shape="block" style={{ height: "40px", width: "100%" }} />
 
-        {/* 课程描述 - 调整为两行，更改宽度 */}
-        <Skeleton shape="block" style={{ height: "24px", width: "90%" }} />
-        <Skeleton shape="block" style={{ height: "24px", width: "85%" }} />
+        {/* 课程描述 - 使用100%宽度 */}
+        <Skeleton shape="block" style={{ height: "24px", width: "100%" }} />
+        <Skeleton shape="block" style={{ height: "24px", width: "100%" }} />
 
         {/* 元数据信息 - 持续时间和类型 */}
-        <Flex gap="m" style={{ marginTop: "16px" }}>
+        <Flex gap="m" style={{ marginTop: "16px", width: "100%" }}>
           <Skeleton
             shape="block"
             style={{
               height: "20px",
-              width: "140px", // 更具体的宽度
+              width: "100%", // 更改为100%
               borderRadius: "4px",
               opacity: 0.6,
+              flexGrow: 1, // 添加flexGrow属性使其填充可用空间
             }}
           />
           <Skeleton
             shape="block"
             style={{
               height: "20px",
-              width: "120px", // 更具体的宽度
+              width: "100%", // 更改为100%
               borderRadius: "4px",
               opacity: 0.6,
+              flexGrow: 1, // 添加flexGrow属性使其填充可用空间
             }}
           />
         </Flex>
@@ -43,6 +49,7 @@ export const LessonSkeleton: React.FC = () => {
           borderRadius: "12px",
           background: "rgba(51, 102, 255, 0.05)",
           border: "1px solid rgba(51, 102, 255, 0.2)",
+          width: "100%", // 确保100%宽度
         }}
       >
         <Skeleton
@@ -57,7 +64,7 @@ export const LessonSkeleton: React.FC = () => {
           shape="block"
           style={{
             height: "24px",
-            width: "95%",
+            width: "100%",
             marginTop: "12px",
             opacity: 0.7,
           }}
@@ -66,7 +73,7 @@ export const LessonSkeleton: React.FC = () => {
           shape="block"
           style={{
             height: "24px",
-            width: "90%",
+            width: "100%",
             marginTop: "12px",
             opacity: 0.7,
           }}
@@ -75,7 +82,7 @@ export const LessonSkeleton: React.FC = () => {
           shape="block"
           style={{
             height: "24px",
-            width: "85%",
+            width: "100%",
             marginTop: "12px",
             opacity: 0.7,
           }}
@@ -84,7 +91,7 @@ export const LessonSkeleton: React.FC = () => {
           shape="block"
           style={{
             height: "24px",
-            width: "80%",
+            width: "100%",
             marginTop: "12px",
             opacity: 0.7,
           }}
@@ -93,7 +100,7 @@ export const LessonSkeleton: React.FC = () => {
           shape="block"
           style={{
             height: "24px",
-            width: "75%",
+            width: "100%",
             marginTop: "12px",
             opacity: 0.7,
           }}
@@ -106,7 +113,7 @@ export const LessonSkeleton: React.FC = () => {
           height: "1px",
           background: "rgba(255, 255, 255, 0.1)",
           margin: "32px 0 16px",
-          width: "100%",
+          width: "100%", // 确保100%宽度
         }}
       />
 
@@ -117,13 +124,14 @@ export const LessonSkeleton: React.FC = () => {
           padding: "24px 0",
           display: "flex",
           justifyContent: "space-between",
+          width: "100%", // 确保100%宽度
         }}
       >
         <Skeleton
           shape="block"
           style={{
             height: "40px",
-            width: "180px",
+            width: "45%", // 更改为百分比宽度
             borderRadius: "4px",
           }}
         />
@@ -131,7 +139,7 @@ export const LessonSkeleton: React.FC = () => {
           shape="block"
           style={{
             height: "40px",
-            width: "180px",
+            width: "45%", // 更改为百分比宽度
             borderRadius: "4px",
           }}
         />
