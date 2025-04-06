@@ -5,10 +5,10 @@ export default function LessonLoading() {
   return (
     <Flex direction="column" padding="xl">
       <Flex direction="column" gap="s" style={{ marginBottom: "32px" }}>
-        {/* 课程标题 */}
+        {/* 课程标题 - 更改宽度为70% */}
         <Skeleton shape="block" style={{ height: "40px", width: "70%" }} />
 
-        {/* 课程描述 */}
+        {/* 课程描述 - 调整为两行，更改宽度 */}
         <Skeleton shape="block" style={{ height: "24px", width: "90%" }} />
         <Skeleton shape="block" style={{ height: "24px", width: "85%" }} />
 
@@ -18,6 +18,7 @@ export default function LessonLoading() {
             shape="block"
             style={{
               height: "20px",
+              width: "140px", // 更具体的宽度
               borderRadius: "4px",
               opacity: 0.6,
             }}
@@ -26,7 +27,7 @@ export default function LessonLoading() {
             shape="block"
             style={{
               height: "20px",
-              width: "100%",
+              width: "120px", // 更具体的宽度
               borderRadius: "4px",
               opacity: 0.6,
             }}
@@ -77,6 +78,61 @@ export default function LessonLoading() {
             width: "85%",
             marginTop: "12px",
             opacity: 0.7,
+          }}
+        />
+        <Skeleton
+          shape="block"
+          style={{
+            height: "24px",
+            width: "80%",
+            marginTop: "12px",
+            opacity: 0.7,
+          }}
+        />
+        <Skeleton
+          shape="block"
+          style={{
+            height: "24px",
+            width: "75%",
+            marginTop: "12px",
+            opacity: 0.7,
+          }}
+        />
+      </Flex>
+
+      {/* 分割线 */}
+      <div
+        style={{
+          height: "1px",
+          background: "rgba(255, 255, 255, 0.1)",
+          margin: "32px 0 16px",
+          width: "100%",
+        }}
+      />
+
+      {/* 导航按钮区域 */}
+      <Flex
+        style={{
+          marginTop: "32px",
+          padding: "24px 0",
+          display: "flex",
+          justifyContent: "space-between",
+        }}
+      >
+        <Skeleton
+          shape="block"
+          style={{
+            height: "40px",
+            width: "180px",
+            borderRadius: "4px",
+          }}
+        />
+        <Skeleton
+          shape="block"
+          style={{
+            height: "40px",
+            width: "180px",
+            borderRadius: "4px",
           }}
         />
       </Flex>
