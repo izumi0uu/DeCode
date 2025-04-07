@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Flex } from "@/once-ui/components";
 import Markdown from "@/features/mdx/components/code/markdown";
 
@@ -7,6 +7,13 @@ interface LessonContentProps {
 }
 
 export const LessonContent: React.FC<LessonContentProps> = ({ content }) => {
+  // 添加客户端渲染标记
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   if (!content) {
     return (
       <Flex
@@ -59,7 +66,8 @@ export const LessonContent: React.FC<LessonContentProps> = ({ content }) => {
         border: "1px solid rgba(51, 102, 255, 0.2)",
       }}
     >
-      <Markdown>{safeContent}</Markdown>
+      {/* 仅在客户端渲染时显示内容 */}
+      {isMounted && <Markdown>{safeContent}</Markdown>}
     </Flex>
   );
 };

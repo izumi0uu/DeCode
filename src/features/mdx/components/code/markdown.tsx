@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
@@ -29,6 +29,13 @@ export default function Markdown({
   children: string;
   mode?: "normal" | "quiz";
 }) {
+  // 添加客户端渲染标记，解决水合问题
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   // 确保输入为字符串
   const markdownText =
     typeof children === "string" ? children : String(children || "");
@@ -247,6 +254,15 @@ export default function Markdown({
     color: "#F8F9FA",
     ...(mode === "quiz" ? { fontSize: "14px" } : {}),
   };
+
+  // 使用客户端渲染标记，避免服务器/客户端渲染差异
+  if (!isMounted) {
+    return (
+      <article style={articleStyle}>
+        <div style={{ minHeight: "100px" }}></div>
+      </article>
+    );
+  }
 
   return (
     <article style={articleStyle}>
