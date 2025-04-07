@@ -32,39 +32,31 @@ const QuizFooter: React.FC<QuizFooterProps> = ({
         disabled={currentIndex === 0}
       />
 
-      <Button
-        variant="primary"
-        onClick={isLastQuestion ? onSubmit : onNext}
-        disabled={Boolean(isLoading)}
-        style={{
-          background: isLastQuestion
-            ? "linear-gradient(90deg, #3366FF, #00CCFF)"
-            : undefined,
-          transition: "all 0.3s ease",
-        }}
-      >
-        {isLoading ? (
-          "Processing..."
-        ) : (
-          <>
-            {!isLastQuestion ? (
-              <IconButton
-                onClick={onNext}
-                icon="chevronRight"
-                size="m"
-                tooltip="Next Question"
-                tooltipPosition="top"
-                variant="primary"
-              />
-            ) : (
-              <Flex align="center" center gap="s">
-                <Text>SUMIT</Text>
-                <Icon onClick={onSubmit} name="check" size="s" />
-              </Flex>
-            )}
-          </>
-        )}
-      </Button>
+      {isLoading ? (
+        <Button variant="primary" disabled>
+          Processing...
+        </Button>
+      ) : !isLastQuestion ? (
+        <IconButton
+          onClick={onNext}
+          icon="chevronRight"
+          size="m"
+          tooltip="Next Question"
+          tooltipPosition="top"
+          variant="primary"
+        />
+      ) : (
+        <Button
+          variant="primary"
+          onClick={onSubmit}
+          style={{
+            background: "linear-gradient(90deg, #3366FF, #00CCFF)",
+            transition: "all 0.3s ease",
+          }}
+        >
+          <Text>SUBMIT</Text>
+        </Button>
+      )}
     </Flex>
   );
 };
