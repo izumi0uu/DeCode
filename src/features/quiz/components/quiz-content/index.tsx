@@ -117,7 +117,8 @@ const QuizContent: React.FC<QuizContentProps> = ({
   }
 
   return (
-    <div
+    <Flex
+      direction="column"
       className="quiz-container"
       style={{
         maxWidth: "800px",
@@ -170,7 +171,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
           isLoading={isLoading}
         />
       )}
-    </div>
+    </Flex>
   );
 };
 
