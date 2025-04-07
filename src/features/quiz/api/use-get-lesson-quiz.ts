@@ -98,12 +98,7 @@ export const useGetLessonQuizDetailed = (
             fields: ["id", "title", "slug"],
           },
           questions: {
-            sort: ["position:asc"],
-            populate: {
-              options: {
-                sort: ["id:asc"], // 保持选项顺序一致
-              },
-            },
+            populate: ["options"],
           },
         },
       });
