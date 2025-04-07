@@ -10,9 +10,11 @@ import {
   Card,
   RadioButton,
   Input,
+  type RadioButtonProps,
 } from "@/once-ui/components";
-import { useQuery } from "@tanstack/react-query";
+import { useGetLessonQuizDetailed } from "@/features/quiz/api/use-get-lesson-quiz";
 import { QuestionType } from "@/features/types/api/quiz-question";
+import CheckboxGroup from "./CheckboxGroup";
 
 interface PageProps {
   params: {
@@ -51,26 +53,31 @@ const Progress: React.FC<{
   );
 };
 
-// 定义RadioButtonProps的类型，以便在RadioGroup中使用
-interface RadioButtonWithValueProps {
+// 更新类型定义
+interface RadioButtonWithValueProps extends Omit<RadioButtonProps, "onToggle"> {
   value: string;
-  key?: React.Key;
-  label?: string;
-  isChecked?: boolean;
   onToggle?: () => void;
 }
 
-// 自定义RadioGroup实现
-const RadioGroup: React.FC<{
-  value: string | number;
-  onChange: (value: string | number) => void;
+interface RadioGroupProps {
+  name: string;
+  selectedValue: string;
+  onChange: (value: string) => void;
   children: React.ReactNode;
-}> = ({ value, onChange, children }) => {
-  // 克隆子元素并传递value和onChange
+}
+
+// 更新 RadioGroup 组件
+const RadioGroup: React.FC<RadioGroupProps> = ({
+  name,
+  selectedValue,
+  onChange,
+  children,
+}) => {
   const childrenWithProps = React.Children.map(children, (child) => {
     if (React.isValidElement<RadioButtonWithValueProps>(child)) {
       return React.cloneElement(child, {
-        isChecked: child.props.value === value,
+        name,
+        isChecked: child.props.value === selectedValue,
         onToggle: () => onChange(child.props.value),
       });
     }
@@ -86,26 +93,15 @@ export default function QuizPage({ params }: PageProps) {
 
   // 状态管理
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [userAnswers, setUserAnswers] = useState<Record<number, any>>({});
+  const [userAnswers, setUserAnswers] = useState<
+    Record<number, string | string[]>
+  >({});
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
-  // 获取测验数据
-  const { data: quizData, isLoading } = useQuery({
-    queryKey: ["quiz", coursename, lessonname],
-    queryFn: async () => {
-      try {
-        const response = await fetch(`/api/quizzes?lessonSlug=${lessonname}`);
-        if (!response.ok) {
-          throw new Error("Failed to fetch quiz data");
-        }
-        return response.json();
-      } catch (error) {
-        console.error("Error fetching quiz:", error);
-        throw error;
-      }
-    },
-  });
+  // 使用我们创建的 hook 获取测验数据
+  const { data: quizData, isLoading } = useGetLessonQuizDetailed(lessonname);
 
   // 设置计时器
   useEffect(() => {
@@ -130,97 +126,147 @@ export default function QuizPage({ params }: PageProps) {
     }
   }, [quizData, quizSubmitted]);
 
-  // 格式化时间
-  const formatTime = (seconds: number | null) => {
-    if (seconds === null) return "--:--";
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs
-      .toString()
-      .padStart(2, "0")}`;
-  };
-
-  // 处理答案变更
-  const handleAnswerChange = (questionId: number, answer: any) => {
+  // 更新答案处理函数
+  const handleAnswerChange = (
+    questionId: number,
+    answer: string | string[]
+  ) => {
     setUserAnswers((prev) => ({
       ...prev,
       [questionId]: answer,
     }));
   };
 
-  // 提交测验
-  const handleSubmitQuiz = async () => {
-    try {
-      // 这里可以添加提交到API的逻辑
-      setQuizSubmitted(true);
+  // 更新答案验证函数
+  const validateAnswers = () => {
+    const errors: string[] = [];
+    if (!quizData?.questions) return errors;
 
-      // 模拟提交后的结果计算
+    quizData.questions.forEach((question) => {
+      const answer = userAnswers[question.id];
+      if (!answer) {
+        errors.push(`请回答第 ${question.id} 题`);
+      } else if (question.type === QuestionType.MULTIPLE_CHOICE) {
+        if (!Array.isArray(answer) || answer.length === 0) {
+          errors.push(`请选择第 ${question.id} 题的答案`);
+        }
+      } else if (typeof answer !== "string" || answer.trim() === "") {
+        errors.push(`请选择第 ${question.id} 题的答案`);
+      }
+    });
+    return errors;
+  };
+
+  // 更新提交测验函数
+  const handleSubmitQuiz = async () => {
+    const errors = validateAnswers();
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+
+    const formattedAnswers = Object.entries(userAnswers).map(
+      ([questionId, answer]) => ({
+        questionId: parseInt(questionId, 10),
+        answer: Array.isArray(answer) ? answer.join(",") : answer,
+      })
+    );
+
+    try {
+      // ... 提交逻辑 ...
+      setQuizSubmitted(true);
       if (quizData) {
         const score = calculateScore();
         const passed = score >= quizData.passingScore;
-
-        // 可以保存结果或直接展示
         console.log("Quiz submitted with score:", score, "Passed:", passed);
-
-        // 可以跳转到结果页面
-        // router.push(`/courses/${coursename}/${lessonname}/quiz/result`);
       }
     } catch (error) {
-      console.error("Error submitting quiz:", error);
+      console.error("提交测验失败:", error);
     }
   };
 
-  // 计算分数
+  // 更新计算分数函数
   const calculateScore = () => {
     if (!quizData?.questions) return 0;
 
-    let totalPoints = 0;
-    let earnedPoints = 0;
-
-    quizData.questions.forEach((question: any) => {
-      totalPoints += question.points;
-
+    let totalScore = 0;
+    quizData.questions.forEach((question) => {
       const userAnswer = userAnswers[question.id];
       if (!userAnswer) return;
 
-      if (
-        question.type === QuestionType.SINGLE_CHOICE ||
-        question.type === QuestionType.TRUE_FALSE
-      ) {
-        // 单选题
-        const correctOption = question.options.find(
-          (opt: any) => opt.isCorrect
-        );
-        if (correctOption && userAnswer === correctOption.id) {
-          earnedPoints += question.points;
+      if (question.type === QuestionType.MULTIPLE_CHOICE) {
+        if (Array.isArray(userAnswer)) {
+          const correctAnswers = question.options
+            .filter((option: any) => option.isCorrect)
+            .map((option: any) => option.id.toString());
+
+          const isCorrect =
+            userAnswer.length === correctAnswers.length &&
+            userAnswer.every((answer) => correctAnswers.includes(answer));
+
+          if (isCorrect) {
+            totalScore += question.points || 1;
+          }
         }
-      } else if (question.type === QuestionType.MULTIPLE_CHOICE) {
-        // 多选题
-        const correctOptions = question.options
-          .filter((opt: any) => opt.isCorrect)
-          .map((opt: any) => opt.id);
-        const allCorrect =
-          correctOptions.length === userAnswer.length &&
-          correctOptions.every((id: number) => userAnswer.includes(id));
-        if (allCorrect) {
-          earnedPoints += question.points;
-        }
-      } else if (question.type === QuestionType.SHORT_ANSWER) {
-        // 简答题 - 实际项目中可能需要更复杂的评分逻辑
-        const correctOption = question.options.find(
-          (opt: any) => opt.isCorrect
-        );
-        if (
-          correctOption &&
-          userAnswer.toLowerCase() === correctOption.text.toLowerCase()
-        ) {
-          earnedPoints += question.points;
+      } else {
+        const correctAnswer = question.options
+          .find((option: any) => option.isCorrect)
+          ?.id.toString();
+
+        if (userAnswer === correctAnswer) {
+          totalScore += question.points || 1;
         }
       }
     });
 
-    return Math.round((earnedPoints / totalPoints) * 100);
+    return totalScore;
   };
+
+  // 加载状态
+  if (isLoading) {
+    return (
+      <Flex
+        direction="column"
+        padding="xl"
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "70vh",
+        }}
+      >
+        <Text variant="body-strong-l">加载测验中...</Text>
+      </Flex>
+    );
+  }
+
+  // 数据不存在
+  if (!quizData) {
+    return (
+      <Flex
+        direction="column"
+        padding="xl"
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "70vh",
+        }}
+      >
+        <Text variant="heading-strong-m" color="error">
+          测验未找到
+        </Text>
+        <Text variant="body-default-m" style={{ marginTop: "16px" }}>
+          该课程可能还没有相关的测验，或者测验数据加载失败。
+        </Text>
+        <Button
+          variant="secondary"
+          onClick={() => router.push(`/courses/${coursename}/${lessonname}`)}
+          style={{ marginTop: "24px" }}
+        >
+          返回课程
+        </Button>
+      </Flex>
+    );
+  }
 
   // 渲染当前问题
   const renderCurrentQuestion = () => {
@@ -253,8 +299,13 @@ export default function QuizPage({ params }: PageProps) {
           {/* 根据问题类型渲染不同的答题控件 */}
           {question.type === QuestionType.SINGLE_CHOICE && (
             <RadioGroup
-              value={userAnswers[question.id] || ""}
-              onChange={(value: string | number) =>
+              name={`question-${question.id}`}
+              selectedValue={
+                Array.isArray(userAnswers[question.id])
+                  ? ""
+                  : userAnswers[question.id]?.toString() || ""
+              }
+              onChange={(value: string) =>
                 handleAnswerChange(question.id, value)
               }
             >
@@ -271,34 +322,37 @@ export default function QuizPage({ params }: PageProps) {
           )}
 
           {question.type === QuestionType.MULTIPLE_CHOICE && (
-            <Flex direction="column" gap="m">
-              {question.options.map((option: any) => (
-                <Checkbox
-                  key={option.id}
-                  checked={(userAnswers[question.id] || []).includes(option.id)}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    const currentAnswers = userAnswers[question.id] || [];
-                    let newAnswers;
-                    if (e.target.checked) {
-                      newAnswers = [...currentAnswers, option.id];
-                    } else {
-                      newAnswers = currentAnswers.filter(
-                        (id: number) => id !== option.id
-                      );
-                    }
-                    handleAnswerChange(question.id, newAnswers);
-                  }}
-                >
-                  {option.text}
-                </Checkbox>
-              ))}
-            </Flex>
+            <CheckboxGroup
+              value={
+                Array.isArray(userAnswers[question.id])
+                  ? (userAnswers[question.id] as string[])
+                  : []
+              }
+              onChange={(newAnswers: string[]) =>
+                handleAnswerChange(question.id, newAnswers)
+              }
+            >
+              <Flex direction="column" gap="m">
+                {question.options.map((option: any) => (
+                  <Checkbox
+                    key={option.id}
+                    value={option.id.toString()}
+                    label={option.text}
+                  />
+                ))}
+              </Flex>
+            </CheckboxGroup>
           )}
 
           {question.type === QuestionType.TRUE_FALSE && (
             <RadioGroup
-              value={userAnswers[question.id] || ""}
-              onChange={(value: string | number) =>
+              name={`question-${question.id}`}
+              selectedValue={
+                Array.isArray(userAnswers[question.id])
+                  ? ""
+                  : userAnswers[question.id]?.toString() || ""
+              }
+              onChange={(value: string) =>
                 handleAnswerChange(question.id, value)
               }
             >
@@ -397,153 +451,51 @@ export default function QuizPage({ params }: PageProps) {
     );
   };
 
-  // 加载状态
-  if (isLoading) {
-    return (
-      <Flex
-        direction="column"
-        padding="xl"
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "70vh",
-        }}
-      >
-        <Text variant="body-strong-l">加载测验中...</Text>
-      </Flex>
-    );
-  }
-
-  // 数据不存在
-  if (!quizData) {
-    return (
-      <Flex
-        direction="column"
-        padding="xl"
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "70vh",
-        }}
-      >
-        <Text variant="heading-strong-m" color="error">
-          测验未找到
-        </Text>
-        <Text variant="body-default-m" style={{ marginTop: "16px" }}>
-          该课程可能还没有相关的测验，或者测验数据加载失败。
-        </Text>
-        <Button
-          variant="secondary"
-          onClick={() => router.push(`/courses/${coursename}/${lessonname}`)}
-          style={{ marginTop: "24px" }}
-        >
-          返回课程
-        </Button>
-      </Flex>
-    );
-  }
-
   return (
-    <Flex
-      direction="column"
-      padding="xl"
-      style={{ maxWidth: "800px", margin: "0 auto" }}
-    >
-      {/* 测验头部 */}
-      <Flex
-        direction="column"
-        style={{
-          marginBottom: "32px",
-          borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-          paddingBottom: "24px",
-        }}
-      >
-        <Text variant="heading-strong-l" style={{ marginBottom: "8px" }}>
-          {quizData.title}
-        </Text>
-
-        <Text variant="body-default-m" style={{ marginBottom: "16px" }}>
-          {quizData.description}
-        </Text>
-
-        <Flex style={{ justifyContent: "space-between", alignItems: "center" }}>
-          <Text variant="body-strong-m">
-            通过分数: {quizData.passingScore}%
+    <div className="quiz-container">
+      <div className="quiz-header">
+        <Text variant="heading-strong-l">{quizData.title}</Text>
+        {quizData.description && (
+          <Text variant="body-default-l" style={{ marginTop: "8px" }}>
+            {quizData.description}
           </Text>
+        )}
+        {timeLeft !== null && (
+          <Text variant="body-strong-m" style={{ marginTop: "16px" }}>
+            剩余时间: {Math.floor(timeLeft / 60)}:
+            {(timeLeft % 60).toString().padStart(2, "0")}
+          </Text>
+        )}
+      </div>
 
-          {timeLeft !== null && (
-            <Text
-              variant="body-strong-m"
-              color={timeLeft < 60 ? "error" : undefined}
-            >
-              剩余时间: {formatTime(timeLeft)}
-            </Text>
-          )}
-        </Flex>
-      </Flex>
-
-      {/* 测验内容 */}
-      {!quizSubmitted ? (
-        <>
-          {renderCurrentQuestion()}
-
-          {/* 导航按钮 */}
-          <Flex style={{ justifyContent: "space-between", marginTop: "24px" }}>
-            <Button
-              variant="secondary"
-              disabled={currentQuestionIndex === 0}
-              onClick={() =>
-                setCurrentQuestionIndex((prev) => Math.max(0, prev - 1))
-              }
-            >
-              上一题
-            </Button>
-
-            {currentQuestionIndex < (quizData.questions?.length || 0) - 1 ? (
-              <Button
-                variant="primary"
-                onClick={() => setCurrentQuestionIndex((prev) => prev + 1)}
-              >
-                下一题
-              </Button>
-            ) : (
-              <Button variant="primary" onClick={handleSubmitQuiz}>
-                提交测验
-              </Button>
-            )}
-          </Flex>
-
-          {/* 问题导航 */}
-          <Flex style={{ marginTop: "32px", flexWrap: "wrap", gap: "8px" }}>
-            {quizData.questions?.map((question: any, index: number) => (
-              <Button
-                key={index}
-                variant={
-                  index === currentQuestionIndex
-                    ? "primary"
-                    : userAnswers[question.id]
-                    ? "secondary"
-                    : "tertiary"
-                }
-                size="s"
-                onClick={() => setCurrentQuestionIndex(index)}
-                style={{
-                  minWidth: "40px",
-                  height: "40px",
-                  padding: "0",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                {index + 1}
-              </Button>
+      {validationErrors.length > 0 && (
+        <Card
+          padding="m"
+          style={{ marginBottom: "20px", backgroundColor: "#FFF3F3" }}
+        >
+          <Flex direction="column" gap="s">
+            {validationErrors.map((error, index) => (
+              <Text key={index} variant="body-default-m" color="error">
+                {error}
+              </Text>
             ))}
           </Flex>
-        </>
-      ) : (
-        renderQuizResults()
+        </Card>
       )}
-    </Flex>
+
+      {quizSubmitted ? renderQuizResults() : renderCurrentQuestion()}
+
+      {!quizSubmitted && (
+        <Flex horizontal="center" style={{ marginTop: "24px" }}>
+          <Button
+            variant="primary"
+            onClick={handleSubmitQuiz}
+            disabled={quizSubmitted}
+          >
+            提交测验
+          </Button>
+        </Flex>
+      )}
+    </div>
   );
 }

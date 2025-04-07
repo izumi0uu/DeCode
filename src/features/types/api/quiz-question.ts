@@ -32,6 +32,7 @@ export interface QuizQuestion {
   options: RelationArray<QuizOption>;
   createdAt: string;
   updatedAt: string;
+  slug: string;
 }
 
 /**
