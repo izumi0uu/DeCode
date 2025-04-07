@@ -209,6 +209,8 @@ function QuizContent({
   const { data: quizData, isLoading: quizLoading } =
     useGetLessonQuizDetailed(lessonSlug);
 
+  console.log(quizData);
+
   // 设置计时器
   useEffect(() => {
     if (quizData?.timeLimit) {
@@ -478,9 +480,10 @@ function QuizContent({
     return (
       <Flex
         gap="s"
-        wrap="wrap"
         style={{
           marginBottom: "20px",
+          display: "flex",
+          flexWrap: "wrap",
         }}
       >
         {quizData.questions.map((_, index) => {
@@ -544,7 +547,7 @@ function QuizContent({
           <Flex
             style={{ justifyContent: "space-between", alignItems: "center" }}
           >
-            <Flex gap="s" vertical="center">
+            <Flex gap="s" style={{ alignItems: "center" }}>
               <div
                 style={{
                   background: "rgba(51, 102, 255, 0.1)",
@@ -722,7 +725,7 @@ function QuizContent({
         }}
       >
         <Flex direction="column" gap="l" style={{ alignItems: "center" }}>
-          <Flex gap="s" vertical="center">
+          <Flex gap="s" style={{ alignItems: "center" }}>
             <span
               className="material-icons-round"
               style={{
@@ -891,7 +894,13 @@ function QuizContent({
           {timeLeft !== null && <Timer timeLeft={timeLeft} />}
         </Flex>
 
-        <Flex gap="s" wrap="wrap">
+        <Flex
+          gap="s"
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+          }}
+        >
           <div
             style={{
               background: "rgba(51, 102, 255, 0.1)",

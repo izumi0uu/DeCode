@@ -8,23 +8,21 @@ import {
 import { Quiz } from "./quiz";
 import { QuizQuestion } from "./quiz-question";
 import { QuizOption } from "./quiz-option";
+import { UserQuizProgress } from "./user-quiz-progress";
 
 /**
  * 测验答案基础属性
  */
 export interface QuizAnswer {
   id: number;
-  user: number; // 用户ID
-  quiz: Relation<Quiz>;
-  question: Relation<QuizQuestion>;
-  selectedOptions: RelationArray<QuizOption>;
-  textAnswer: string | null; // 用于简答题
+  selectedOptions?: any; // JSON类型，存储选择的选项
   isCorrect: boolean;
-  points: number;
-  timeTaken: number | null; // 回答问题所花费的时间（秒）
-  attemptNumber: number; // 尝试次数
+  codeSubmission?: string; // 代码提交，用于编程题
+  quizProgress: Relation<UserQuizProgress>;
+  question: Relation<QuizQuestion>;
   createdAt: string;
   updatedAt: string;
+  publishedAt?: string | null;
 }
 
 /**
@@ -32,7 +30,7 @@ export interface QuizAnswer {
  */
 export type QuizAnswerInput = Omit<
   QuizAnswer,
-  "id" | "createdAt" | "updatedAt"
+  "id" | "createdAt" | "updatedAt" | "publishedAt"
 >;
 
 /**

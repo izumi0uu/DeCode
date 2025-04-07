@@ -9,11 +9,11 @@ export interface QuizOption {
   id: number;
   text: string;
   isCorrect: boolean;
-  explanation: string | null; // 选项解释
-  position: number; // 选项顺序
+  explanation?: any; // 在schema中是blocks类型
   question: Relation<QuizQuestion>;
   createdAt: string;
   updatedAt: string;
+  publishedAt?: string | null;
 }
 
 /**
@@ -21,7 +21,7 @@ export interface QuizOption {
  */
 export type QuizOptionInput = Omit<
   QuizOption,
-  "id" | "createdAt" | "updatedAt"
+  "id" | "createdAt" | "updatedAt" | "publishedAt"
 >;
 
 /**

@@ -17,12 +17,13 @@ export interface Quiz {
   description: string;
   passingScore: number; // 通过分数
   timeLimit: number | null; // 时间限制（分钟）
-  shuffleQuestions: boolean; // 是否打乱问题顺序
-  publishedAt: string | null;
+  shuffleQuestions?: boolean; // 是否打乱问题顺序
+  documentId?: string; // 从schema中看到的documentId字段
   lesson: Relation<Lesson>;
   questions: RelationArray<QuizQuestion>;
   createdAt: string;
   updatedAt: string;
+  publishedAt: string | null;
 }
 
 /**

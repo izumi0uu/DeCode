@@ -12,10 +12,11 @@ import { QuizOption } from "./quiz-option";
  * 问题类型枚举
  */
 export enum QuestionType {
-  SINGLE_CHOICE = "single_choice",
-  MULTIPLE_CHOICE = "multiple_choice",
+  SINGLE_CHOICE = "single",
+  MULTIPLE_CHOICE = "multiple",
   TRUE_FALSE = "true_false",
   SHORT_ANSWER = "short_answer",
+  PROGRAMMING = "programming",
 }
 
 /**
@@ -26,13 +27,14 @@ export interface QuizQuestion {
   question: string;
   type: QuestionType;
   points: number;
-  explanation: string | null; // 问题解释（回答后显示）
-  position: number; // 问题顺序
+  sortOrder?: number;
+  codeTemplate?: string | null;
   quiz: Relation<Quiz>;
   options: RelationArray<QuizOption>;
+  slug: string;
   createdAt: string;
   updatedAt: string;
-  slug: string;
+  publishedAt?: string | null;
 }
 
 /**
@@ -40,7 +42,7 @@ export interface QuizQuestion {
  */
 export type QuizQuestionInput = Omit<
   QuizQuestion,
-  "id" | "createdAt" | "updatedAt"
+  "id" | "createdAt" | "updatedAt" | "publishedAt"
 >;
 
 /**
