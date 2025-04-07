@@ -883,6 +883,7 @@ export interface ApiQuizQuestionQuizQuestion
   extends Struct.CollectionTypeSchema {
   collectionName: 'quiz_questions';
   info: {
+    description: '';
     displayName: 'QuizQuestion';
     pluralName: 'quiz-questions';
     singularName: 'quiz-question';
@@ -920,6 +921,7 @@ export interface ApiQuizQuestionQuizQuestion
       }>;
     quiz: Schema.Attribute.Relation<'manyToOne', 'api::quiz.quiz'> &
       Schema.Attribute.Required;
+    slug: Schema.Attribute.UID & Schema.Attribute.Required;
     sortOrder: Schema.Attribute.Integer;
     type: Schema.Attribute.Enumeration<['single', 'multiple', 'programming']> &
       Schema.Attribute.Required;

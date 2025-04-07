@@ -4,7 +4,8 @@
   "info": {
     "singularName": "quiz-question",
     "pluralName": "quiz-questions",
-    "displayName": "QuizQuestion"
+    "displayName": "QuizQuestion",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -26,7 +27,11 @@
     },
     "type": {
       "type": "enumeration",
-      "enum": ["single", "multiple", "programming"],
+      "enum": [
+        "single",
+        "multiple",
+        "programming"
+      ],
       "required": true
     },
     "points": {
@@ -49,6 +54,10 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::quiz-option.quiz-option"
+    },
+    "slug": {
+      "type": "uid",
+      "required": true
     }
   }
 }
