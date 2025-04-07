@@ -1,7 +1,7 @@
 // page.tsx
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { useRouteParams } from "@/lib/utils/route-params";
 import { QuizContent } from "@/features/quiz";
 
@@ -17,10 +17,12 @@ export default function QuizPage({ params }: PageProps) {
     const resolvedParams = useRouteParams(params);
 
     return (
-      <QuizContent
-        courseSlug={resolvedParams.coursename}
-        lessonSlug={resolvedParams.lessonname}
-      />
+      <Suspense fallback={<div>Fallback UI</div>}>
+        <QuizContent
+          courseSlug={resolvedParams.coursename}
+          lessonSlug={resolvedParams.lessonname}
+        />
+      </Suspense>
     );
   } catch (error) {
     // 发生错误由error.tsx处理

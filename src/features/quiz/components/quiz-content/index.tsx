@@ -94,23 +94,6 @@ const QuizContent: React.FC<QuizContentProps> = ({
     setIsSubmitted(false);
   };
 
-  // 数据加载中
-  if (quizLoading) {
-    return (
-      <Flex
-        direction="column"
-        padding="xl"
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "70vh",
-        }}
-      >
-        <div style={{ textAlign: "center" }}>Loading quiz...</div>
-      </Flex>
-    );
-  }
-
   // 数据不存在
   if (!quizData) {
     return <QuizNotFound courseSlug={courseSlug} lessonSlug={lessonSlug} />;

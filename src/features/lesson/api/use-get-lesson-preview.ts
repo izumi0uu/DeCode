@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import type { Course, LessonLight, HookResponse } from "@/features/types";
 
 // 课程和章节预览数据接口

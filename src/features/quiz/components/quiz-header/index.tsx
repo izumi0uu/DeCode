@@ -53,17 +53,6 @@ const QuizHeader: React.FC<QuizHeaderProps> = ({ quizData, timeLeft }) => {
       >
         <div
           style={{
-            background: "rgba(51, 102, 255, 0.1)",
-            color: "var(--color-primary)",
-            padding: "4px 8px",
-            borderRadius: "4px",
-            fontSize: "12px",
-          }}
-        >
-          ID: {quizData.id}
-        </div>
-        <div
-          style={{
             background: "rgba(255, 255, 255, 0.1)",
             color: "var(--color-light)",
             padding: "4px 8px",

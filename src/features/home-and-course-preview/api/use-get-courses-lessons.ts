@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 // @ts-ignore
 import qs from "qs";
 import { NavNode } from "@/features/types";
@@ -224,12 +224,12 @@ const transformData = (
 
 // 自定义 hook，获取课程和章节数据并转换为导航树
 export const useCoursesAndLessons = (): HookResponse<NavNode[]> => {
-  const coursesQuery = useQuery({
+  const coursesQuery = useSuspenseQuery({
     queryKey: ["courses"],
     queryFn: fetchCourses,
   });
 
-  const lessonsQuery = useQuery({
+  const lessonsQuery = useSuspenseQuery({
     queryKey: ["lessons-light"],
     queryFn: fetchLessonsLight,
     enabled: !!coursesQuery.data, // 只有在课程数据加载完成后才加载章节数据
@@ -257,7 +257,7 @@ export const useCoursesAndLessons = (): HookResponse<NavNode[]> => {
 // 自定义hook，获取用于预览卡片的课程和章节数据
 export const useCoursesAndLessonsForPreview =
   (): HookResponse<CoursesAndLessonsPreview> => {
-    const query = useQuery({
+    const query = useSuspenseQuery({
       queryKey: ["courses-lessons-preview"],
       queryFn: fetchCoursesAndLessonsForPreview,
     });
@@ -271,7 +271,7 @@ export const useCoursesAndLessonsForPreview =
   };
 
 export const useCourses = (): HookResponse<Course[]> => {
-  const query = useQuery({
+  const query = useSuspenseQuery({
     queryKey: ["courses"],
     queryFn: fetchCourses,
   });
@@ -285,7 +285,7 @@ export const useCourses = (): HookResponse<Course[]> => {
 };
 
 export const useLessons = (): HookResponse<LessonLight[]> => {
-  const query = useQuery({
+  const query = useSuspenseQuery({
     queryKey: ["lessons"],
     queryFn: fetchLessonsLight,
   });

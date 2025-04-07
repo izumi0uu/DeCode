@@ -21,8 +21,6 @@ const QuizNotFound: React.FC<QuizNotFoundProps> = ({
         alignItems: "center",
         justifyContent: "center",
         minHeight: "70vh",
-        background:
-          "linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 100%)",
         borderRadius: "12px",
       }}
     >

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 // @ts-ignore
 import qs from "qs";
 import { Quiz, QuizListResponse, HookResponse } from "@/features/types";
@@ -57,10 +57,9 @@ export const useGetLessonQuiz = (
     }
   };
 
-  const query = useQuery({
+  const query = useSuspenseQuery({
     queryKey: ["lesson-quiz", lessonSlug],
     queryFn: fetchLessonQuiz,
-    enabled: queryEnabled,
   });
 
   return {
@@ -78,8 +77,6 @@ export const useGetLessonQuiz = (
 export const useGetLessonQuizDetailed = (
   lessonSlug: string | undefined
 ): HookResponse<Quiz | null> => {
-  const queryEnabled = !!lessonSlug;
-
   const fetchQuizDetailed = async (): Promise<Quiz | null> => {
     if (!lessonSlug) return null;
 
@@ -124,10 +121,9 @@ export const useGetLessonQuizDetailed = (
     }
   };
 
-  const query = useQuery({
+  const query = useSuspenseQuery({
     queryKey: ["lesson-quiz-detailed", lessonSlug],
     queryFn: fetchQuizDetailed,
-    enabled: queryEnabled,
   });
 
   return {
