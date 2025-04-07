@@ -1,3 +1,4 @@
+import { Flex } from "@/once-ui/components/Flex";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

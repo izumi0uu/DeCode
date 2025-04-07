@@ -115,7 +115,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             }}
           />
           <Header />
-          <Flex position="relative" zIndex={8} fillWidth flex={1}>
+          <Flex position="relative" zIndex={8} fillWidth flex={1} center>
             <Flex minHeight="0">{children}</Flex>
           </Flex>
         </Column>
