@@ -19,9 +19,11 @@ export default function Loading() {
         <div></div>
         <div></div>
       </div>
+
       <Text variant="heading-strong-m" style={{ marginTop: "24px" }}>
         Loading Quiz...
       </Text>
+
       <style jsx>{`
         .loading-spinner {
           display: inline-block;
