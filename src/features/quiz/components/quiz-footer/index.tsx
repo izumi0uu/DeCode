@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Button, IconButton, Text } from "@/once-ui/components";
+import { Flex, Button, IconButton, Text, Icon } from "@/once-ui/components";
 
 interface QuizFooterProps {
   currentIndex: number;
@@ -57,16 +57,9 @@ const QuizFooter: React.FC<QuizFooterProps> = ({
                 variant="primary"
               />
             ) : (
-              <Flex align="center" center>
-                <IconButton
-                  onClick={onSubmit}
-                  icon="check"
-                  size="m"
-                  tooltip="Submit Quiz"
-                  tooltipPosition="top"
-                  variant="primary"
-                />
-                <Text>Submit Quiz</Text>
+              <Flex align="center" center gap="s">
+                <Text>SUMIT</Text>
+                <Icon onClick={onSubmit} name="check" size="s" />
               </Flex>
             )}
           </>
