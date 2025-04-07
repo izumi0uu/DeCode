@@ -212,6 +212,7 @@ export default function Markdown({
         <Text
           as="li"
           style={{
+            display: "flex",
             color: "#F8F9FA",
             fontSize: "16px",
             marginBottom: "8px",
