@@ -19,16 +19,16 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
   onChange,
   children,
 }) => {
-  // 修改处理子组件的方法，确保只向RadioButton组件传递isChecked属性
-  const processChildren = (children: React.ReactNode) => {
+  // 递归处理子元素，确保只有RadioButton接收isChecked属性
+  const processChildren = (children: React.ReactNode): React.ReactNode => {
     return React.Children.map(children, (child) => {
-      // 如果不是React元素，原样返回
-      if (!React.isValidElement(child)) {
-        return child;
-      }
+      if (!React.isValidElement(child)) return child;
 
-      // 如果是RadioButton组件，添加属性
-      if (child.type === RadioButton) {
+      // 检查是否为RadioButton组件
+      if (
+        child.type === RadioButton ||
+        (child.props && child.props.value !== undefined)
+      ) {
         return React.cloneElement(child, {
           name,
           isChecked: child.props.value === selectedValue,
@@ -36,16 +36,15 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
         });
       }
 
-      // 如果是容器组件，递归处理其子组件
-      if (child.props.children) {
-        return React.cloneElement(
-          child,
-          {},
-          processChildren(child.props.children)
-        );
+      // 如果不是RadioButton但有子元素，递归处理子元素
+      if (child.props && child.props.children) {
+        return React.cloneElement(child, {
+          ...child.props,
+          children: processChildren(child.props.children),
+        });
       }
 
-      // 其他情况原样返回
+      // 其他元素不变
       return child;
     });
   };

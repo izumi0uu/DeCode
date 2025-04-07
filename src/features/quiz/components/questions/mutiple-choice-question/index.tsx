@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex, Checkbox } from "@/once-ui/components";
-import CheckboxGroup from "../../ui/checkoutbox-gruop"; // 复用已有的组件
+import CheckboxGroup from "../../ui/checkoutbox-gruop";
 
 interface Option {
   id: number;
