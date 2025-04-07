@@ -15,6 +15,7 @@ import {
 import { useGetLessonQuizDetailed } from "@/features/quiz/api/use-get-lesson-quiz";
 import { QuestionType } from "@/features/types/api/quiz-question";
 import CheckboxGroup from "./CheckboxGroup";
+import { useRouteParams } from "@/lib/utils/route-params";
 
 interface PageProps {
   params: {
@@ -454,7 +455,7 @@ function QuizContent({
         )}
         {timeLeft !== null && (
           <Text variant="body-strong-m" style={{ marginTop: "16px" }}>
-            剩余时间: {Math.floor(timeLeft / 60)}:
+            Left Time: {Math.floor(timeLeft / 60)}:
             {(timeLeft % 60).toString().padStart(2, "0")}
           </Text>
         )}
@@ -484,7 +485,7 @@ function QuizContent({
             onClick={handleSubmitQuiz}
             disabled={quizSubmitted}
           >
-            提交测验
+            Submit
           </Button>
         </Flex>
       )}
@@ -496,25 +497,14 @@ function QuizContent({
 export default function QuizPage({ params }: PageProps) {
   // Next.js 15+ 中参数可能是 Promise
   try {
-    // 检查 params 是否可能是 Promise
-    if (typeof params === "object" && "then" in params) {
-      // 是 Promise，使用 React.use
-      const resolvedParams = React.use(params as Promise<PageProps["params"]>);
-      return (
-        <QuizContent
-          coursename={resolvedParams.coursename}
-          lessonname={resolvedParams.lessonname}
-        />
-      );
-    } else {
-      // 不是 Promise，直接使用
-      return (
-        <QuizContent
-          coursename={params.coursename}
-          lessonname={params.lessonname}
-        />
-      );
-    }
+    const resolvedParams = useRouteParams(params);
+
+    return (
+      <QuizContent
+        coursename={resolvedParams.coursename}
+        lessonname={resolvedParams.lessonname}
+      />
+    );
   } catch (error) {
     // 发生错误由error.tsx处理，这里不需要处理
     throw error;
