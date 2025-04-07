@@ -7,7 +7,6 @@ import { NavNode } from "@/features/types/ui/nav-node";
 import styles from "./index.module.scss";
 import { useCoursesAndLessons } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 
 export interface CascaderProps {
   data?: NavNode[];
@@ -20,7 +19,6 @@ const Cascader = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
   const [activeCourse, setActiveCourse] = useState<NavNode | null>(null);
   const [isChangingCourse, setIsChangingCourse] = useState(false);
   const coursesColumnRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
 
   // 记录滚动位置
   const handleScroll = () => {
@@ -52,27 +50,6 @@ const Cascader = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
     }
   };
 
-  // 滚动到指定课程
-  const scrollToCourse = (courseId: string) => {
-    if (coursesColumnRef.current && navigationData) {
-      const index = navigationData.findIndex(
-        (course) => course.id === courseId
-      );
-      if (index !== -1) {
-        const container = coursesColumnRef.current;
-        const scrollHeight = container.scrollHeight;
-        const itemHeight = scrollHeight / navigationData.length;
-
-        // 计算目标滚动位置
-        const scrollTo = itemHeight * index;
-        container.scrollTo({
-          top: scrollTo,
-          behavior: "smooth",
-        });
-      }
-    }
-  };
-
   // 如果没有选中课程，默认选中第一个
   useEffect(() => {
     if (!activeCourse && navigationData && navigationData.length > 0) {
@@ -92,24 +69,6 @@ const Cascader = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
   }, [navigationData]);
 
   if (error) return null;
-
-  // 处理课程点击
-  const handleCourseClick = (course: NavNode) => {
-    setActiveCourse(course);
-    scrollToCourse(course.id);
-
-    // 如果有路径就跳转到指定路由
-    if (course.path) {
-      router.push(course.path);
-    }
-  };
-
-  // 处理课时点击
-  const handleLessonClick = (lessonPath: string) => {
-    if (lessonPath) {
-      router.push(lessonPath);
-    }
-  };
 
   // 骨架屏加载状态
   if (isLoading) {
@@ -174,7 +133,14 @@ const Cascader = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
   }
 
   return (
-    <CascaderInteraction onSelect={navigateTo}>
+    <CascaderInteraction
+      onSelect={navigateTo}
+      navigationData={navigationData}
+      activeCourse={activeCourse}
+      setActiveCourse={setActiveCourse}
+      setIsChangingCourse={setIsChangingCourse}
+      coursesColumnRef={coursesColumnRef}
+    >
       <Flex className={styles.cascaderContent}>
         {/* 左侧课程列表 */}
         <Flex
@@ -190,7 +156,6 @@ const Cascader = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
               }`}
               paddingY="8"
               paddingX="12"
-              onClick={() => handleCourseClick(course)}
             >
               <Flex
                 className={styles.courseTitle}
@@ -219,7 +184,6 @@ const Cascader = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
                 className={styles.lessonItem}
                 paddingY="8"
                 paddingX="12"
-                onClick={() => handleLessonClick(lesson.path)}
               >
                 {/* 添加指针高亮区域 */}
                 <div className={styles.pointerHighlight}></div>
