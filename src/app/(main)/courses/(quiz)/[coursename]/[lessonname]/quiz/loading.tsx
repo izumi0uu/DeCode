@@ -12,24 +12,45 @@ export default function Loading() {
         alignItems: "center",
         justifyContent: "center",
         minHeight: "70vh",
+        position: "relative",
       }}
     >
-      <div className="loading-spinner">
-        <div></div>
-        <div></div>
-        <div></div>
+      <div className="loading-container">
+        <div className="loading-spinner">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+
+        <Text
+          variant="heading-strong-m"
+          style={{
+            marginTop: "24px",
+            height: "28px",
+            textAlign: "center",
+          }}
+        >
+          Loading Quiz...
+        </Text>
       </div>
 
-      <Text variant="heading-strong-m" style={{ marginTop: "24px" }}>
-        Loading Quiz...
-      </Text>
-
       <style jsx>{`
+        .loading-container {
+          width: 100%;
+          height: 140px; /* 固定高度包含spinner和text */
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
         .loading-spinner {
           display: inline-block;
           position: relative;
           width: 80px;
           height: 80px;
+          margin: 0 auto;
+          opacity: 1;
+          animation: fadeIn 0.3s ease-in-out; /* 加快动画出现速度 */
         }
         .loading-spinner div {
           position: absolute;
@@ -43,6 +64,14 @@ export default function Loading() {
         }
         .loading-spinner div:nth-child(3) {
           animation-delay: -1s;
+        }
+        @keyframes fadeIn {
+          0% {
+            opacity: 0;
+          }
+          100% {
+            opacity: 1;
+          }
         }
         @keyframes loading-spinner {
           0% {
