@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Flex, Text } from "@/once-ui/components";
+import { Flex } from "@/once-ui/components";
+import { motion } from "framer-motion";
 
 export default function Loading() {
   return (
@@ -13,6 +14,7 @@ export default function Loading() {
         justifyContent: "center",
         minHeight: "70vh",
         position: "relative",
+        overflow: "hidden", // 防止内容溢出
       }}
     >
       <div className="loading-container">
@@ -22,26 +24,65 @@ export default function Loading() {
           <div></div>
         </div>
 
-        <Text
-          variant="heading-strong-m"
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
           style={{
-            marginTop: "24px",
             height: "28px",
+            marginTop: "24px",
             textAlign: "center",
+            fontWeight: "bold",
+            fontSize: "18px",
           }}
         >
-          Loading Quiz...
-        </Text>
+          Loading Quiz
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 0] }}
+            transition={{ repeat: Infinity, duration: 1.5, times: [0, 0.5, 1] }}
+          >
+            .
+          </motion.span>
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 0] }}
+            transition={{
+              repeat: Infinity,
+              duration: 1.5,
+              delay: 0.2,
+              times: [0, 0.5, 1],
+            }}
+          >
+            .
+          </motion.span>
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 0] }}
+            transition={{
+              repeat: Infinity,
+              duration: 1.5,
+              delay: 0.4,
+              times: [0, 0.5, 1],
+            }}
+          >
+            .
+          </motion.span>
+        </motion.div>
       </div>
 
       <style jsx>{`
         .loading-container {
           width: 100%;
-          height: 140px; /* 固定高度包含spinner和text */
+          height: 140px;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
+          position: absolute; /* 使用绝对定位 */
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%); /* 确保完全居中 */
         }
         .loading-spinner {
           display: inline-block;
@@ -50,7 +91,7 @@ export default function Loading() {
           height: 80px;
           margin: 0 auto;
           opacity: 1;
-          animation: fadeIn 0.3s ease-in-out; /* 加快动画出现速度 */
+          animation: fadeIn 0.3s ease-in-out;
         }
         .loading-spinner div {
           position: absolute;
