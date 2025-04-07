@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, { useState, useEffect, ChangeEvent, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import {
   Flex,
@@ -87,9 +87,15 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
   return <>{childrenWithProps}</>;
 };
 
-export default function QuizPage({ params }: PageProps) {
+// 内部组件，接收已解析的参数
+function QuizContent({
+  coursename,
+  lessonname,
+}: {
+  coursename: string;
+  lessonname: string;
+}) {
   const router = useRouter();
-  const { coursename, lessonname } = params;
 
   // 状态管理
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -99,9 +105,25 @@ export default function QuizPage({ params }: PageProps) {
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
-  // 使用我们创建的 hook 获取测验数据
-  const { data: quizData, isLoading } = useGetLessonQuizDetailed(lessonname);
+  // 使用我们创建的 hook 获取测验数据，添加错误处理
+  const {
+    data: quizData,
+    isLoading,
+    error,
+  } = useGetLessonQuizDetailed(lessonname);
+
+  // 设置错误状态
+  useEffect(() => {
+    if (error) {
+      setFetchError(
+        `获取测验数据失败: ${
+          error instanceof Error ? error.message : "未知错误"
+        }`
+      );
+    }
+  }, [error]);
 
   // 设置计时器
   useEffect(() => {
@@ -235,6 +257,44 @@ export default function QuizPage({ params }: PageProps) {
         }}
       >
         <Text variant="body-strong-l">加载测验中...</Text>
+      </Flex>
+    );
+  }
+
+  // 错误状态
+  if (fetchError) {
+    return (
+      <Flex
+        direction="column"
+        padding="xl"
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "70vh",
+        }}
+      >
+        <Text variant="heading-strong-m" color="error">
+          加载测验失败
+        </Text>
+        <Text
+          variant="body-default-m"
+          style={{ marginTop: "16px", textAlign: "center" }}
+        >
+          {fetchError}
+        </Text>
+        <Text
+          variant="body-default-m"
+          style={{ marginTop: "8px", textAlign: "center" }}
+        >
+          这个课程可能还没有相关的测验，或者后端服务暂时不可用。
+        </Text>
+        <Button
+          variant="secondary"
+          onClick={() => router.push(`/courses/${coursename}/${lessonname}`)}
+          style={{ marginTop: "24px" }}
+        >
+          返回课程
+        </Button>
       </Flex>
     );
   }
@@ -498,4 +558,50 @@ export default function QuizPage({ params }: PageProps) {
       )}
     </div>
   );
+}
+
+// 主组件
+export default function QuizPage({ params }: PageProps) {
+  // Next.js 15+ 中参数可能是 Promise
+  try {
+    // 检查 params 是否可能是 Promise
+    if (typeof params === "object" && "then" in params) {
+      // 是 Promise，使用 React.use
+      const resolvedParams = React.use(params as Promise<PageProps["params"]>);
+      return (
+        <QuizContent
+          coursename={resolvedParams.coursename}
+          lessonname={resolvedParams.lessonname}
+        />
+      );
+    } else {
+      // 不是 Promise，直接使用
+      return (
+        <QuizContent
+          coursename={params.coursename}
+          lessonname={params.lessonname}
+        />
+      );
+    }
+  } catch (error) {
+    // 发生错误时的回退 UI
+    return (
+      <Flex
+        direction="column"
+        padding="xl"
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "70vh",
+        }}
+      >
+        <Text variant="heading-strong-m" color="error">
+          加载测验出错
+        </Text>
+        <Text variant="body-default-m" style={{ marginTop: "16px" }}>
+          无法加载测验。请稍后再试。
+        </Text>
+      </Flex>
+    );
+  }
 }
