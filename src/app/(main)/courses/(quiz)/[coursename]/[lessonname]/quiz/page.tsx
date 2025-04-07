@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, ChangeEvent, Suspense } from "react";
+import React, { useState, useEffect, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import {
   Flex,
@@ -90,11 +90,11 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
 
 // 内部组件，接收已解析的参数
 function QuizContent({
-  coursename,
-  lessonname,
+  courseSlug,
+  lessonSlug,
 }: {
-  coursename: string;
-  lessonname: string;
+  courseSlug: string;
+  lessonSlug: string;
 }) {
   const router = useRouter();
 
@@ -108,7 +108,7 @@ function QuizContent({
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
   // 使用我们创建的 hook 获取测验数据
-  const { data: quizData } = useGetLessonQuizDetailed(lessonname);
+  const { data: quizData } = useGetLessonQuizDetailed(lessonSlug);
 
   // 设置计时器
   useEffect(() => {
@@ -250,7 +250,7 @@ function QuizContent({
         </Text>
         <Button
           variant="secondary"
-          onClick={() => router.push(`/courses/${coursename}/${lessonname}`)}
+          onClick={() => router.push(`/courses/${courseSlug}/${lessonSlug}`)}
           style={{ marginTop: "24px" }}
         >
           Back to Course
@@ -417,7 +417,7 @@ function QuizContent({
             <Button
               variant="secondary"
               onClick={() =>
-                router.push(`/courses/${coursename}/${lessonname}`)
+                router.push(`/courses/${courseSlug}/${lessonSlug}`)
               }
             >
               Back to Lesson
@@ -499,10 +499,12 @@ export default function QuizPage({ params }: PageProps) {
   try {
     const resolvedParams = useRouteParams(params);
 
+    console.log(resolvedParams);
+
     return (
       <QuizContent
-        coursename={resolvedParams.coursename}
-        lessonname={resolvedParams.lessonname}
+        courseSlug={resolvedParams.coursename}
+        lessonSlug={resolvedParams.lessonname}
       />
     );
   } catch (error) {
