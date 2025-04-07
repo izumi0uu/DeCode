@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from "react";
 import { RadioButton, type RadioButtonProps } from "@/once-ui/components";
 

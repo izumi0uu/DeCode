@@ -1,5 +1,5 @@
 import React from "react";
-import { Flex, Button } from "@/once-ui/components";
+import { Flex, Button, IconButton, Text } from "@/once-ui/components";
 
 interface QuizFooterProps {
   currentIndex: number;
@@ -22,19 +22,15 @@ const QuizFooter: React.FC<QuizFooterProps> = ({
 
   return (
     <Flex style={{ justifyContent: "space-between", marginTop: "24px" }}>
-      <Button
-        variant="tertiary"
+      <IconButton
         onClick={onPrevious}
+        icon="chevronLeft"
+        size="m"
+        tooltip="Previous Question"
+        tooltipPosition="top"
+        variant="primary"
         disabled={currentIndex === 0}
-      >
-        <span
-          className="material-icons-round"
-          style={{ marginRight: "8px", fontSize: "18px" }}
-        >
-          arrow_back
-        </span>
-        Previous
-      </Button>
+      />
 
       <Button
         variant="primary"
@@ -52,25 +48,26 @@ const QuizFooter: React.FC<QuizFooterProps> = ({
         ) : (
           <>
             {!isLastQuestion ? (
-              <>
-                Next Question
-                <span
-                  className="material-icons-round"
-                  style={{ marginLeft: "8px", fontSize: "18px" }}
-                >
-                  arrow_forward
-                </span>
-              </>
+              <IconButton
+                onClick={onNext}
+                icon="chevronRight"
+                size="m"
+                tooltip="Next Question"
+                tooltipPosition="top"
+                variant="primary"
+              />
             ) : (
-              <>
-                Submit Quiz
-                <span
-                  className="material-icons-round"
-                  style={{ marginLeft: "8px", fontSize: "18px" }}
-                >
-                  check
-                </span>
-              </>
+              <Flex align="center" center>
+                <IconButton
+                  onClick={onSubmit}
+                  icon="check"
+                  size="m"
+                  tooltip="Submit Quiz"
+                  tooltipPosition="top"
+                  variant="primary"
+                />
+                <Text>Submit Quiz</Text>
+              </Flex>
             )}
           </>
         )}
