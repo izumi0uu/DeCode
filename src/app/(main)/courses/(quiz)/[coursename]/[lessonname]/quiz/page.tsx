@@ -14,7 +14,7 @@ import {
 } from "@/once-ui/components";
 import { useGetLessonQuizDetailed } from "@/features/quiz/api/use-get-lesson-quiz";
 import { QuestionType } from "@/features/types/api/quiz-question";
-import CheckboxGroup from "./CheckboxGroup";
+import CheckboxGroup from "../../../../../../../features/quiz/components/ui/checkoutbox-gruop";
 import { useRouteParams } from "@/lib/utils/route-params";
 import Markdown from "@/features/mdx/components/code/markdown";
 import CodeBlock from "@/features/mdx/components/code/code-block";
