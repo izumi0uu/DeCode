@@ -1,4 +1,4 @@
-export * from "./markdown";
+export * from "./code/markdown";
 export * from "./code/code-block";
 export * from "./code/pre-single-line";
 export * from "./code/syntax-hightlighter";

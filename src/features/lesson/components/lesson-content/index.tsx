@@ -1,6 +1,6 @@
 import React from "react";
 import { Flex } from "@/once-ui/components";
-import Markdown from "@/features/mdx/components/markdown";
+import Markdown from "@/features/mdx/components/code/markdown";
 
 interface LessonContentProps {
   content?: any;

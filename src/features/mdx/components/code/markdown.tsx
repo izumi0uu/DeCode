@@ -6,10 +6,10 @@ import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import { escapeBrackets, escapeMhchem, fixMarkdownBold } from "../utils";
+import { escapeBrackets, escapeMhchem, fixMarkdownBold } from "../../utils";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
-import CodeBlock from "./code/code-block";
+import CodeBlock from "./code-block";
 import { Text, Flex, InlineCode } from "@/once-ui/components";
 
 // 创建一个预处理Unicode字符的函数，特别是处理弯引号
