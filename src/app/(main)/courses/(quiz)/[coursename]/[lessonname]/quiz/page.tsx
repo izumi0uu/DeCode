@@ -16,6 +16,8 @@ import { useGetLessonQuizDetailed } from "@/features/quiz/api/use-get-lesson-qui
 import { QuestionType } from "@/features/types/api/quiz-question";
 import CheckboxGroup from "./CheckboxGroup";
 import { useRouteParams } from "@/lib/utils/route-params";
+import Markdown from "@/features/mdx/components/code/markdown";
+import CodeBlock from "@/features/mdx/components/code/code-block";
 
 interface PageProps {
   params: {
@@ -294,29 +296,6 @@ function QuizContent({
     }
 
     setIsLoading(true);
-
-    const formattedAnswers = Object.entries(userAnswers).map(
-      ([questionId, answer]) => ({
-        questionId: parseInt(questionId, 10),
-        answer: Array.isArray(answer) ? answer.join(",") : answer,
-      })
-    );
-
-    try {
-      // 模拟提交延迟
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setQuizSubmitted(true);
-      if (quizData) {
-        const score = calculateScore();
-        const passed = score >= quizData.passingScore;
-        console.log("Quiz submitted with score:", score, "Passed:", passed);
-      }
-    } catch (error) {
-      console.error("Failed to submit quiz:", error);
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   // 更新计算分数函数
@@ -338,11 +317,20 @@ function QuizContent({
             .filter((option: any) => option.isCorrect)
             .map((option: any) => option.id.toString());
 
-          const isCorrect =
+          // 对于只有一个正确答案的多选题，用户只需选择该答案
+          if (
+            correctAnswers.length === 1 &&
+            userAnswer.includes(correctAnswers[0]) &&
+            userAnswer.length === 1
+          ) {
+            totalScore += question.points || 1;
+          }
+          // 对于有多个正确答案的多选题，用户需要完全匹配所有正确答案
+          else if (
+            correctAnswers.length > 1 &&
             userAnswer.length === correctAnswers.length &&
-            userAnswer.every((answer) => correctAnswers.includes(answer));
-
-          if (isCorrect) {
+            userAnswer.every((answer) => correctAnswers.includes(answer))
+          ) {
             totalScore += question.points || 1;
           }
         }
@@ -360,68 +348,6 @@ function QuizContent({
     // 计算百分比分数
     return Math.round((totalScore / totalPoints) * 100);
   };
-
-  // 数据加载中
-  if (quizLoading) {
-    return (
-      <Flex
-        direction="column"
-        padding="xl"
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "70vh",
-        }}
-      >
-        <div className="loading-spinner">
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
-        <Text variant="heading-strong-m" style={{ marginTop: "24px" }}>
-          Loading Quiz...
-        </Text>
-        <style jsx>{`
-          .loading-spinner {
-            display: inline-block;
-            position: relative;
-            width: 80px;
-            height: 80px;
-          }
-          .loading-spinner div {
-            position: absolute;
-            border: 4px solid #3366ff;
-            opacity: 1;
-            border-radius: 50%;
-            animation: loading-spinner 1.5s cubic-bezier(0, 0.2, 0.8, 1)
-              infinite;
-          }
-          .loading-spinner div:nth-child(2) {
-            animation-delay: -0.5s;
-          }
-          .loading-spinner div:nth-child(3) {
-            animation-delay: -1s;
-          }
-          @keyframes loading-spinner {
-            0% {
-              top: 36px;
-              left: 36px;
-              width: 0;
-              height: 0;
-              opacity: 1;
-            }
-            100% {
-              top: 0px;
-              left: 0px;
-              width: 72px;
-              height: 72px;
-              opacity: 0;
-            }
-          }
-        `}</style>
-      </Flex>
-    );
-  }
 
   // 数据不存在
   if (!quizData) {
@@ -532,174 +458,202 @@ function QuizContent({
     );
 
     return (
-      <Card
-        padding="xl"
-        style={{
-          marginBottom: "20px",
-          border: "1px solid rgba(51, 102, 255, 0.2)",
-          background:
-            "linear-gradient(135deg, rgba(51, 102, 255, 0.05) 0%, rgba(0,0,0,0.1) 100%)",
-          boxShadow: "0 8px 16px rgba(0, 0, 0, 0.1)",
-          borderRadius: "12px",
-        }}
-      >
-        <Flex direction="column" gap="l">
-          <Flex
-            style={{ justifyContent: "space-between", alignItems: "center" }}
-          >
-            <Flex gap="s" style={{ alignItems: "center" }}>
-              <div
-                style={{
-                  background: "rgba(51, 102, 255, 0.1)",
-                  color: "var(--color-primary)",
-                  padding: "4px 8px",
-                  borderRadius: "4px",
-                  fontSize: "12px",
-                  fontWeight: "bold",
-                }}
-              >
-                {question.type === QuestionType.SINGLE_CHOICE
-                  ? "Single Choice"
-                  : question.type === QuestionType.MULTIPLE_CHOICE
-                  ? "Multiple Choice"
-                  : question.type === QuestionType.TRUE_FALSE
-                  ? "True/False"
-                  : "Short Answer"}
-              </div>
-              <Text variant="heading-strong-s">
-                Question {currentQuestionIndex + 1} /{" "}
-                {quizData.questions.length}
-              </Text>
-            </Flex>
+      <Flex direction="column" gap="l">
+        <Flex style={{ justifyContent: "space-between", alignItems: "center" }}>
+          <Flex gap="s" style={{ alignItems: "center" }}>
             <div
               style={{
-                background: "rgba(76, 175, 80, 0.1)",
-                color: "var(--color-success)",
+                background: "rgba(51, 102, 255, 0.1)",
+                color: "var(--color-primary)",
                 padding: "4px 8px",
                 borderRadius: "4px",
                 fontSize: "12px",
                 fontWeight: "bold",
               }}
             >
-              {question.points} points
+              {question.type === QuestionType.SINGLE_CHOICE
+                ? "Single Choice"
+                : question.type === QuestionType.MULTIPLE_CHOICE
+                ? "Multiple Choice"
+                : question.type === QuestionType.TRUE_FALSE
+                ? "True/False"
+                : "Short Answer"}
             </div>
+            <Text variant="heading-strong-s">
+              Question {currentQuestionIndex + 1} / {quizData.questions.length}
+            </Text>
           </Flex>
-
-          <Progress
-            value={questionProgress}
-            max={100}
-            size="s"
-            status="success"
-          />
-
-          <Text
-            variant="body-strong-l"
+          <div
             style={{
-              marginBottom: "16px",
-              padding: "12px",
-              background: "rgba(255, 255, 255, 0.05)",
-              borderRadius: "8px",
-              borderLeft: "4px solid rgba(51, 102, 255, 0.7)",
+              background: "rgba(76, 175, 80, 0.1)",
+              color: "var(--color-success)",
+              padding: "4px 8px",
+              borderRadius: "4px",
+              fontSize: "12px",
+              fontWeight: "bold",
             }}
           >
-            {question.question}
-          </Text>
-
-          <hr
-            style={{
-              border: "none",
-              borderTop: "1px solid rgba(255, 255, 255, 0.1)",
-              margin: "8px 0",
-            }}
-          />
-
-          {/* 根据问题类型渲染不同的答题控件 */}
-          <div style={{ padding: "8px 0" }}>
-            {question.type === QuestionType.SINGLE_CHOICE && (
-              <RadioGroup
-                name={`question-${question.id}`}
-                selectedValue={
-                  Array.isArray(userAnswers[question.id])
-                    ? ""
-                    : userAnswers[question.id]?.toString() || ""
-                }
-                onChange={(value: string) =>
-                  handleAnswerChange(question.id, value)
-                }
-              >
-                <Flex direction="column" gap="m">
-                  {question.options.map((option: any) => (
-                    <RadioButton
-                      key={option.id}
-                      value={option.id.toString()}
-                      label={option.text}
-                    />
-                  ))}
-                </Flex>
-              </RadioGroup>
-            )}
-
-            {question.type === QuestionType.MULTIPLE_CHOICE && (
-              <CheckboxGroup
-                value={
-                  Array.isArray(userAnswers[question.id])
-                    ? (userAnswers[question.id] as string[])
-                    : []
-                }
-                onChange={(newAnswers: string[]) =>
-                  handleAnswerChange(question.id, newAnswers)
-                }
-              >
-                <Flex direction="column" gap="m">
-                  {question.options.map((option: any) => (
-                    <Checkbox
-                      key={option.id}
-                      value={option.id.toString()}
-                      label={option.text}
-                    />
-                  ))}
-                </Flex>
-              </CheckboxGroup>
-            )}
-
-            {question.type === QuestionType.TRUE_FALSE && (
-              <RadioGroup
-                name={`question-${question.id}`}
-                selectedValue={
-                  Array.isArray(userAnswers[question.id])
-                    ? ""
-                    : userAnswers[question.id]?.toString() || ""
-                }
-                onChange={(value: string) =>
-                  handleAnswerChange(question.id, value)
-                }
-              >
-                <Flex direction="column" gap="m">
-                  {question.options.map((option: any) => (
-                    <RadioButton
-                      key={option.id}
-                      value={option.id.toString()}
-                      label={option.text}
-                    />
-                  ))}
-                </Flex>
-              </RadioGroup>
-            )}
-
-            {question.type === QuestionType.SHORT_ANSWER && (
-              <Input
-                id={`question-${question.id}`}
-                label="Your Answer"
-                value={userAnswers[question.id] || ""}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  handleAnswerChange(question.id, e.target.value)
-                }
-                placeholder="Please enter your answer"
-              />
-            )}
+            {question.points} points
           </div>
         </Flex>
-      </Card>
+
+        <Progress
+          value={questionProgress}
+          max={100}
+          size="s"
+          status="success"
+        />
+
+        <Text
+          variant="body-strong-l"
+          style={{
+            marginBottom: "16px",
+            padding: "12px",
+            background: "rgba(255, 255, 255, 0.05)",
+            borderRadius: "8px",
+            borderLeft: "4px solid rgba(51, 102, 255, 0.7)",
+          }}
+        >
+          <Markdown>{question.question}</Markdown>
+        </Text>
+
+        <hr
+          style={{
+            border: "none",
+            borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+            margin: "8px 0",
+          }}
+        />
+
+        {/* 根据问题类型渲染不同的答题控件 */}
+        <div style={{ padding: "8px 0" }}>
+          {question.type === QuestionType.SINGLE_CHOICE && (
+            <RadioGroup
+              name={`question-${question.id}`}
+              selectedValue={
+                Array.isArray(userAnswers[question.id])
+                  ? ""
+                  : userAnswers[question.id]?.toString() || ""
+              }
+              onChange={(value: string) =>
+                handleAnswerChange(question.id, value)
+              }
+            >
+              <Flex direction="column" gap="m">
+                {question.options.map((option: any) => (
+                  <RadioButton
+                    key={option.id}
+                    value={option.id.toString()}
+                    label={option.text}
+                  />
+                ))}
+              </Flex>
+            </RadioGroup>
+          )}
+          {question.type === "programming" && (
+            <div style={{ width: "100%" }}>
+              <Text variant="body-strong-m" style={{ marginBottom: "12px" }}>
+                Write your code here:
+              </Text>
+              {question.codeTemplate && (
+                <div style={{ position: "relative" }}>
+                  <textarea
+                    style={{
+                      width: "100%",
+                      minHeight: "300px",
+                      padding: "16px",
+                      backgroundColor: "#1E1E1E",
+                      color: "#FFFFFF",
+                      border: "1px solid #333333",
+                      borderRadius: "8px",
+                      fontFamily: "monospace",
+                      fontSize: "14px",
+                      lineHeight: "1.5",
+                      resize: "vertical",
+                    }}
+                    defaultValue={question.codeTemplate
+                      .replace(/\\n/g, "\n")
+                      .replace(/\\"/g, '"')}
+                    onChange={(e) =>
+                      handleAnswerChange(question.id, e.target.value)
+                    }
+                  />
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "8px",
+                      right: "8px",
+                      background: "#252525",
+                      padding: "4px 8px",
+                      borderRadius: "4px",
+                      fontSize: "12px",
+                      color: "#888888",
+                    }}
+                  >
+                    Solidity
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+          {question.type === QuestionType.MULTIPLE_CHOICE && (
+            <CheckboxGroup
+              value={
+                Array.isArray(userAnswers[question.id])
+                  ? (userAnswers[question.id] as string[])
+                  : []
+              }
+              onChange={(newAnswers: string[]) =>
+                handleAnswerChange(question.id, newAnswers)
+              }
+            >
+              <Flex direction="column" gap="m">
+                {question.options.map((option: any) => (
+                  <Checkbox
+                    key={option.id}
+                    value={option.id.toString()}
+                    label={option.text}
+                  />
+                ))}
+              </Flex>
+            </CheckboxGroup>
+          )}
+          {question.type === QuestionType.TRUE_FALSE && (
+            <RadioGroup
+              name={`question-${question.id}`}
+              selectedValue={
+                Array.isArray(userAnswers[question.id])
+                  ? ""
+                  : userAnswers[question.id]?.toString() || ""
+              }
+              onChange={(value: string) =>
+                handleAnswerChange(question.id, value)
+              }
+            >
+              <Flex direction="column" gap="m">
+                {question.options.map((option: any) => (
+                  <RadioButton
+                    key={option.id}
+                    value={option.id.toString()}
+                    label={option.text}
+                  />
+                ))}
+              </Flex>
+            </RadioGroup>
+          )}
+          {question.type === QuestionType.SHORT_ANSWER && (
+            <Input
+              id={`question-${question.id}`}
+              label="Your Answer"
+              value={userAnswers[question.id] || ""}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                handleAnswerChange(question.id, e.target.value)
+              }
+              placeholder="Please enter your answer"
+            />
+          )}
+        </div>
+      </Flex>
     );
   };
 
