@@ -1,6 +1,6 @@
 "use client";
 
-import { CascaderProps } from "@/components/cascader";
+import { CascaderProps } from "@/components/ui/cascader";
 
 const CascaderInteraction = ({
   children,

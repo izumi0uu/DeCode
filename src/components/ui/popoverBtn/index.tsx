@@ -1,7 +1,7 @@
 "use client";
 
 import { forwardRef } from "react";
-import { Popover } from "@/components/popover";
+import { Popover } from "@/components/ui/popover";
 import { ToggleButton } from "@/once-ui/components";
 import type { ToggleButtonProps } from "@/once-ui/components/ToggleButton";
 

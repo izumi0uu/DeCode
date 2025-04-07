@@ -10,7 +10,7 @@ import {
 } from "@/once-ui/components";
 import { courses, website } from "@/resources/content";
 import { AnimateLessonsBoxes } from "@/features/home-and-course-preview/components/animate-lessons-boxes";
-import { Footer } from "../footer";
+import { Footer } from "../layout/footer";
 
 const Home = () => {
   const cover1 = "/images/cover1.jpg";

@@ -9,7 +9,7 @@ import {
   Button,
   Arrow,
 } from "@/once-ui/components";
-import { HeaderInteraction } from "@/components/headerInteraction";
+import { HeaderInteraction } from "@/components/layout/headerInteraction";
 import { TimeDisplay, PopoverBtn, Cascader } from "@/components";
 import styles from "./index.module.scss";
 import { mode, courses, myInfo, about } from "@/resources";
