@@ -105,25 +105,9 @@ function QuizContent({
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
-  const [fetchError, setFetchError] = useState<string | null>(null);
 
-  // 使用我们创建的 hook 获取测验数据，添加错误处理
-  const {
-    data: quizData,
-    isLoading,
-    error,
-  } = useGetLessonQuizDetailed(lessonname);
-
-  // 设置错误状态
-  useEffect(() => {
-    if (error) {
-      setFetchError(
-        `获取测验数据失败: ${
-          error instanceof Error ? error.message : "未知错误"
-        }`
-      );
-    }
-  }, [error]);
+  // 使用我们创建的 hook 获取测验数据
+  const { data: quizData } = useGetLessonQuizDetailed(lessonname);
 
   // 设置计时器
   useEffect(() => {
@@ -167,13 +151,13 @@ function QuizContent({
     quizData.questions.forEach((question) => {
       const answer = userAnswers[question.id];
       if (!answer) {
-        errors.push(`请回答第 ${question.id} 题`);
+        errors.push(`Please answer question ${question.id}`);
       } else if (question.type === QuestionType.MULTIPLE_CHOICE) {
         if (!Array.isArray(answer) || answer.length === 0) {
-          errors.push(`请选择第 ${question.id} 题的答案`);
+          errors.push(`Please select the answer for question ${question.id}`);
         }
       } else if (typeof answer !== "string" || answer.trim() === "") {
-        errors.push(`请选择第 ${question.id} 题的答案`);
+        errors.push(`Please select the answer for question ${question.id}`);
       }
     });
     return errors;
@@ -203,7 +187,7 @@ function QuizContent({
         console.log("Quiz submitted with score:", score, "Passed:", passed);
       }
     } catch (error) {
-      console.error("提交测验失败:", error);
+      console.error("Failed to submit quiz:", error);
     }
   };
 
@@ -244,61 +228,6 @@ function QuizContent({
     return totalScore;
   };
 
-  // 加载状态
-  if (isLoading) {
-    return (
-      <Flex
-        direction="column"
-        padding="xl"
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "70vh",
-        }}
-      >
-        <Text variant="body-strong-l">加载测验中...</Text>
-      </Flex>
-    );
-  }
-
-  // 错误状态
-  if (fetchError) {
-    return (
-      <Flex
-        direction="column"
-        padding="xl"
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "70vh",
-        }}
-      >
-        <Text variant="heading-strong-m" color="error">
-          加载测验失败
-        </Text>
-        <Text
-          variant="body-default-m"
-          style={{ marginTop: "16px", textAlign: "center" }}
-        >
-          {fetchError}
-        </Text>
-        <Text
-          variant="body-default-m"
-          style={{ marginTop: "8px", textAlign: "center" }}
-        >
-          这个课程可能还没有相关的测验，或者后端服务暂时不可用。
-        </Text>
-        <Button
-          variant="secondary"
-          onClick={() => router.push(`/courses/${coursename}/${lessonname}`)}
-          style={{ marginTop: "24px" }}
-        >
-          返回课程
-        </Button>
-      </Flex>
-    );
-  }
-
   // 数据不存在
   if (!quizData) {
     return (
@@ -312,17 +241,18 @@ function QuizContent({
         }}
       >
         <Text variant="heading-strong-m" color="error">
-          测验未找到
+          Quiz Not Found
         </Text>
         <Text variant="body-default-m" style={{ marginTop: "16px" }}>
-          该课程可能还没有相关的测验，或者测验数据加载失败。
+          This course may not have any quizzes associated with it yet, or the
+          quiz data may have failed to load.
         </Text>
         <Button
           variant="secondary"
           onClick={() => router.push(`/courses/${coursename}/${lessonname}`)}
           style={{ marginTop: "24px" }}
         >
-          返回课程
+          Back to Course
         </Button>
       </Flex>
     );
@@ -333,7 +263,7 @@ function QuizContent({
     if (!quizData?.questions || quizData.questions.length === 0) {
       return (
         <Card padding="xl">
-          <Text variant="body-default-m">没有可用的问题</Text>
+          <Text variant="body-default-m">No available questions</Text>
         </Card>
       );
     }
@@ -347,9 +277,9 @@ function QuizContent({
             style={{ justifyContent: "space-between", alignItems: "center" }}
           >
             <Text variant="heading-strong-s">
-              问题 {currentQuestionIndex + 1} / {quizData.questions.length}
+              Question {currentQuestionIndex + 1} / {quizData.questions.length}
             </Text>
-            <Text variant="body-strong-m">{question.points} 分</Text>
+            <Text variant="body-strong-m">{question.points} points</Text>
           </Flex>
 
           <Text variant="body-strong-l" style={{ marginBottom: "16px" }}>
@@ -431,12 +361,12 @@ function QuizContent({
           {question.type === QuestionType.SHORT_ANSWER && (
             <Input
               id={`question-${question.id}`}
-              label="你的答案"
+              label="Your Answer"
               value={userAnswers[question.id] || ""}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 handleAnswerChange(question.id, e.target.value)
               }
-              placeholder="请输入你的答案"
+              placeholder="Please enter your answer"
             />
           )}
         </Flex>
@@ -454,7 +384,7 @@ function QuizContent({
     return (
       <Card padding="xl">
         <Flex direction="column" gap="l" style={{ alignItems: "center" }}>
-          <Text variant="heading-strong-l">测验结果</Text>
+          <Text variant="heading-strong-l">Quiz Results</Text>
 
           <div style={{ width: "100%", maxWidth: "200px" }}>
             <Progress
@@ -473,11 +403,13 @@ function QuizContent({
           </Text>
 
           <Text variant="body-strong-l">
-            {passed ? "恭喜，你已通过测验！" : "很遗憾，你未能通过测验。"}
+            {passed
+              ? "Congratulations, you have passed the quiz!"
+              : "Unfortunately, you did not pass the quiz."}
           </Text>
 
           <Text variant="body-default-m">
-            及格分数: {quizData.passingScore}%
+            Passing Score: {quizData.passingScore}%
           </Text>
 
           <Flex gap="m">
@@ -487,7 +419,7 @@ function QuizContent({
                 router.push(`/courses/${coursename}/${lessonname}`)
               }
             >
-              返回课程
+              Back to Lesson
             </Button>
 
             {!passed && (
@@ -502,7 +434,7 @@ function QuizContent({
                   }
                 }}
               >
-                重新测验
+                Retake Quiz
               </Button>
             )}
           </Flex>
@@ -584,24 +516,7 @@ export default function QuizPage({ params }: PageProps) {
       );
     }
   } catch (error) {
-    // 发生错误时的回退 UI
-    return (
-      <Flex
-        direction="column"
-        padding="xl"
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "70vh",
-        }}
-      >
-        <Text variant="heading-strong-m" color="error">
-          加载测验出错
-        </Text>
-        <Text variant="body-default-m" style={{ marginTop: "16px" }}>
-          无法加载测验。请稍后再试。
-        </Text>
-      </Flex>
-    );
+    // 发生错误由error.tsx处理，这里不需要处理
+    throw error;
   }
 }
