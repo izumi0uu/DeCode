@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import {
   BannerCarousel,
   AnimateLessonsBoxes,
@@ -15,8 +15,8 @@ import { Footer } from "@/components";
 import Loading from "../../loading";
 
 export default function Page({ params }: { params: { locale: string } }) {
-  const [categoryList, setCategoryList] = useState<string[]>(["All"]);
-  const [currentCategory, setCurrentCategory] = useState<string>("All");
+  const [tagList, setTagList] = useState<string[]>(["All"]);
+  const [currentTag, setCurrentTag] = useState<string>("All");
 
   const [popularCourses, setPopularCourses] = useState<Course[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
@@ -31,27 +31,27 @@ export default function Page({ params }: { params: { locale: string } }) {
   // 从课程数据中提取分类
   useEffect(() => {
     if (coursesData) {
-      const categories = new Set<string>();
-      categories.add("All");
+      const tags = new Set<string>();
+      tags.add("All");
 
       // 从课程中提取分类标签
       coursesData.courses.forEach((course) => {
         // 优先使用 shortTitleTag
         if (course.shortTitleTag) {
-          categories.add(course.shortTitleTag);
+          tags.add(course.shortTitleTag);
         }
         // 其次使用 category name
         else if (course.category?.name) {
-          categories.add(course.category.name);
+          tags.add(course.category.name);
         }
         // 最后使用标题的简化版本
         else {
           const shortTitle = course.title.split(" ").slice(0, 2).join(" ");
-          categories.add(shortTitle);
+          tags.add(shortTitle);
         }
       });
 
-      setCategoryList(Array.from(categories));
+      setTagList(Array.from(tags));
     }
   }, [coursesData]);
 
@@ -72,30 +72,30 @@ export default function Page({ params }: { params: { locale: string } }) {
 
   // 根据当前选中的分类筛选课程
   useEffect(() => {
-    if (currentCategory === "All") {
+    if (currentTag === "All") {
       setFilteredCourses(courses);
     } else {
       const filtered = courses.filter((course) => {
         // 优先匹配 shortTitleTag
-        if (course.shortTitleTag === currentCategory) {
+        if (course.shortTitleTag === currentTag) {
           return true;
         }
         // 其次匹配 category name
-        if (course.category?.name === currentCategory) {
+        if (course.category?.name === currentTag) {
           return true;
         }
         // 最后匹配标题的简化版本
         const shortTitle = course.title.split(" ").slice(0, 2).join(" ");
-        return shortTitle === currentCategory;
+        return shortTitle === currentTag;
       });
 
       setFilteredCourses(filtered);
     }
-  }, [currentCategory, courses]);
+  }, [currentTag, courses]);
 
   // 分类选择处理函数
-  const handleCategorySelect = (category: string) => {
-    setCurrentCategory(category);
+  const handleTagSelect = (tag: string) => {
+    setCurrentTag(tag);
   };
 
   // nextjs特性 客户端page不能自动继承父组件的loading
@@ -111,11 +111,10 @@ export default function Page({ params }: { params: { locale: string } }) {
         </BannerCarousel>
       </CourseCarouselProvider>
 
-      {/* lesson展示区 */}
       <AnimateLessonsBoxes
-        tagList={categoryList}
-        currentTag={currentCategory}
-        onTagSelect={handleCategorySelect}
+        tagList={tagList}
+        currentTag={currentTag}
+        onTagSelect={handleTagSelect}
       />
       <Footer />
     </>
