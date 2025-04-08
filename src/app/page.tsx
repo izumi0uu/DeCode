@@ -12,8 +12,6 @@ import { courses, website } from "@/resources/content";
 import { AnimateLessonsBoxes } from "@/features/home-and-course-preview/components/animate-lessons-boxes";
 import { Footer } from "@/components/layout/footer";
 
-import Loading from "./loading";
-
 const HomeComponent = () => {
   const cover1 = "/images/cover1.jpg";
 
@@ -112,6 +110,5 @@ const HomeComponent = () => {
 };
 
 export default function Home() {
-  return <Loading />;
-  // return <HomeComponent />;
+  return <HomeComponent />;
 }
