@@ -27,6 +27,7 @@ const fetchLessonContentBySlug = async (
           fields: ["id", "title", "slug"],
         },
       },
+      encodeValuesOnly: true,
     });
 
     const response = await fetch(`/api/lessons?${queryString}`);

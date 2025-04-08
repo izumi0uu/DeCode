@@ -17,12 +17,10 @@ export default function QuizPage({ params }: PageProps) {
     const resolvedParams = useRouteParams(params);
 
     return (
-      <Suspense fallback={<div>Fallback UI</div>}>
-        <QuizContent
-          courseSlug={resolvedParams.coursename}
-          lessonSlug={resolvedParams.lessonname}
-        />
-      </Suspense>
+      <QuizContent
+        courseSlug={resolvedParams.coursename}
+        lessonSlug={resolvedParams.lessonname}
+      />
     );
   } catch (error) {
     // 发生错误由error.tsx处理
