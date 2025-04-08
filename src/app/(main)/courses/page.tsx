@@ -20,7 +20,6 @@ export default function Page({ params }: { params: { locale: string } }) {
 
   const [popularCourses, setPopularCourses] = useState<Course[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
-  const [filteredCourses, setFilteredCourses] = useState<Course[]>([]);
 
   const { data: popularCoursesData, isLoading: popularCoursesLoading } =
     usePopularCourses();
@@ -66,32 +65,8 @@ export default function Page({ params }: { params: { locale: string } }) {
   useEffect(() => {
     if (coursesData) {
       setCourses(coursesData.courses);
-      setFilteredCourses(coursesData.courses);
     }
   }, [coursesData]);
-
-  // 根据当前选中的分类筛选课程
-  useEffect(() => {
-    if (currentTag === "All") {
-      setFilteredCourses(courses);
-    } else {
-      const filtered = courses.filter((course) => {
-        // 优先匹配 shortTitleTag
-        if (course.shortTitleTag === currentTag) {
-          return true;
-        }
-        // 其次匹配 category name
-        if (course.category?.name === currentTag) {
-          return true;
-        }
-        // 最后匹配标题的简化版本
-        const shortTitle = course.title.split(" ").slice(0, 2).join(" ");
-        return shortTitle === currentTag;
-      });
-
-      setFilteredCourses(filtered);
-    }
-  }, [currentTag, courses]);
 
   // 分类选择处理函数
   const handleTagSelect = (tag: string) => {
