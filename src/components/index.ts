@@ -1,8 +1,6 @@
 export { Header } from "@/components/layout/header";
 export { HeaderInteraction } from "@/components/layout/headerInteraction";
 export { Footer } from "@/components/layout/footer";
-export { Entrance } from "@/components/entrance";
-export { Home } from "@/components/home";
 export { TimeDisplay } from "@/components/ui/timePlay";
 export { Popover } from "@/components/ui/popover";
 export { PopoverBtn } from "@/components/ui/popoverBtn";
