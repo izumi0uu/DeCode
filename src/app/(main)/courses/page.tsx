@@ -12,6 +12,8 @@ import { usePopularCourses } from "@/features/home-and-course-preview/api/use-ge
 import { CourseCarouselProvider } from "@/features/home-and-course-preview/context/courseCarouselContext";
 import { Footer } from "@/components";
 
+import Loading from "../../loading";
+
 export default function Page({ params }: { params: { locale: string } }) {
   const [categoryList, setCategoryList] = useState<string[]>(["All"]);
   const [currentCategory, setCurrentCategory] = useState<string>("All");
@@ -25,10 +27,6 @@ export default function Page({ params }: { params: { locale: string } }) {
 
   const { data: coursesData, isLoading: coursesLoading } =
     useCoursesAndLessonsForPreview();
-
-  useEffect(() => {
-    console.log(coursesData);
-  }, [coursesData]);
 
   // 从课程数据中提取分类
   useEffect(() => {
@@ -99,6 +97,10 @@ export default function Page({ params }: { params: { locale: string } }) {
   const handleCategorySelect = (category: string) => {
     setCurrentCategory(category);
   };
+
+  if (coursesLoading || popularCoursesLoading) {
+    return <Loading />;
+  }
 
   return (
     <>
