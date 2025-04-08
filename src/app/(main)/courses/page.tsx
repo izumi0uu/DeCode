@@ -98,6 +98,7 @@ export default function Page({ params }: { params: { locale: string } }) {
     setCurrentCategory(category);
   };
 
+  // nextjs特性 客户端page不能自动继承父组件的loading
   if (coursesLoading || popularCoursesLoading) {
     return <Loading />;
   }

@@ -6,11 +6,11 @@ import { Text, Flex, Button } from "@/once-ui/components";
 import {
   LessonBoxesProvider,
   useLessonBoxes,
-} from "../../context/lessonBoxesContext";
-import { Banner } from "./Banner";
-import { CategoryTags } from "./CategoryTags";
-import { TechTags } from "./TechTags";
-import { LessonDisplay } from "./LessonDisplay";
+} from "@/features/home-and-course-preview/context/lessonBoxesContext";
+import { Banner } from "../banner";
+import { CategoryTags } from "../category-tags";
+import { TechTags } from "../tech-tags";
+import { LessonDisplay } from "../lesson-display";
 import styles from "./index.module.scss";
 
 // 主组件接口

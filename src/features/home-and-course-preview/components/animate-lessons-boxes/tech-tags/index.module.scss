@@ -1,0 +1,102 @@
+.techTagsToggle {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  margin: 0 0 20px 60px;
+}
+
+.techTagsContainer {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 0 28px 60px;
+  padding: 0;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.techTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.toggleButton {
+  font-size: 0.9rem;
+  border-radius: 20px;
+  padding: 7px 16px;
+  transition: all 0.3s ease;
+  background: linear-gradient(
+    90deg,
+    rgba(102, 126, 234, 0.2),
+    rgba(102, 126, 234, 0.1)
+  );
+  border: 1px solid rgba(159, 204, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+
+  &:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(
+      90deg,
+      rgba(102, 126, 234, 0.3),
+      rgba(102, 126, 234, 0.2)
+    );
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.25);
+  }
+}
+
+.techTagButton {
+  font-size: 0.85rem;
+  padding: 5px 14px;
+  transition: all 0.3s ease;
+  border-radius: 20px;
+  font-weight: 500;
+  border: 1px solid rgba(159, 204, 255, 0.2);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+  }
+
+  &.active {
+    border: none;
+    background: linear-gradient(45deg, #3366ff, #667eea);
+    transform: none !important;
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.4);
+
+    &:hover {
+      transform: none !important;
+      box-shadow: 0 4px 10px rgba(102, 126, 234, 0.4);
+    }
+  }
+}
+
+.clearTagsButton {
+  position: relative;
+  font-size: 0.9rem;
+  border-radius: 50%;
+  background: linear-gradient(to right, #ff5f6d, #ffc371);
+  color: white;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 95, 109, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(255, 95, 109, 0.2);
+  }
+}
