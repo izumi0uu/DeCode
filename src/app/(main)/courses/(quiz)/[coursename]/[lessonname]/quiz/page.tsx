@@ -1,7 +1,7 @@
 // page.tsx
 "use client";
 
-import React, { Suspense } from "react";
+import React from "react";
 import { useRouteParams } from "@/lib/utils/route-params";
 import { QuizContent } from "@/features/quiz";
 

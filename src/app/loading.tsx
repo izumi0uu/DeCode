@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import rootLoadingStyles from "@/features/loading-scss";
+import { rootLoadingStyles } from "@/features/loading-scss";
 
 export default function Loading() {
   return (
