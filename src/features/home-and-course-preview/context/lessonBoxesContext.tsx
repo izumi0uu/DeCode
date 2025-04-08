@@ -90,8 +90,6 @@ export function LessonBoxesProvider({
     data.courses.forEach((course) => {
       if (course.shortTitleTag) {
         uniqueTags.add(course.shortTitleTag);
-      } else if (course.category?.name) {
-        uniqueTags.add(course.category.name);
       } else {
         const shortTitle = course.title.split(" ").slice(0, 2).join(" ");
         uniqueTags.add(shortTitle);
