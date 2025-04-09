@@ -1,5 +1,6 @@
 // src/features/home-and-course-preview/api/server.ts
 import { cache } from "react";
+// @ts-ignore
 import qs from "qs";
 import { Course, LessonLight } from "@/features/types";
 import { fetchAllPagesServer } from "@/lib/utils/fetch-all-pages-server";
@@ -89,7 +90,6 @@ const getCoursesAndLessonsForPreview = cache(async () => {
 // 获取热门课程
 const getPopularCourses = cache(async () => {
   const queryParams = {
-    sort: ["popularity:desc"],
     populate: ["coverImage", "tags"],
     pagination: {
       limit: 10,
