@@ -1,6 +1,8 @@
+// src/features/home-and-course-preview/components/courses-page-client/index.tsx
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
+import { Flex } from "@/once-ui/components";
 import {
   BannerCarousel,
   AnimateLessonsBoxes,
@@ -8,38 +10,53 @@ import {
 } from "@/features/home-and-course-preview/components";
 import { CourseCarouselProvider } from "@/features/home-and-course-preview/context/courseCarouselContext";
 import { LessonBoxesProvider } from "@/features/home-and-course-preview/context/lessonBoxesContext";
+import {
+  CoursePopularCardSkeletons,
+  LessonsBoxesSkeleton,
+} from "@/features/home-and-course-preview/components/skeletons";
 import { Footer } from "@/components";
 
-interface CoursePageClientProps {
-  coursesData: any; // 使用适当的类型
-  popularCoursesData: any; // 使用适当的类型
+interface CoursesPageClientProps {
+  coursesData: any;
+  popularCoursesData: any;
 }
 
-const CoursePageClient = ({
+export function CoursesPageClient({
   coursesData,
   popularCoursesData,
-}: CoursePageClientProps) => {
+}: CoursesPageClientProps) {
   return (
-    <>
-      {/* 热门课程部分 */}
-      <CourseCarouselProvider courses={popularCoursesData || []}>
-        <BannerCarousel>
-          <AnimatePopularBoxes />
-        </BannerCarousel>
-      </CourseCarouselProvider>
-
-      {/* 课程和课时部分  */}
-      <LessonBoxesProvider
-        coursesData={coursesData?.courses || []}
-        lessonsData={coursesData?.lessons || []}
-        initialTag="All"
+    <Flex direction="column" className="courses-page-client">
+      {/* 热门课程部分：独立Suspense区域 */}
+      <Suspense
+        fallback={
+          <Flex
+            className="banner-carousel-skeleton"
+            style={{ height: "500px" }}
+          >
+            <CoursePopularCardSkeletons count={2} />
+          </Flex>
+        }
       >
-        <AnimateLessonsBoxes />
-      </LessonBoxesProvider>
+        <CourseCarouselProvider courses={popularCoursesData || []}>
+          <BannerCarousel>
+            <AnimatePopularBoxes />
+          </BannerCarousel>
+        </CourseCarouselProvider>
+      </Suspense>
+
+      {/* 课程和课时部分：独立Suspense区域 */}
+      <Suspense fallback={<LessonsBoxesSkeleton />}>
+        <LessonBoxesProvider
+          coursesData={coursesData?.courses || []}
+          lessonsData={coursesData?.lessons || []}
+          initialTag="All"
+        >
+          <AnimateLessonsBoxes />
+        </LessonBoxesProvider>
+      </Suspense>
 
       <Footer />
-    </>
+    </Flex>
   );
-};
-
-export default CoursePageClient;
+}

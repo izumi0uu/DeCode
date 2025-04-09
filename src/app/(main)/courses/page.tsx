@@ -1,20 +1,33 @@
-import React from "react";
+// src/app/(main)/courses/page.tsx
+import React, { Suspense } from "react";
 import {
   getCoursesAndLessonsForPreview,
   getPopularCourses,
 } from "@/features/home-and-course-preview/api/server";
-import CoursePageClient from "@/features/home-and-course-preview/components/course-page-client";
+import { CoursesPageClient } from "@/features/home-and-course-preview/components/course-page-client";
+import { CoursesPageSkeleton } from "@/features/home-and-course-preview/components/skeletons";
 
-// 服务端数据获取
-const coursesData = await getCoursesAndLessonsForPreview();
-const popularCoursesData = await getPopularCourses();
+// 数据提供器组件：负责数据获取
+async function DataProvider() {
+  // 并行数据获取，提高性能
+  const [coursesData, popularCoursesData] = await Promise.all([
+    getCoursesAndLessonsForPreview(),
+    getPopularCourses().catch(() => []), // 错误处理
+  ]);
 
-export default async function CoursesPage() {
-  // 将数据传递给客户端组件
   return (
-    <CoursePageClient
+    <CoursesPageClient
       coursesData={coursesData}
       popularCoursesData={popularCoursesData}
     />
+  );
+}
+
+// 页面组件
+export default async function CoursesPage() {
+  return (
+    <Suspense fallback={<CoursesPageSkeleton />}>
+      <DataProvider />
+    </Suspense>
   );
 }
