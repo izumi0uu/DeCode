@@ -111,4 +111,7 @@ const getPopularCourses = cache(async () => {
   return result.data;
 });
 
-export { getCoursesAndLessonsForPreview, getPopularCourses };
+export {
+  getCoursesAndLessonsForPreview, // 获取用于预览卡片的课程和章节数据
+  getPopularCourses, // 获取热门课程
+};
