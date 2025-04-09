@@ -18,7 +18,9 @@ export default async function CoursePage({
   );
 
   if (!currentCourse) {
-    throw new Error("Course not found");
+    throw new Error(
+      "There was a problem loading this course. Please try again later."
+    );
   }
 
   // 找到当前课程的所有课时

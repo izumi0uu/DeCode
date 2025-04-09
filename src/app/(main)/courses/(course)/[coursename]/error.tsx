@@ -31,7 +31,7 @@ export default function CourseError({
         color="light"
         style={{ marginTop: "16px", textAlign: "center", maxWidth: "600px" }}
       >
-        There was a problem loading this course. Please try again later.
+        {error.message || "An unexpected error occurred"}
       </Text>
       <Text
         variant="body-default-s"
