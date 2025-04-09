@@ -91,7 +91,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
     if (timeLeft === 0 && !state.quizSubmitted) {
       addToast({
         variant: "danger",
-        message: "时间到！测验将自动提交",
+        message: "time's up! quiz will be submitted automatically",
       });
       handleSubmit();
     }
