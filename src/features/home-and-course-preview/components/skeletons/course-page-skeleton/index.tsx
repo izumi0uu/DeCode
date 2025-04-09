@@ -7,17 +7,16 @@ import { LessonsBoxesSkeleton } from "../lesson-boxes-skeleton";
 
 export function CoursesPageSkeleton() {
   return (
-    <Flex direction="column" className="courses-page-skeleton">
+    <Flex direction="column">
       {/* 热门课程骨架屏 */}
       <Flex
-        className="banner-carousel-skeleton"
         style={{
-          height: "500px",
           background: "rgba(0,0,0,0.05)",
           position: "relative",
+          height: "fit-content",
         }}
       >
-        <CoursePopularCardSkeletons count={2} />
+        <CoursePopularCardSkeletons count={1} />
       </Flex>
 
       {/* 课程列表骨架屏 */}

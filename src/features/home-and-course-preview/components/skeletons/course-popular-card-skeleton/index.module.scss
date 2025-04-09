@@ -1,11 +1,10 @@
 .container {
   width: 100%;
-  justify-content: flex-start;
+  justify-content: center;
 }
 
 .skeleton {
   width: 280px;
-  flex-grow: 0;
   border-radius: 16px;
   overflow: hidden;
 }
@@ -15,7 +14,6 @@
   border-radius: 16px;
   overflow: hidden;
   backdrop-filter: blur(8px);
-  background: rgba(25, 29, 49, 0.7);
   border: 1px solid rgba(59, 130, 246, 0.6);
   animation: pulse 1.5s ease-in-out infinite;
 }
@@ -53,10 +51,6 @@
   border-radius: 12px;
   transform-origin: center;
   transform: translate(-50%, -50%) rotate(45deg);
-}
-
-.info {
-  flex: 1;
 }
 
 .title {
