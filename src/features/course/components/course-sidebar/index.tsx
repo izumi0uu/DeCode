@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Flex, Text, Scroller } from "@/once-ui/components";

@@ -1,4 +1,3 @@
-// decode/src/app/(main)/courses/(course)/[coursename]/layout.tsx
 "use client";
 
 import { ReactNode, Suspense } from "react";
