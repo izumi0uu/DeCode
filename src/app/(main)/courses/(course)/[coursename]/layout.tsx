@@ -5,7 +5,10 @@ import { usePathname } from "next/navigation";
 import { CourseContextProvider } from "@/features/course/context/CourseContext";
 import { CourseSidebar } from "@/features/course/components/course-sidebar";
 import { Flex } from "@/once-ui/components";
-import { CourseSidebarSkeleton } from "@/features/course/components/skeletons";
+import {
+  CourseSidebarSkeleton,
+  CourseDetailSkeleton,
+} from "@/features/course/components/skeletons";
 
 interface PageContainerProps {
   children: ReactNode;
@@ -25,17 +28,20 @@ const PageContainer = ({ children, sidebar }: PageContainerProps) => (
     <Suspense fallback={<CourseSidebarSkeleton />}>
       <div className="hidden md:block">{sidebar}</div>
     </Suspense>
-    <Flex
-      style={{
-        flex: 1,
-        height: "100vh",
-        overflowY: "auto",
-        width: "1200px",
-        background: "var(--bg-surface)",
-      }}
-    >
-      {children}
-    </Flex>
+
+    <Suspense fallback={<CourseDetailSkeleton />}>
+      <Flex
+        style={{
+          flex: 1,
+          height: "100vh",
+          overflowY: "auto",
+          width: "1200px",
+          background: "var(--bg-surface)",
+        }}
+      >
+        {children}
+      </Flex>
+    </Suspense>
   </Flex>
 );
 
