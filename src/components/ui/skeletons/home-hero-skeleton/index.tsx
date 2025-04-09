@@ -7,19 +7,45 @@ export const HomeHeroSkeleton = () => {
     <Column fillWidth paddingY="l" gap="m">
       <Column maxWidth="l" gap="xl" horizontal="center">
         <Column maxWidth="s">
-          <Flex fillWidth horizontal="end" paddingBottom="m" gap="m">
+          <Flex fillWidth paddingBottom="m" gap="m">
             <Skeleton
               shape="block"
               width="xl"
               height="xl"
               style={{ width: "200px", height: "200px", borderRadius: "8px" }}
             />
-            <Skeleton
-              shape="line"
-              width="xl"
-              height="l"
-              style={{ width: "300px" }}
-            />
+            <Flex direction="column" gap="m">
+              <Skeleton
+                shape="line"
+                width="xl"
+                height="l"
+                style={{ width: "260px" }}
+              />
+              <Skeleton
+                shape="line"
+                width="xl"
+                height="l"
+                style={{ width: "260px" }}
+              />
+              <Skeleton
+                shape="line"
+                width="xl"
+                height="l"
+                style={{ width: "260px" }}
+              />
+              <Skeleton
+                shape="line"
+                width="xl"
+                height="l"
+                style={{ width: "230px" }}
+              />
+              <Skeleton
+                shape="line"
+                width="xl"
+                height="l"
+                style={{ width: "230px" }}
+              />
+            </Flex>
           </Flex>
           <Flex fillWidth horizontal="start" paddingBottom="m">
             <Skeleton
