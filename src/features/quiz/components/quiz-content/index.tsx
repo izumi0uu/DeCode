@@ -2,17 +2,21 @@
 "use client";
 
 import React, { RefObject, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { Flex, Button } from "@/once-ui/components";
-import { useGetLessonQuizDetailed } from "@/features/quiz/api/use-get-lesson-quiz";
-import QuizHeader from "../quiz-header";
+import { useOptimistic } from "react";
+
+import { Flex } from "@/once-ui/components";
+import ScrollToBottomButton from "@/components/ui/scroll-to-bottom-button";
+
 import ValidationErrors from "../validation-errors";
+import { useGetLessonQuizDetailed } from "@/features/quiz/api/use-get-lesson-quiz";
+import { useToast } from "@/once-ui/components/ToastProvider";
+import QuizHeader from "../quiz-header";
 import QuestionNav from "../question-nav";
 import QuizResults from "../quiz-results";
 import QuestionRenderer from "../questions/question-renderer";
 import QuizFooter from "../quiz-footer";
 import QuizNotFound from "../quiz-not-found";
-import ScrollToBottomButton from "@/components/ui/scroll-to-bottom-button";
+
 import useQuizState from "../../hooks/use-quiz-state";
 import useQuizTimer from "../../hooks/use-quiz-timer";
 import useQuizValidation from "../../hooks/use-quiz-validation";
@@ -29,6 +33,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
   lessonSlug,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { addToast } = useToast();
 
   const {
     state,
@@ -46,16 +51,24 @@ const QuizContent: React.FC<QuizContentProps> = ({
 
   const validation = useQuizValidation(quizData, state.userAnswers);
 
+  // 添加乐观UI状态
+  const [optimisticState, addOptimistic] = useOptimistic(
+    { submitted: false, score: 0 },
+    (state, newState) => ({ ...state, ...newState })
+  );
+
   const {
     isLoading,
     isSubmitted,
     setIsSubmitted,
     calculateScore,
-    handleSubmit,
+    score,
+    handleSubmit: submitQuiz,
   } = useQuizSubmission(
     quizData,
     state.userAnswers,
-    validation.validateAnswers
+    validation.validateAnswers,
+    lessonSlug
   );
 
   // 监听提交状态变化
@@ -68,9 +81,13 @@ const QuizContent: React.FC<QuizContentProps> = ({
   // 处理自动提交（时间到）
   useEffect(() => {
     if (timeLeft === 0 && !state.quizSubmitted) {
+      addToast({
+        variant: "danger",
+        message: "时间到！测验将自动提交",
+      });
       handleSubmit();
     }
-  }, [timeLeft, state.quizSubmitted, handleSubmit]);
+  }, [timeLeft, state.quizSubmitted]);
 
   // 处理下一题
   const handleNext = () => {
@@ -89,17 +106,49 @@ const QuizContent: React.FC<QuizContentProps> = ({
     }
   };
 
+  // 带有乐观UI的提交处理
+  const handleSubmit = () => {
+    const errors = validation.validateAnswers();
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      addToast({
+        variant: "danger",
+        message: "please answer all required questions",
+      });
+      return;
+    }
+
+    // 立即更新乐观UI状态
+    const optimisticScore = calculateScore();
+    addOptimistic({
+      submitted: true,
+      score: optimisticScore,
+    });
+
+    // 实际提交
+    submitQuiz();
+  };
+
   // 处理重新测验
   const handleRetake = () => {
     resetQuiz();
     resetTimer();
     setIsSubmitted(false);
+    addOptimistic({ submitted: false, score: 0 });
+
+    addToast({
+      variant: "success",
+      message: "quiz reset",
+    });
   };
 
   // 数据不存在
   if (!quizData) {
     return <QuizNotFound courseSlug={courseSlug} lessonSlug={lessonSlug} />;
   }
+
+  const isOptimisticallySubmitted =
+    optimisticState.submitted && !state.quizSubmitted;
 
   return (
     <>
@@ -114,7 +163,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
           <ValidationErrors errors={validation.validationErrors} />
         )}
 
-        {!state.quizSubmitted && (
+        {!state.quizSubmitted && !isOptimisticallySubmitted && (
           <QuestionNav
             questions={quizData.questions}
             currentIndex={state.currentQuestionIndex}
@@ -123,10 +172,10 @@ const QuizContent: React.FC<QuizContentProps> = ({
           />
         )}
 
-        {state.quizSubmitted ? (
+        {state.quizSubmitted || isOptimisticallySubmitted ? (
           <QuizResults
             quizData={quizData}
-            score={calculateScore()}
+            score={isSubmitted ? score : optimisticState.score}
             onRetake={handleRetake}
             courseSlug={courseSlug}
             lessonSlug={lessonSlug}
@@ -145,7 +194,7 @@ const QuizContent: React.FC<QuizContentProps> = ({
           />
         )}
 
-        {!state.quizSubmitted && (
+        {!state.quizSubmitted && !isOptimisticallySubmitted && (
           <QuizFooter
             currentIndex={state.currentQuestionIndex}
             totalQuestions={quizData.questions.length}

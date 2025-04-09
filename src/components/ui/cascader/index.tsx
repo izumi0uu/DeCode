@@ -2,7 +2,7 @@
 
 import { Flex, Skeleton, Text } from "@/once-ui/components";
 import { CascaderInteraction } from "@/components/ui/cascader-interaction";
-import { navigateTo } from "@/app/actions/navigateTo";
+import { navigateTo } from "@/app/actions/navigate-to";
 import { NavNode } from "@/features/types/ui/nav-node";
 import styles from "./index.module.scss";
 import { useCoursesAndLessonsToNavTree } from "@/features/home-and-course-preview/api/use-get-courses-lessons";

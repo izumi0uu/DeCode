@@ -1,14 +1,20 @@
 // hooks/useQuizSubmission.ts
 import { useState } from "react";
+import { useTransition } from "react";
 import { QuestionType, QuizQuestion } from "@/features/types/api/quiz-question";
+import { submitQuizAnswer } from "@/app/actions/quiz-actions";
+import { useToast } from "@/once-ui/components/ToastProvider";
 
 const useQuizSubmission = (
   quizData: any,
   userAnswers: Record<number, string | string[]>,
-  validateAnswers: () => string[]
+  validateAnswers: () => string[],
+  lessonSlug: string
 ) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [score, setScore] = useState(0);
+  const { addToast } = useToast();
 
   const calculateScore = () => {
     if (!quizData?.questions) return 0;
@@ -28,16 +34,13 @@ const useQuizSubmission = (
             .filter((option: any) => option.isCorrect)
             .map((option: any) => option.id.toString());
 
-          // 对于只有一个正确答案的多选题，用户只需选择该答案
           if (
             correctAnswers.length === 1 &&
             userAnswer.includes(correctAnswers[0]) &&
             userAnswer.length === 1
           ) {
             totalScore += question.points || 1;
-          }
-          // 对于有多个正确答案的多选题，用户需要完全匹配所有正确答案
-          else if (
+          } else if (
             correctAnswers.length > 1 &&
             userAnswer.length === correctAnswers.length &&
             userAnswer.every((answer) => correctAnswers.includes(answer))
@@ -56,38 +59,65 @@ const useQuizSubmission = (
       }
     });
 
-    // 计算百分比分数
     return Math.round((totalScore / totalPoints) * 100);
   };
 
   const handleSubmit = async () => {
     const errors = validateAnswers();
     if (errors.length > 0) {
+      addToast({
+        variant: "danger",
+        message: "Please answer all required questions",
+      });
       return;
     }
 
-    setIsLoading(true);
+    // 先显示提交中的Toast
+    addToast({
+      variant: "success",
+      message: "submitting quiz...",
+    });
 
-    try {
-      // 这里可以添加API调用来保存测验结果
-      // const response = await submitQuizResult({...});
+    startTransition(async () => {
+      try {
+        const result = await submitQuizAnswer(
+          lessonSlug,
+          userAnswers,
+          quizData.questions
+        );
 
-      // 模拟异步操作
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+        if (result.success) {
+          setScore(result.score || 0);
+          setIsSubmitted(true);
 
-      setIsSubmitted(true);
-    } catch (error) {
-      console.error("Failed to submit quiz:", error);
-    } finally {
-      setIsLoading(false);
-    }
+          // 提交成功的Toast
+          addToast({
+            variant: "success",
+            message: `quiz submitted successfully! score: ${result.score}%`,
+          });
+        } else {
+          // 提交失败的Toast
+          addToast({
+            variant: "danger",
+            message: result.error || "submission failed, please try again",
+          });
+        }
+      } catch (error) {
+        console.error("submit quiz failed:", error);
+        addToast({
+          variant: "danger",
+          message: "submission failed, please check your network connection",
+        });
+      }
+    });
   };
 
   return {
-    isLoading,
+    isLoading: isPending,
     isSubmitted,
     setIsSubmitted,
     calculateScore,
+    score,
     handleSubmit,
   };
 };
