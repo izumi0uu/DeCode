@@ -3,7 +3,7 @@
 
 import React, { RefObject, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Flex } from "@/once-ui/components";
+import { Flex, Button } from "@/once-ui/components";
 import { useGetLessonQuizDetailed } from "@/features/quiz/api/use-get-lesson-quiz";
 import QuizHeader from "../quiz-header";
 import ValidationErrors from "../validation-errors";

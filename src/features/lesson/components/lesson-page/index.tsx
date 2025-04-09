@@ -1,12 +1,13 @@
 ﻿"use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, RefObject } from "react";
 import { Flex, Button } from "@/once-ui/components";
 import { useGetLessonContent } from "../../api/use-get-lesson";
 import LessonHeader from "../lesson-header";
 import LessonContent from "../lesson-content";
 import LessonNavigation from "../lesson-navigation";
 import Link from "next/link";
+import ScrollToBottomButton from "@/components/ui/scroll-to-bottom-button";
 
 interface LessonPageProps {
   coursename?: string;
@@ -14,6 +15,9 @@ interface LessonPageProps {
 }
 
 export const LessonPage: React.FC<LessonPageProps> = ({ lessonSlug }) => {
+  // 容器引用，用于滚动
+  const containerRef = useRef<HTMLDivElement>(null);
+
   // 使用自定义hook获取课程和章节数据
   const { data, isLoading, isError } = useGetLessonContent(lessonSlug);
   // 状态用于控制是否显示测验按钮
@@ -67,75 +71,81 @@ export const LessonPage: React.FC<LessonPageProps> = ({ lessonSlug }) => {
   const courseSlug = currentCourse.slug || currentCourse.id.toString();
 
   return (
-    <Flex direction="column" padding="xl">
-      <LessonHeader
-        title={currentLesson.title}
-        description={currentLesson.description}
-        duration={currentLesson.duration}
-        type={currentLesson.type}
-      />
+    <>
+      <Flex direction="column" padding="xl" ref={containerRef}>
+        <LessonHeader
+          title={currentLesson.title}
+          description={currentLesson.description}
+          duration={currentLesson.duration}
+          type={currentLesson.type}
+        />
 
-      <LessonContent content={currentLesson.content} />
+        <LessonContent content={currentLesson.content} />
 
-      {/* 测验按钮 */}
-      {hasQuiz || (
-        <Flex
-          center
-          style={{
-            marginTop: "32px",
-            borderTop: "1px solid rgba(255, 255, 255, 0.1)",
-            paddingTop: "24px",
-          }}
-        >
-          <Link
-            href={`/courses/${courseSlug}/${lessonSlug}/quiz`}
-            style={{ textDecoration: "none" }}
+        {/* 测验按钮 */}
+        {hasQuiz || (
+          <Flex
+            center
+            style={{
+              marginTop: "32px",
+              borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+              paddingTop: "24px",
+            }}
           >
-            <Button
-              variant="primary"
-              size="l"
-              style={{
-                padding: "0 32px",
-                background:
-                  "linear-gradient(90deg, rgba(64, 93, 230, 0.8) 0%, rgba(88, 81, 219, 0.8) 100%)",
-                border: "1px solid rgba(255, 255, 255, 0.2)",
-                boxShadow: "0 4px 14px rgba(0, 0, 0, 0.25)",
-              }}
+            <Link
+              href={`/courses/${courseSlug}/${lessonSlug}/quiz`}
+              style={{ textDecoration: "none" }}
             >
-              Start a quiz
-            </Button>
-          </Link>
-        </Flex>
-      )}
+              <Button
+                variant="primary"
+                size="l"
+                style={{
+                  padding: "0 32px",
+                  background:
+                    "linear-gradient(90deg, rgba(64, 93, 230, 0.8) 0%, rgba(88, 81, 219, 0.8) 100%)",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  boxShadow: "0 4px 14px rgba(0, 0, 0, 0.25)",
+                }}
+              >
+                Start a quiz
+              </Button>
+            </Link>
+          </Flex>
+        )}
 
-      <hr
-        style={{
-          margin: "32px 0 16px",
-          border: "none",
-          borderTop: "1px solid rgba(255, 255, 255, 0.1)",
-        }}
-      />
+        <hr
+          style={{
+            margin: "32px 0 16px",
+            border: "none",
+            borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+          }}
+        />
 
-      <LessonNavigation
-        courseName={courseSlug}
-        prevLesson={
-          prevLesson
-            ? {
-                slug: prevLesson.slug || prevLesson.id.toString(),
-                title: prevLesson.title,
-              }
-            : undefined
-        }
-        nextLesson={
-          nextLesson
-            ? {
-                slug: nextLesson.slug || nextLesson.id.toString(),
-                title: nextLesson.title,
-              }
-            : undefined
-        }
+        <LessonNavigation
+          courseName={courseSlug}
+          prevLesson={
+            prevLesson
+              ? {
+                  slug: prevLesson.slug || prevLesson.id.toString(),
+                  title: prevLesson.title,
+                }
+              : undefined
+          }
+          nextLesson={
+            nextLesson
+              ? {
+                  slug: nextLesson.slug || nextLesson.id.toString(),
+                  title: nextLesson.title,
+                }
+              : undefined
+          }
+        />
+      </Flex>
+
+      <ScrollToBottomButton
+        containerRef={containerRef as RefObject<HTMLElement>}
       />
-    </Flex>
+    </>
   );
 };
 
