@@ -232,7 +232,6 @@ export const useCoursesAndLessons = (): HookResponse<NavNode[]> => {
   const lessonsQuery = useSuspenseQuery({
     queryKey: ["lessons-light"],
     queryFn: fetchLessonsLight,
-    enabled: !!coursesQuery.data, // 只有在课程数据加载完成后才加载章节数据
   });
 
   // 当两个查询都完成时，转换数据
