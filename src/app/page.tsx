@@ -1,9 +1,8 @@
 import HomePageClient from "@/components/layout/homePageClient";
 import { getCoursesAndLessonsForPreview } from "@/features/home-and-course-preview/api/server";
 
-export default async function Home() {
-  // 服务端数据获取
-  const coursesData = await getCoursesAndLessonsForPreview();
+const coursesData = await getCoursesAndLessonsForPreview();
 
+export default async function Home() {
   return <HomePageClient coursesData={coursesData} />;
 }
