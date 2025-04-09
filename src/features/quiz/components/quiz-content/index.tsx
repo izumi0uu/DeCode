@@ -5,8 +5,8 @@ import React, { RefObject, useEffect, useRef } from "react";
 import { useOptimistic } from "react";
 
 import { Flex } from "@/once-ui/components";
-import ScrollToBottomButton from "@/components/ui/scroll-to-bottom-button";
 
+import ScrollToBottomButton from "@/components/ui/scroll-to-bottom-button";
 import ValidationErrors from "../validation-errors";
 import { useGetLessonQuizDetailed } from "@/features/quiz/api/use-get-lesson-quiz";
 import { useToast } from "@/once-ui/components/ToastProvider";
@@ -26,6 +26,11 @@ import styles from "./index.module.scss";
 interface QuizContentProps {
   courseSlug: string;
   lessonSlug: string;
+}
+
+interface OptimisticState {
+  submitted: boolean;
+  score: number;
 }
 
 const QuizContent: React.FC<QuizContentProps> = ({
@@ -52,10 +57,13 @@ const QuizContent: React.FC<QuizContentProps> = ({
   const validation = useQuizValidation(quizData, state.userAnswers);
 
   // 添加乐观UI状态
-  const [optimisticState, addOptimistic] = useOptimistic(
-    { submitted: false, score: 0 },
-    (state, newState) => ({ ...state, ...newState })
-  );
+  const [optimisticState, addOptimistic] = useOptimistic<
+    OptimisticState,
+    Partial<OptimisticState>
+  >({ submitted: false, score: 0 }, (state, newState) => ({
+    ...state,
+    ...newState,
+  }));
 
   const {
     isLoading,
