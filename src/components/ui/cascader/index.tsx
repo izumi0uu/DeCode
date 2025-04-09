@@ -1,7 +1,7 @@
 "use client";
 
 import { Flex, Skeleton, Text } from "@/once-ui/components";
-import { CascaderInteraction } from "@/components/ui/cascaderInteraction";
+import { CascaderInteraction } from "@/components/ui/cascader-interaction";
 import { navigateTo } from "@/app/actions/navigateTo";
 import { NavNode } from "@/features/types/ui/nav-node";
 import styles from "./index.module.scss";

@@ -1,4 +1,4 @@
 export * from "./footer";
 export * from "./header";
-export * from "./headerInteraction";
-export * from "./homePageClient";
+export * from "./header-interaction";
+export * from "./home-page-client";

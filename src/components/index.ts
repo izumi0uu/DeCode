@@ -1,9 +1,9 @@
 export { Header } from "@/components/layout/header";
-export { HeaderInteraction } from "@/components/layout/headerInteraction";
+export { HeaderInteraction } from "@/components/layout/header-interaction";
 export { Footer } from "@/components/layout/footer";
-export { TimeDisplay } from "@/components/ui/timePlay";
+export { TimeDisplay } from "@/components/ui/time-play";
 export { Popover } from "@/components/ui/popover";
-export { PopoverBtn } from "@/components/ui/popoverBtn";
+export { PopoverBtn } from "@/components/ui/popover-btn";
 export { Cascader } from "@/components/ui/cascader";
-export { CascaderInteraction } from "@/components/ui/cascaderInteraction";
+export { CascaderInteraction } from "@/components/ui/cascader-interaction";
 export { Progress } from "@/components/ui/progress";

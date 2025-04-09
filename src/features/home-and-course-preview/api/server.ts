@@ -2,7 +2,7 @@
 import { cache } from "react";
 import qs from "qs";
 import { Course, LessonLight } from "@/features/types";
-import { fetchAllPagesServer } from "@/lib/utils/fetchAllPagesServer";
+import { fetchAllPagesServer } from "@/lib/utils/fetch-all-pages-server";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 

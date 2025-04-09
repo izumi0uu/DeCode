@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { Tag } from "@/features/types";
 import { useCourseCarousel } from "./courseCarouselContext";
-import { shuffleArray } from "@/lib/utils/shuffleArray";
+import { shuffleArray } from "@/lib/utils/shuffle-array";
 
 interface TagCarouselContextType {
   randomTags: Tag[];

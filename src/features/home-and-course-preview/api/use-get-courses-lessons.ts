@@ -14,7 +14,7 @@ import {
   COURSE_LIGHT_FIELDS,
   QUIZ_LIGHT_FIELDS,
 } from "@/features/types";
-import { fetchAllPages } from "@/lib/utils/fetchAllPages";
+import { fetchAllPages } from "@/lib/utils/fetch-all-pages";
 
 // 获取课程数据
 const fetchCourses = async (): Promise<ApiDataResponse<Course[]>> => {
