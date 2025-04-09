@@ -26,9 +26,8 @@ async function DataProvider() {
 // 页面组件
 export default async function CoursesPage() {
   return (
-    // <Suspense fallback={<CoursesPageSkeleton />}>
-    //   <DataProvider />
-    // </Suspense>
-    <CoursesPageSkeleton />
+    <Suspense fallback={<CoursesPageSkeleton />}>
+      <DataProvider />
+    </Suspense>
   );
 }
