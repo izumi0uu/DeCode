@@ -74,7 +74,7 @@ export const LessonsBoxesSkeleton = () => {
 
         {/* 分类标签骨架屏 */}
         <Flex gap="m" style={{ marginBottom: "20px", flexWrap: "wrap" }}>
-          {[1, 2, 3, 4, 5, 6].map((i) => (
+          {[1, 2, 3, 4, 5, 6, 7].map((i) => (
             <Skeleton
               key={i}
               shape="block"
@@ -84,17 +84,6 @@ export const LessonsBoxesSkeleton = () => {
               style={{ borderRadius: "16px", width: "100px", height: "32px" }}
             />
           ))}
-        </Flex>
-
-        {/* 技术标签切换按钮骨架屏 */}
-        <Flex style={{ justifyContent: "center", marginBottom: "16px" }}>
-          <Skeleton
-            shape="block"
-            width="s"
-            height="s"
-            delay="3"
-            style={{ borderRadius: "14px", width: "80px", height: "28px" }}
-          />
         </Flex>
       </Flex>
 
