@@ -9,8 +9,8 @@ import React, {
   ReactNode,
 } from "react";
 import { Course } from "@/features/types/api/course";
-import { Lesson, LessonLight } from "@/features/types/api/lesson";
-import { TagItem } from "../components/animate-lessons-boxes/TechTags";
+import { LessonLight } from "@/features/types/api/lesson";
+import { TagItem } from "../components/animate-lessons-boxes/tech-tags";
 
 // 默认值
 const DEFAULT_COURSE_TAGS = [
@@ -277,11 +277,20 @@ export function LessonBoxesProvider({
 
   // 处理"探索"按钮点击
   const handleExplore = useCallback(() => {
-    const tagSection = document.querySelector(".categorySectionTitle");
+    // 使用ID选择器代替类选择器
+    const tagSection = document.getElementById("lessons-section-title");
     if (tagSection) {
       const yOffset =
         tagSection.getBoundingClientRect().top + window.scrollY - 20;
       window.scrollTo({ top: yOffset, behavior: "smooth" });
+    } else {
+      // 备用方案：如果找不到ID，尝试使用类选择器
+      const fallbackSection = document.querySelector(".categorySectionTitle");
+      if (fallbackSection) {
+        const yOffset =
+          fallbackSection.getBoundingClientRect().top + window.scrollY - 20;
+        window.scrollTo({ top: yOffset, behavior: "smooth" });
+      }
     }
   }, []);
 

@@ -57,6 +57,7 @@ function LessonBoxesContent() {
       >
         {/* 分类标题 */}
         <motion.div
+          id="lessons-section-title"
           className={styles.categorySectionTitle}
           {...animations.fadeIn}
           transition={{ duration: 0.5, ease: "easeOut" }}

@@ -50,7 +50,10 @@ export const LessonsBoxesSkeleton = () => {
         }}
       >
         {/* 分类标题骨架屏 */}
-        <Flex style={{ marginBottom: "24px", alignItems: "center" }}>
+        <Flex
+          id="lessons-section-title"
+          style={{ marginBottom: "24px", alignItems: "center" }}
+        >
           <Skeleton
             shape="line"
             width="l"
