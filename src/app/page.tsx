@@ -12,9 +12,8 @@ async function HomeDataProvider() {
 
 export default async function Home() {
   return (
-    // <Suspense fallback={<HomePageSkeleton />}>
-    //   <HomeDataProvider />
-    // </Suspense>
-    <HomePageSkeleton />
+    <Suspense fallback={<HomePageSkeleton />}>
+      <HomeDataProvider />
+    </Suspense>
   );
 }
