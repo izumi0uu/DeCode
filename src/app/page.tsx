@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import HomePageClient from "@/components/layout/homePageClient";
 import { getCoursesAndLessonsForPreview } from "@/features/home-and-course-preview/api/server";
 
