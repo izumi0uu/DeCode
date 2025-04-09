@@ -3,22 +3,12 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Text, Flex, Button } from "@/once-ui/components";
-import {
-  LessonBoxesProvider,
-  useLessonBoxes,
-} from "@/features/home-and-course-preview/context/lessonBoxesContext";
+import { useLessonBoxes } from "@/features/home-and-course-preview/context/lessonBoxesContext";
 import { Banner } from "../banner";
 import { CategoryTags } from "../category-tags";
 import { TechTags } from "../tech-tags";
 import { LessonDisplay } from "../lesson-display";
 import styles from "./index.module.scss";
-
-// 主组件接口
-interface AnimateLessonsBoxesProps {
-  tagList?: string[];
-  currentTag?: string;
-  onTagSelect?: (tag: string) => void;
-}
 
 // 动画变体定义
 const animations = {
@@ -30,7 +20,7 @@ const animations = {
   },
 };
 
-// 内部组件，使用Context
+// 内容组件，使用Context
 function LessonBoxesContent() {
   const {
     currentTag,
@@ -65,7 +55,7 @@ function LessonBoxesContent() {
           width: "100%",
         }}
       >
-        {/* 课程分类标题 */}
+        {/* 分类标题 */}
         <motion.div
           className={styles.categorySectionTitle}
           {...animations.fadeIn}
@@ -81,7 +71,7 @@ function LessonBoxesContent() {
           <div className={styles.flowingLine}></div>
         </motion.div>
 
-        {/* 课程分类标签 */}
+        {/* 分类标签 */}
         <CategoryTags
           tagList={displayTags}
           currentTag={currentTag}
@@ -120,7 +110,7 @@ function LessonBoxesContent() {
         </AnimatePresence>
       </Flex>
 
-      {/* 内容区域 */}
+      {/* 内容区域 - 显示课时 */}
       <Flex className={styles.lessonsSection}>
         <LessonDisplay
           loading={isLoading}
@@ -133,15 +123,7 @@ function LessonBoxesContent() {
   );
 }
 
-// 包装主组件
-export const AnimateLessonsBoxes = (props: AnimateLessonsBoxesProps = {}) => {
-  return (
-    <LessonBoxesProvider
-      initialTag={props.currentTag}
-      tagList={props.tagList}
-      onTagSelect={props.onTagSelect}
-    >
-      <LessonBoxesContent />
-    </LessonBoxesProvider>
-  );
+// 导出主组件 - 不再直接包含Provider
+export const AnimateLessonsBoxes = () => {
+  return <LessonBoxesContent />;
 };

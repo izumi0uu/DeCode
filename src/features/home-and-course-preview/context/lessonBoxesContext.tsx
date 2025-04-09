@@ -6,16 +6,14 @@ import React, {
   useState,
   useCallback,
   useMemo,
-  useEffect,
   ReactNode,
 } from "react";
-import { useCoursesAndLessonsForPreview } from "../api/use-get-courses-lessons";
 import { Course } from "@/features/types/api/course";
-import { Lesson } from "@/features/types/api/lesson";
+import { Lesson, LessonLight } from "@/features/types/api/lesson";
 import { TagItem } from "../components/animate-lessons-boxes/TechTags";
 
 // 默认值
-const DEFAULT_COURSE_CATEGORY_TAGS = [
+const DEFAULT_COURSE_TAGS = [
   "All",
   "Web3 Basics",
   "Cryptocurrency",
@@ -41,7 +39,7 @@ interface LessonBoxesContextType {
   displayTags: string[];
   visibleTechTags: TagItem[];
   filteredCourses: Course[];
-  filteredLessons: Lesson[];
+  filteredLessons: LessonLight[];
   isLoading: boolean;
 
   // 动作
@@ -60,36 +58,40 @@ const LessonBoxesContext = createContext<LessonBoxesContextType | undefined>(
 // Provider Props
 interface LessonBoxesProviderProps {
   children: ReactNode;
+  coursesData: Course[]; // 从page传递的课程数据
+  lessonsData: LessonLight[]; // 从page传递的课时数据
   initialTag?: string;
-  tagList?: string[];
+  externalTagList?: string[];
   onTagSelect?: (tag: string) => void;
 }
 
 // Provider组件
 export function LessonBoxesProvider({
   children,
+  coursesData = [],
+  lessonsData = [],
   initialTag = "All",
-  tagList: propTagList,
+  externalTagList,
   onTagSelect,
 }: LessonBoxesProviderProps) {
-  // 获取课程数据
-  const { data, isLoading } = useCoursesAndLessonsForPreview();
-
   // 组件状态
   const [currentTag, setCurrentTag] = useState(initialTag);
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
   const [selectedTagNames, setSelectedTagNames] = useState<string[]>([]);
   const [showTechTags, setShowTechTags] = useState(false);
+  const [isLoading] = useState(false); // 不再需要loading状态，因为数据在page获取
 
-  // 从API中提取课程分类标签
-  const apiTags = useMemo(() => {
-    if (!data?.courses?.length) return DEFAULT_COURSE_CATEGORY_TAGS;
+  // 从课程数据中提取标签
+  const courseTags = useMemo(() => {
+    if (!coursesData?.length) return DEFAULT_COURSE_TAGS;
 
     const uniqueTags = new Set(["All"]);
 
-    data.courses.forEach((course) => {
+    coursesData.forEach((course) => {
       if (course.shortTitleTag) {
         uniqueTags.add(course.shortTitleTag);
+      } else if (course.category?.name) {
+        uniqueTags.add(course.category.name);
       } else {
         const shortTitle = course.title.split(" ").slice(0, 2).join(" ");
         uniqueTags.add(shortTitle);
@@ -97,24 +99,24 @@ export function LessonBoxesProvider({
     });
 
     return Array.from(uniqueTags);
-  }, [data?.courses]);
+  }, [coursesData]);
 
   // 用于UI显示的标签列表
   const displayTags = useMemo(
-    () => propTagList || apiTags,
-    [propTagList, apiTags]
+    () => externalTagList || courseTags,
+    [externalTagList, courseTags]
   );
 
   // 构建课程类别到技术标签的映射
   const categoryToTechTagsMap = useMemo(() => {
-    if (!data?.courses?.length) {
+    if (!coursesData?.length) {
       return { All: DEFAULT_TECH_TAGS };
     }
 
     const mapping: Record<string, TagItem[]> = {};
     const allTechTagsMap = new Map<number, TagItem>();
 
-    data.courses.forEach((course) => {
+    coursesData.forEach((course) => {
       let categoryKey =
         course.shortTitleTag ||
         course.category?.name ||
@@ -153,7 +155,7 @@ export function LessonBoxesProvider({
     });
 
     return mapping;
-  }, [data?.courses]);
+  }, [coursesData]);
 
   // 当前类别的可见技术标签
   const visibleTechTags = useMemo(() => {
@@ -162,9 +164,9 @@ export function LessonBoxesProvider({
 
   // 筛选课程列表
   const filteredCourses = useMemo(() => {
-    if (!data?.courses) return [];
+    if (!coursesData) return [];
 
-    return data.courses.filter((course) => {
+    return coursesData.filter((course) => {
       const matchesCategory =
         currentTag === "All" ||
         course.shortTitleTag === currentTag ||
@@ -181,11 +183,11 @@ export function LessonBoxesProvider({
 
       return matchesCategory;
     });
-  }, [data?.courses, currentTag, selectedTagIds]);
+  }, [coursesData, currentTag, selectedTagIds]);
 
   // 筛选课时列表
   const filteredLessons = useMemo(() => {
-    if (!data?.lessons?.length || !data?.courses?.length) return [];
+    if (!lessonsData?.length || !coursesData?.length) return [];
 
     const extractTagIds = (tagData: any): number[] => {
       if (!tagData) return [];
@@ -203,10 +205,10 @@ export function LessonBoxesProvider({
 
     const courseIds =
       currentTag === "All"
-        ? data.courses.map((course) => course.id)
+        ? coursesData.map((course) => course.id)
         : filteredCourses.map((course) => course.id);
 
-    let filtered = data.lessons.filter(
+    let filtered = lessonsData.filter(
       (lesson) => lesson.course && courseIds.includes(lesson.course.id)
     );
 
@@ -229,22 +231,7 @@ export function LessonBoxesProvider({
     }
 
     return filtered;
-  }, [
-    data?.lessons,
-    data?.courses,
-    currentTag,
-    filteredCourses,
-    selectedTagIds,
-  ]);
-
-  // 同步外部initialTag变化
-  useEffect(() => {
-    if (initialTag && initialTag !== currentTag) {
-      setCurrentTag(initialTag);
-      setSelectedTagIds([]);
-      setSelectedTagNames([]);
-    }
-  }, [initialTag, currentTag]);
+  }, [lessonsData, coursesData, currentTag, filteredCourses, selectedTagIds]);
 
   // 处理课程分类标签点击
   const handleTagClick = useCallback(
@@ -290,7 +277,6 @@ export function LessonBoxesProvider({
 
   // 处理"探索"按钮点击
   const handleExplore = useCallback(() => {
-    // 这里需要添加样式类的引用，假设已导入了styles
     const tagSection = document.querySelector(".categorySectionTitle");
     if (tagSection) {
       const yOffset =
