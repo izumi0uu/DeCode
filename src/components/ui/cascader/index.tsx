@@ -5,7 +5,7 @@ import { CascaderInteraction } from "@/components/ui/cascaderInteraction";
 import { navigateTo } from "@/app/actions/navigateTo";
 import { NavNode } from "@/features/types/ui/nav-node";
 import styles from "./index.module.scss";
-import { useCoursesAndLessons } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
+import { useCoursesAndLessonsToNavTree } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
 import { RefObject, useEffect, useRef, useState } from "react";
 
 export interface CascaderProps {
@@ -15,7 +15,12 @@ export interface CascaderProps {
 }
 
 const Cascader = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
-  const { data: navigationData, isLoading, error } = useCoursesAndLessons();
+  const {
+    data: navigationData,
+    isLoading,
+    error,
+  } = useCoursesAndLessonsToNavTree();
+
   const [activeCourse, setActiveCourse] = useState<NavNode | null>(null);
   const [isChangingCourse, setIsChangingCourse] = useState(false);
   const coursesColumnRef = useRef<HTMLDivElement>(null);

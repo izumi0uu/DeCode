@@ -223,7 +223,7 @@ const transformData = (
 };
 
 // 自定义 hook，获取课程和章节数据并转换为导航树
-export const useCoursesAndLessons = (): HookResponse<NavNode[]> => {
+const useCoursesAndLessonsToNavTree = (): HookResponse<NavNode[]> => {
   const coursesQuery = useSuspenseQuery({
     queryKey: ["courses"],
     queryFn: fetchCourses,
@@ -254,7 +254,7 @@ export const useCoursesAndLessons = (): HookResponse<NavNode[]> => {
 };
 
 // 自定义hook，获取用于预览卡片的课程和章节数据
-export const useCoursesAndLessonsForPreview =
+const useCoursesAndLessonsForPreview =
   (): HookResponse<CoursesAndLessonsPreview> => {
     const query = useSuspenseQuery({
       queryKey: ["courses-lessons-preview"],
@@ -269,7 +269,7 @@ export const useCoursesAndLessonsForPreview =
     };
   };
 
-export const useCourses = (): HookResponse<Course[]> => {
+const useCourses = (): HookResponse<Course[]> => {
   const query = useSuspenseQuery({
     queryKey: ["courses"],
     queryFn: fetchCourses,
@@ -283,7 +283,7 @@ export const useCourses = (): HookResponse<Course[]> => {
   };
 };
 
-export const useLessons = (): HookResponse<LessonLight[]> => {
+const useLessons = (): HookResponse<LessonLight[]> => {
   const query = useSuspenseQuery({
     queryKey: ["lessons"],
     queryFn: fetchLessonsLight,
@@ -295,4 +295,11 @@ export const useLessons = (): HookResponse<LessonLight[]> => {
     isError: query.isError,
     error: query.error,
   };
+};
+
+export {
+  useCoursesAndLessonsToNavTree, // 转换数据为导航树
+  useCoursesAndLessonsForPreview, // 获取用于预览卡片的课程和章节数据
+  useCourses, // 获取课程数据
+  useLessons, // 获取章节数据
 };
