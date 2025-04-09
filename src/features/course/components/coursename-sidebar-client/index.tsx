@@ -7,8 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Course } from "@/features/types/api/course";
 import { useCourseContext } from "@/features/course/context/CourseContext";
 import { CourseCard } from "@/features/course/components/course-card";
-import { CourseSidebarSkeleton } from "@/features/course/components/skeletons";
-import { usePopularCourses } from "@/features/home-and-course-preview/api/use-get-courses-popular";
 
 // 侧边栏标题组件
 const SidebarHeader = () => (
@@ -69,27 +67,30 @@ export const CourseList = ({
   </Scroller>
 );
 
-// 侧边栏主组件
-interface CourseSidebarProps {
+// 客户端侧边栏组件
+interface CourseSidebarClientProps {
+  courses: Course[];
   coursePath: string;
 }
 
-const CourseSidebar = ({ coursePath }: CourseSidebarProps) => {
-  const { data, isLoading } = usePopularCourses();
-  const { courses, activeCourseId, setActiveCourseId } = useCourseContext();
+const CourseSidebarClient = ({
+  courses,
+  coursePath,
+}: CourseSidebarClientProps) => {
+  const { activeCourseId, setActiveCourseId } = useCourseContext();
   const router = useRouter();
 
   // 当路径变化时更新活动课程
   useEffect(() => {
-    if (data && coursePath) {
-      const course = data.find(
+    if (courses && coursePath) {
+      const course = courses.find(
         (c: Course) => c.slug === coursePath || c.id.toString() === coursePath
       );
       if (course) {
         setActiveCourseId(course.id);
       }
     }
-  }, [data, coursePath, setActiveCourseId]);
+  }, [courses, coursePath, setActiveCourseId]);
 
   // 处理课程点击
   const handleCourseClick = useCallback(
@@ -100,10 +101,6 @@ const CourseSidebar = ({ coursePath }: CourseSidebarProps) => {
     },
     [router, setActiveCourseId]
   );
-
-  if (isLoading) {
-    return <CourseSidebarSkeleton />;
-  }
 
   return (
     <Flex
@@ -128,4 +125,4 @@ const CourseSidebar = ({ coursePath }: CourseSidebarProps) => {
   );
 };
 
-export { CourseSidebar };
+export { CourseSidebarClient };

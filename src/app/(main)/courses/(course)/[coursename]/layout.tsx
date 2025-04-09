@@ -1,64 +1,48 @@
-"use client";
-
+// src/app/(main)/courses/(course)/[coursename]/layout.tsx
 import { ReactNode, Suspense } from "react";
-import { usePathname } from "next/navigation";
-import { CourseContextProvider } from "@/features/course/context/CourseContext";
-import { CourseSidebar } from "@/features/course/components/course-sidebar";
-import { Flex } from "@/once-ui/components";
+import { getPopularCourses } from "@/features/home-and-course-preview/api/server";
+import { CourseSidebarClient } from "@/features/course/components/coursename-sidebar-client";
+import { CoursePageContainer } from "@/features/course/components/coursename-page-container";
 import {
   CourseSidebarSkeleton,
   CourseDetailSkeleton,
 } from "@/features/course/components/skeletons";
 
-interface PageContainerProps {
+// 服务端数据获取
+async function CourseLayout({
+  children,
+  params,
+}: {
   children: ReactNode;
-  sidebar: ReactNode;
-}
-
-const PageContainer = ({ children, sidebar }: PageContainerProps) => (
-  <Flex
-    style={{
-      width: "100%",
-      maxWidth: "1920px",
-      height: "100vh",
-      margin: "0 auto",
-      overflow: "hidden",
-    }}
-  >
-    <Suspense fallback={<CourseSidebarSkeleton />}>
-      <div className="hidden md:block">{sidebar}</div>
-    </Suspense>
-
-    <Suspense fallback={<CourseDetailSkeleton />}>
-      <Flex
-        style={{
-          flex: 1,
-          height: "100vh",
-          overflowY: "auto",
-          width: "1200px",
-          background: "var(--bg-surface)",
-        }}
-      >
-        {children}
-      </Flex>
-    </Suspense>
-  </Flex>
-);
-
-// Course Layout wrapper component that provides the context
-const CourseLayout = ({ children }: { children: ReactNode }) => {
-  // Use the URL directly instead of params
-  const pathname = usePathname();
-  const segments = pathname.split("/");
-  const coursename = segments[segments.length - 1];
+  params: { coursename: string };
+}) {
+  // 服务端获取课程数据
+  const coursesData = await getPopularCourses();
+  const coursename = params.coursename;
 
   return (
-    <CourseContextProvider>
-      <PageContainer sidebar={<CourseSidebar coursePath={coursename} />}>
-        {children}
-      </PageContainer>
-    </CourseContextProvider>
+    <Suspense
+      fallback={
+        <CoursePageContainer
+          sidebar={<CourseSidebarSkeleton />}
+          children={<CourseDetailSkeleton />}
+        />
+      }
+    >
+      <CoursePageContainer
+        sidebar={
+          <Suspense fallback={<CourseSidebarSkeleton />}>
+            <CourseSidebarClient
+              courses={coursesData}
+              coursePath={coursename}
+            />
+          </Suspense>
+        }
+      >
+        <Suspense fallback={<CourseDetailSkeleton />}>{children}</Suspense>
+      </CoursePageContainer>
+    </Suspense>
   );
-};
+}
 
 export default CourseLayout;
