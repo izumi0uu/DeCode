@@ -6,7 +6,7 @@ import { navigateTo } from "@/app/actions/navigateTo";
 import { NavNode } from "@/features/types/ui/nav-node";
 import styles from "./index.module.scss";
 import { useCoursesAndLessons } from "@/features/home-and-course-preview/api/use-get-courses-lessons";
-import { useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 
 export interface CascaderProps {
   data?: NavNode[];
@@ -139,7 +139,7 @@ const Cascader = ({ currentPath }: Omit<CascaderProps, "onSelect">) => {
       activeCourse={activeCourse}
       setActiveCourse={setActiveCourse}
       setIsChangingCourse={setIsChangingCourse}
-      coursesColumnRef={coursesColumnRef}
+      coursesColumnRef={coursesColumnRef as RefObject<HTMLDivElement>}
     >
       <Flex className={styles.cascaderContent}>
         {/* 左侧课程列表 */}
