@@ -11,7 +11,7 @@ export default async function CoursePage({
   params: { coursename: string };
 }) {
   try {
-    const coursename = params.coursename;
+    const { coursename } = params;
 
     // 找到当前课程
     const currentCourse = coursesData.courses.find(

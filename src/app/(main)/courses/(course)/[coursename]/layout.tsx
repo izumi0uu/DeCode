@@ -11,14 +11,13 @@ import {
 // 服务端数据获取
 async function CourseLayout({
   children,
-  params,
+  params: { coursename },
 }: {
   children: ReactNode;
   params: { coursename: string };
 }) {
   // 服务端获取课程数据
   const coursesData = await getPopularCourses();
-  const coursename = params.coursename;
 
   return (
     <Suspense
