@@ -48,7 +48,8 @@ const useQuizSubmission = (
             totalScore += question.points || 1;
           }
         }
-      } else {
+      } else if (question.type !== QuestionType.PROGRAMMING) {
+        // 跳过编程题的评分，因为编程题需要AI评分
         const correctAnswer = question.options
           .find((option: any) => option.isCorrect)
           ?.id.toString();
@@ -72,14 +73,20 @@ const useQuizSubmission = (
       return;
     }
 
-    // 先显示提交中的Toast
+    // 防止重复提交
+    if (isSubmitted || isPending) {
+      return;
+    }
+
+    // 显示提交中的Toast
     addToast({
       variant: "success",
-      message: "submitting quiz...",
+      message: "提交测验中...",
     });
 
     startTransition(async () => {
       try {
+        // 提交答案到服务器
         const result = await submitQuizAnswer(
           lessonSlug,
           userAnswers,
@@ -87,26 +94,27 @@ const useQuizSubmission = (
         );
 
         if (result.success) {
+          // 设置分数和提交状态
           setScore(result.score || 0);
           setIsSubmitted(true);
 
           // 提交成功的Toast
           addToast({
             variant: "success",
-            message: `quiz submitted successfully! score: ${result.score}%`,
+            message: `测验提交成功`,
           });
         } else {
           // 提交失败的Toast
           addToast({
             variant: "danger",
-            message: result.error || "submission failed, please try again",
+            message: result.error || "提交失败，请重试",
           });
         }
       } catch (error) {
-        console.error("submit quiz failed:", error);
+        console.error("提交测验失败:", error);
         addToast({
           variant: "danger",
-          message: "submission failed, please check your network connection",
+          message: "提交失败，请检查网络连接",
         });
       }
     });

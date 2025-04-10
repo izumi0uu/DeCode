@@ -13,8 +13,6 @@ import { QuizOption } from "@/features/types/api/quiz-option";
 export const useGetLessonQuiz = (
   lessonSlug: string | undefined
 ): HookResponse<Quiz | null> => {
-  const queryEnabled = !!lessonSlug;
-
   const fetchLessonQuiz = async (): Promise<Quiz | null> => {
     if (!lessonSlug) return null;
 
@@ -36,7 +34,9 @@ export const useGetLessonQuiz = (
         },
       });
 
-      const response = await fetch(`/api/quizzes?${queryString}`);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/quizzes?${queryString}`
+      );
 
       if (!response.ok) {
         throw new Error(`Failed to fetch quiz for lesson: ${lessonSlug}`);
@@ -95,12 +95,18 @@ export const useGetLessonQuizDetailed = (
             fields: ["id", "title", "slug"],
           },
           questions: {
-            populate: ["options"],
+            populate: {
+              options: {
+                fields: ["id", "text", "locale", "explanation"],
+              },
+            },
           },
         },
       });
 
-      const response = await fetch(`/api/quizzes?${queryString}`);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/quizzes?${queryString}`
+      );
 
       if (!response.ok) {
         throw new Error(

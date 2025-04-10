@@ -37,10 +37,16 @@ const useQuizState = () => {
   };
 
   const setQuizSubmitted = (submitted: boolean) => {
-    setState((prev) => ({
-      ...prev,
-      quizSubmitted: submitted,
-    }));
+    setState((prev) => {
+      if (prev.quizSubmitted === submitted) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        quizSubmitted: submitted,
+      };
+    });
   };
 
   const setValidationErrors = (errors: string[]) => {

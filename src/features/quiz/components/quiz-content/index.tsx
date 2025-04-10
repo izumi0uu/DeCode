@@ -2,7 +2,7 @@
 "use client";
 
 import React, { RefObject, useEffect, useRef } from "react";
-import { useOptimistic } from "react";
+import { useRouter } from "next/navigation";
 
 import { Flex } from "@/once-ui/components";
 
@@ -12,7 +12,6 @@ import { useGetLessonQuizDetailed } from "@/features/quiz/api/use-get-lesson-qui
 import { useToast } from "@/once-ui/components/ToastProvider";
 import QuizHeader from "../quiz-header";
 import QuestionNav from "../question-nav";
-import QuizResults from "../quiz-results";
 import QuestionRenderer from "../questions/question-renderer";
 import QuizFooter from "../quiz-footer";
 import QuizNotFound from "../quiz-not-found";
@@ -28,63 +27,35 @@ interface QuizContentProps {
   lessonSlug: string;
 }
 
-interface OptimisticState {
-  submitted: boolean;
-  score: number;
-}
-
 const QuizContent: React.FC<QuizContentProps> = ({
   courseSlug,
   lessonSlug,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { addToast } = useToast();
+  const router = useRouter();
 
   const {
     state,
     setCurrentQuestionIndex,
     handleAnswerChange,
-    setQuizSubmitted,
     setValidationErrors,
-    resetQuiz,
+    setQuizSubmitted,
   } = useQuizState();
 
   const { data: quizData, isLoading: quizLoading } =
     useGetLessonQuizDetailed(lessonSlug);
 
-  const { timeLeft, resetTimer } = useQuizTimer(quizData, state.quizSubmitted);
+  const { timeLeft } = useQuizTimer(quizData, false);
 
   const validation = useQuizValidation(quizData, state.userAnswers);
 
-  // 添加乐观UI状态
-  const [optimisticState, addOptimistic] = useOptimistic<
-    OptimisticState,
-    Partial<OptimisticState>
-  >({ submitted: false, score: 0 }, (state, newState) => ({
-    ...state,
-    ...newState,
-  }));
-
-  const {
-    isLoading,
-    isSubmitted,
-    setIsSubmitted,
-    calculateScore,
-    score,
-    handleSubmit: submitQuiz,
-  } = useQuizSubmission(
+  const { isLoading, handleSubmit: submitQuiz } = useQuizSubmission(
     quizData,
     state.userAnswers,
     validation.validateAnswers,
     lessonSlug
   );
-
-  // 监听提交状态变化
-  useEffect(() => {
-    if (isSubmitted) {
-      setQuizSubmitted(true);
-    }
-  }, [isSubmitted, setQuizSubmitted]);
 
   // 处理自动提交（时间到）
   useEffect(() => {
@@ -114,8 +85,14 @@ const QuizContent: React.FC<QuizContentProps> = ({
     }
   };
 
-  // 带有乐观UI的提交处理
+  // 提交处理
   const handleSubmit = () => {
+    // 防止重复提交
+    if (state.quizSubmitted) {
+      console.log("Quiz already submitted, preventing duplicate submission");
+      return;
+    }
+
     const errors = validation.validateAnswers();
     if (errors.length > 0) {
       setValidationErrors(errors);
@@ -126,37 +103,32 @@ const QuizContent: React.FC<QuizContentProps> = ({
       return;
     }
 
-    // 立即更新乐观UI状态
-    const optimisticScore = calculateScore();
-    addOptimistic({
-      submitted: true,
-      score: optimisticScore,
-    });
+    // 保存答案到本地存储，供结果页面使用
+    localStorage.setItem(
+      `quiz_answers_${lessonSlug}`,
+      JSON.stringify(state.userAnswers)
+    );
 
-    // 实际提交
-    submitQuiz();
-  };
+    // 设置提交状态为true，防止重复提交
+    setQuizSubmitted(true);
 
-  // 处理重新测验
-  const handleRetake = () => {
-    resetQuiz();
-    resetTimer();
-    setIsSubmitted(false);
-    addOptimistic({ submitted: false, score: 0 });
-
+    // 显示提交中提示
     addToast({
       variant: "success",
-      message: "quiz reset",
+      message: "submitting quiz...",
     });
+
+    // 提交答案
+    submitQuiz();
+
+    // 直接跳转到结果页面，不依赖useEffect监听isSubmitted
+    router.push(`/courses/${courseSlug}/${lessonSlug}/quiz/result`);
   };
 
   // 数据不存在
   if (!quizData) {
     return <QuizNotFound courseSlug={courseSlug} lessonSlug={lessonSlug} />;
   }
-
-  const isOptimisticallySubmitted =
-    optimisticState.submitted && !state.quizSubmitted;
 
   return (
     <>
@@ -171,47 +143,31 @@ const QuizContent: React.FC<QuizContentProps> = ({
           <ValidationErrors errors={validation.validationErrors} />
         )}
 
-        {!state.quizSubmitted && !isOptimisticallySubmitted && (
-          <QuestionNav
-            questions={quizData.questions}
-            currentIndex={state.currentQuestionIndex}
-            userAnswers={state.userAnswers}
-            onNavigation={setCurrentQuestionIndex}
-          />
-        )}
+        <QuestionNav
+          questions={quizData.questions}
+          currentIndex={state.currentQuestionIndex}
+          userAnswers={state.userAnswers}
+          onNavigation={setCurrentQuestionIndex}
+        />
 
-        {state.quizSubmitted || isOptimisticallySubmitted ? (
-          <QuizResults
-            quizData={quizData}
-            score={isSubmitted ? score : optimisticState.score}
-            onRetake={handleRetake}
-            courseSlug={courseSlug}
-            lessonSlug={lessonSlug}
-          />
-        ) : (
-          <QuestionRenderer
-            question={quizData.questions[state.currentQuestionIndex]}
-            questionIndex={state.currentQuestionIndex}
-            totalQuestions={quizData.questions.length}
-            userAnswer={
-              state.userAnswers[
-                quizData.questions[state.currentQuestionIndex].id
-              ]
-            }
-            onChange={handleAnswerChange}
-          />
-        )}
+        <QuestionRenderer
+          question={quizData.questions[state.currentQuestionIndex]}
+          questionIndex={state.currentQuestionIndex}
+          totalQuestions={quizData.questions.length}
+          userAnswer={
+            state.userAnswers[quizData.questions[state.currentQuestionIndex].id]
+          }
+          onChange={handleAnswerChange}
+        />
 
-        {!state.quizSubmitted && !isOptimisticallySubmitted && (
-          <QuizFooter
-            currentIndex={state.currentQuestionIndex}
-            totalQuestions={quizData.questions.length}
-            onPrevious={handlePrevious}
-            onNext={handleNext}
-            onSubmit={handleSubmit}
-            isLoading={isLoading}
-          />
-        )}
+        <QuizFooter
+          currentIndex={state.currentQuestionIndex}
+          totalQuestions={quizData.questions.length}
+          onPrevious={handlePrevious}
+          onNext={handleNext}
+          onSubmit={handleSubmit}
+          isLoading={isLoading}
+        />
       </Flex>
 
       <ScrollToBottomButton
