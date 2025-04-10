@@ -171,6 +171,7 @@ const RegularQuestionResult: React.FC<RegularQuestionResultProps> = ({
                       : isCorrectOption
                       ? "1px dashed rgba(0, 180, 120, 0.3)"
                       : "1px solid rgba(100, 100, 100, 0.2)",
+                    position: "relative",
                   }}
                 >
                   <Text style={{ flex: 1 }}>{option.text}</Text>
@@ -185,6 +186,7 @@ const RegularQuestionResult: React.FC<RegularQuestionResultProps> = ({
                         background: isCorrectOption
                           ? "rgba(0, 180, 120, 0.2)"
                           : "rgba(220, 50, 50, 0.2)",
+                        position: "absolute",
                       }}
                     >
                       {isCorrectOption ? "Right" : "Wrong"}
@@ -199,6 +201,7 @@ const RegularQuestionResult: React.FC<RegularQuestionResultProps> = ({
                         padding: "2px 8px",
                         borderRadius: "4px",
                         background: "rgba(0, 180, 120, 0.2)",
+                        position: "absolute",
                       }}
                     >
                       Correct Answer
@@ -415,7 +418,7 @@ const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
         flexGrow: 1,
       }}
     >
-      <Flex direction="column" gap="4">
+      <Flex direction="column" gap="4" style={{ width: "100%" }}>
         <Heading as="h3" size="m">
           {question.title}
         </Heading>
@@ -426,6 +429,7 @@ const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
             background: "rgba(0, 0, 0, 0.2)",
             borderRadius: "8px",
             border: "1px solid rgba(100, 100, 100, 0.2)",
+            width: "100%",
           }}
         >
           <Text style={{ fontFamily: "monospace", whiteSpace: "pre-wrap" }}>
