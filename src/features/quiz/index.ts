@@ -17,6 +17,5 @@ export { default as QuizHeader } from "./components/quiz-header";
 export { default as QuizFooter } from "./components/quiz-footer";
 export { default as QuestionNav } from "./components/question-nav";
 export { default as ValidationErrors } from "./components/validation-errors";
-export { default as QuizResults } from "./components/quiz-results";
 export { default as QuizNotFound } from "./components/quiz-not-found";
 export { default as QuizContent } from "./components/quiz-content";

@@ -1,20 +1,71 @@
 "use client";
 
-import { useEffect, useState, useRef, Suspense } from "react";
-import { useParams } from "next/navigation";
-import { Flex, Text, Card, Box, Heading, Button } from "@/once-ui/components";
-import { Bubble, XStream } from "@ant-design/x";
-import { useXStream } from "@ant-design/x";
-import { useGetLessonContent } from "@/features/lesson/api/use-get-lesson";
+import { useEffect, useState, Suspense } from "react";
+import { useParams, useRouter } from "next/navigation";
 import {
-  useGetQuizAnswers,
-  useGetAIPromptTemplate,
-} from "@/features/quiz/api/use-get-quiz-option-answer";
+  Flex,
+  Text,
+  Card,
+  Heading,
+  Button,
+  Skeleton,
+} from "@/once-ui/components";
+import { Bubble } from "@ant-design/x";
+import { useGetQuizAnswers } from "@/features/quiz/api/use-get-quiz-option-answer";
+import { useGetAIPromptTemplate } from "@/features/quiz/api/use-get-ai-prompt";
 import { QuestionType } from "@/features/types/api/quiz-question";
 import Loading from "./loading";
 
+// 定义类型
+type UserAnswers = Record<string, string | string[]>;
+
+interface StreamState {
+  data: { content: string } | string | null;
+  status: "idle" | "loading" | "success" | "error";
+}
+
+interface RegularQuestionResultProps {
+  question: {
+    id: string;
+    title: string;
+    type: string;
+    options: Array<{
+      id: string;
+      isCorrect: boolean;
+    }>;
+  };
+  userAnswer: string | string[] | undefined;
+  correctAnswer: string | string[];
+}
+
+interface CodeQuestionResultProps {
+  question: {
+    id: string;
+    title: string;
+    type: string;
+  };
+  userAnswer: string | string[] | undefined;
+  quizId: string | number;
+}
+
+// 骨架屏加载状态组件
+const ResultLoading = () => (
+  <Card padding="4" margin="2">
+    <Flex direction="column" gap="4">
+      <Skeleton shape="line" width="l" />
+      <Skeleton shape="line" width="m" />
+      <Skeleton shape="line" width="m" />
+      <Skeleton shape="line" width="s" />
+    </Flex>
+  </Card>
+);
+
 // 常规题目答案组件
-const RegularQuestionResult = ({ question, userAnswer, correctAnswer }) => {
+const RegularQuestionResult: React.FC<RegularQuestionResultProps> = ({
+  question,
+  userAnswer,
+  correctAnswer,
+}) => {
   // 判断答案是否正确
   const isMultipleChoice = Array.isArray(correctAnswer);
 
@@ -27,20 +78,20 @@ const RegularQuestionResult = ({ question, userAnswer, correctAnswer }) => {
   return (
     <Card padding="4" margin="2">
       <Flex direction="column" gap="2">
-        <Heading as="h3" size="md">
+        <Heading as="h3" size="m">
           {question.title}
         </Heading>
-        <Text size="sm">
+        <Text>
           您的答案:{" "}
           {Array.isArray(userAnswer)
             ? userAnswer.join(", ")
             : userAnswer || "未作答"}
         </Text>
-        <Text size="sm">
+        <Text>
           正确答案:{" "}
           {isMultipleChoice ? correctAnswer.join(", ") : correctAnswer}
         </Text>
-        <Text weight="bold" color={isCorrect ? "green" : "red"}>
+        <Text weight="strong" color={isCorrect ? "green" : "red"}>
           {isCorrect ? "✓ 正确" : "✗ 错误"}
         </Text>
       </Flex>
@@ -48,14 +99,86 @@ const RegularQuestionResult = ({ question, userAnswer, correctAnswer }) => {
   );
 };
 
+// 流式数据处理钩子
+const useStream = (url: string | null): StreamState => {
+  const [state, setState] = useState<StreamState>({
+    data: null,
+    status: "idle",
+  });
+
+  useEffect(() => {
+    if (!url) return;
+
+    let isMounted = true;
+    setState((prev) => ({ ...prev, status: "loading" }));
+
+    // 使用实际的流处理
+    const processStream = async () => {
+      try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error(`Stream request failed: ${response.status}`);
+        }
+
+        // 确保响应支持流处理
+        if (!response.body) {
+          throw new Error("Response body is null");
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let result = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) {
+            break;
+          }
+
+          // 解码和处理数据块
+          const chunk = decoder.decode(value, { stream: true });
+          result += chunk;
+
+          // 更新状态
+          if (isMounted) {
+            setState({
+              data: { content: result },
+              status: "success",
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Stream processing error:", error);
+        if (isMounted) {
+          setState((prev) => ({ ...prev, status: "error" }));
+        }
+      }
+    };
+
+    processStream();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [url]);
+
+  return state;
+};
+
 // 代码题目答案组件
-const CodeQuestionResult = ({ question, userAnswer, quizId }) => {
+const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
+  question,
+  userAnswer,
+  quizId,
+}) => {
   const [streamStarted, setStreamStarted] = useState(false);
-  const [streamUrl, setStreamUrl] = useState(null);
+  const [streamUrl, setStreamUrl] = useState<string | null>(null);
 
   // 获取AI提示模板
   const { data: promptTemplate, isLoading: promptLoading } =
-    useGetAIPromptTemplate(quizId);
+    useGetAIPromptTemplate(Number(quizId));
 
   // 初始化流
   const startStream = async () => {
@@ -80,6 +203,7 @@ const CodeQuestionResult = ({ question, userAnswer, quizId }) => {
       setStreamUrl(response.url);
     } catch (err) {
       console.error("启动流失败:", err);
+      setStreamStarted(false);
     }
   };
 
@@ -89,8 +213,8 @@ const CodeQuestionResult = ({ question, userAnswer, quizId }) => {
     }
   }, [promptTemplate, userAnswer, streamStarted]);
 
-  // 使用XStream处理流数据
-  const { data, status } = useXStream(streamUrl);
+  // 使用指定格式处理流数据
+  const { data, status } = useStream(streamUrl);
 
   const actualContent =
     typeof data === "string" ? data : data?.content || "正在生成AI反馈...";
@@ -98,19 +222,25 @@ const CodeQuestionResult = ({ question, userAnswer, quizId }) => {
   return (
     <Card padding="4" margin="2">
       <Flex direction="column" gap="4">
-        <Heading as="h3" size="md">
+        <Heading as="h3" size="m">
           {question.title}
         </Heading>
 
-        <Box padding="4" background="surface-neutral">
-          <Text size="sm" family="mono" whiteSpace="pre-wrap">
+        <div
+          style={{
+            padding: "16px",
+            background: "#f5f5f5",
+            borderRadius: "4px",
+          }}
+        >
+          <Text style={{ fontFamily: "monospace", whiteSpace: "pre-wrap" }}>
             {Array.isArray(userAnswer)
               ? userAnswer.join("\n")
               : userAnswer || "未提交代码"}
           </Text>
-        </Box>
+        </div>
 
-        <Heading as="h4" size="sm">
+        <Heading as="h4" size="s">
           AI 代码反馈:
         </Heading>
 
@@ -148,22 +278,16 @@ const CodeQuestionResult = ({ question, userAnswer, quizId }) => {
 // 主结果页面组件
 export default function QuizResultPage() {
   const params = useParams();
-  const { lessonname, coursename } = params;
-
-  // 获取课程和章节信息
-  const { data: lessonData, isLoading: lessonLoading } = useGetLessonContent(
-    lessonname as string
-  );
+  const router = useRouter();
+  const lessonname = params.lessonname as string;
+  const coursename = params.coursename as string;
 
   // 获取测验和正确答案
-  const { data: quizData, isLoading: quizLoading } = useGetQuizAnswers(
-    lessonname as string
-  );
+  const { data: quizData, isLoading: quizLoading } =
+    useGetQuizAnswers(lessonname);
 
   // 本地保存的答案
-  const [userAnswers, setUserAnswers] = useState<
-    Record<number, string | string[]>
-  >({});
+  const [userAnswers, setUserAnswers] = useState<UserAnswers>({});
 
   useEffect(() => {
     // 从本地存储获取用户提交的答案
@@ -177,7 +301,7 @@ export default function QuizResultPage() {
     }
   }, [lessonname]);
 
-  if (lessonLoading || quizLoading) {
+  if (quizLoading) {
     return <Loading />;
   }
 
@@ -189,15 +313,26 @@ export default function QuizResultPage() {
     );
   }
 
+  console.log(quizData);
+
   return (
-    <Flex direction="column" maxWidth="800px" margin="0 auto" padding="4">
-      <Heading as="h1" size="xl" margin="4 0">
-        {lessonData?.currentCourse?.title}: {lessonData?.currentLesson?.title} -
-        测验结果
+    <Flex
+      direction="column"
+      style={{
+        maxWidth: "800px",
+        width: "100%",
+        margin: "0 auto",
+        padding: "16px",
+      }}
+      center
+      align="center"
+    >
+      <Heading as="h1" size="xl" style={{ margin: "16px 0" }}>
+        Quiz Result
       </Heading>
 
-      <Flex direction="column" gap="6">
-        {quizData.attributes?.questions.map((question) => {
+      <Flex direction="column" style={{ gap: "24px" }}>
+        {quizData.questions.map((question: any) => {
           const userAnswer = userAnswers[question.id];
 
           if (question.type === QuestionType.PROGRAMMING) {
@@ -213,8 +348,8 @@ export default function QuizResultPage() {
           }
 
           const correctAnswer = question.options
-            .filter((opt) => opt.isCorrect)
-            .map((opt) => opt.id.toString());
+            .filter((opt: any) => opt.isCorrect)
+            .map((opt: any) => opt.id.toString());
 
           return (
             <Suspense key={question.id} fallback={<ResultLoading />}>
@@ -230,27 +365,11 @@ export default function QuizResultPage() {
         })}
       </Flex>
 
-      {/* 导航按钮 */}
-      <Flex justify="space-between" margin="8 0">
-        <Button
-          variant="secondary"
-          onClick={() =>
-            (window.location.href = `/courses/${coursename}/${lessonname}`)
-          }
-        >
-          返回课程
+      {/* 导航按钮 - 使用浏览器历史栈 */}
+      <Flex style={{ justifyContent: "space-between", margin: "32px 0" }}>
+        <Button variant="secondary" onClick={() => router.back()}>
+          Back to Lesson
         </Button>
-
-        {lessonData?.nextLesson && (
-          <Button
-            variant="primary"
-            onClick={() =>
-              (window.location.href = `/courses/${coursename}/${lessonData.nextLesson.slug}`)
-            }
-          >
-            下一课
-          </Button>
-        )}
       </Flex>
     </Flex>
   );
