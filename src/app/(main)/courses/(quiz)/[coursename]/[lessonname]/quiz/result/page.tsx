@@ -114,26 +114,106 @@ const RegularQuestionResult: React.FC<RegularQuestionResultProps> = ({
       margin="2"
       style={{
         background: isCorrect
-          ? "linear-gradient(135deg, rgba(0, 180, 120, 0.1) 0%, rgba(10, 25, 41, 0.7) 100%)"
-          : "linear-gradient(135deg, rgba(220, 50, 50, 0.1) 0%, rgba(10, 25, 41, 0.7) 100%)",
+          ? "linear-gradient(135deg, rgba(0, 180, 120, 0.1) 0%, rgba(15, 25, 60, 0.8) 100%)"
+          : "linear-gradient(135deg, rgba(220, 50, 50, 0.1) 0%, rgba(15, 25, 60, 0.8) 100%)",
         borderRadius: "16px",
-        borderLeft: `4px solid ${
-          isCorrect
-            ? "var(--success-solid-medium)"
-            : "var(--danger-solid-medium)"
-        }`,
-        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
       }}
     >
-      <Flex direction="column" gap="2">
+      <Flex direction="column" gap="2" style={{ width: "100%" }}>
         <Heading as="h3" size="m">
-          {question.title}
+          {index + 1}. {question.question || question.title}
         </Heading>
+
+        {/* 所有选项展示 */}
+        {question.options && question.options.length > 0 && (
+          <Flex
+            direction="column"
+            gap="2"
+            style={{
+              background: "rgba(0, 0, 0, 0.2)",
+              padding: "12px",
+              borderRadius: "8px",
+              marginTop: "8px",
+            }}
+          >
+            <Text weight="strong">选项：</Text>
+            {question.options.map((option: any) => {
+              const isUserSelected = Array.isArray(userAnswer)
+                ? userAnswer.includes(option.id.toString())
+                : userAnswer === option.id.toString();
+
+              const isCorrectOption = Array.isArray(correctAnswer)
+                ? correctAnswer.includes(option.id.toString())
+                : correctAnswer === option.id.toString();
+
+              return (
+                <Flex
+                  key={option.id}
+                  align="center"
+                  gap="2"
+                  style={{
+                    padding: "8px",
+                    borderRadius: "6px",
+                    background: isUserSelected
+                      ? isCorrectOption
+                        ? "rgba(0, 180, 120, 0.1)"
+                        : "rgba(220, 50, 50, 0.1)"
+                      : isCorrectOption
+                      ? "rgba(0, 180, 120, 0.05)"
+                      : "transparent",
+                    border: isUserSelected
+                      ? isCorrectOption
+                        ? "1px solid rgba(0, 180, 120, 0.3)"
+                        : "1px solid rgba(220, 50, 50, 0.3)"
+                      : isCorrectOption
+                      ? "1px dashed rgba(0, 180, 120, 0.3)"
+                      : "1px solid rgba(100, 100, 100, 0.2)",
+                  }}
+                >
+                  <Text style={{ flex: 1 }}>{option.text}</Text>
+                  {isUserSelected && (
+                    <Text
+                      color={isCorrectOption ? "green" : "red"}
+                      weight="strong"
+                      style={{
+                        fontSize: "0.8rem",
+                        padding: "2px 8px",
+                        borderRadius: "4px",
+                        background: isCorrectOption
+                          ? "rgba(0, 180, 120, 0.2)"
+                          : "rgba(220, 50, 50, 0.2)",
+                      }}
+                    >
+                      {isCorrectOption ? "Right" : "Wrong"}
+                    </Text>
+                  )}
+                  {!isUserSelected && isCorrectOption && (
+                    <Text
+                      color="green"
+                      weight="strong"
+                      style={{
+                        fontSize: "0.8rem",
+                        padding: "2px 8px",
+                        borderRadius: "4px",
+                        background: "rgba(0, 180, 120, 0.2)",
+                      }}
+                    >
+                      Correct Answer
+                    </Text>
+                  )}
+                </Flex>
+              );
+            })}
+          </Flex>
+        )}
+
         <Flex
           style={{
             background: "rgba(0, 0, 0, 0.2)",
             padding: "12px",
             borderRadius: "8px",
+            marginTop: "8px",
           }}
           direction="column"
           gap="2"
@@ -142,14 +222,34 @@ const RegularQuestionResult: React.FC<RegularQuestionResultProps> = ({
             Your Answer:{" "}
             <span style={{ fontWeight: "bold" }}>
               {Array.isArray(userAnswer)
-                ? userAnswer.join(", ")
-                : userAnswer || "No Answer"}
+                ? userAnswer.length > 0
+                  ? question.options
+                      .filter((opt: any) =>
+                        userAnswer.includes(opt.id.toString())
+                      )
+                      .map((opt: any) => opt.text)
+                      .join(", ")
+                  : "No Answer"
+                : userAnswer
+                ? question.options.find(
+                    (opt: any) => opt.id.toString() === userAnswer
+                  )?.text || "No Answer"
+                : "No Answer"}
             </span>
           </Text>
           <Text>
             Correct Answer:{" "}
             <span style={{ fontWeight: "bold" }}>
-              {isMultipleChoice ? correctAnswer.join(", ") : correctAnswer}
+              {isMultipleChoice
+                ? question.options
+                    .filter((opt: any) =>
+                      correctAnswer.includes(opt.id.toString())
+                    )
+                    .map((opt: any) => opt.text)
+                    .join(", ")
+                : question.options.find(
+                    (opt: any) => opt.id.toString() === correctAnswer
+                  )?.text || "No Answer"}
             </span>
           </Text>
         </Flex>
@@ -167,7 +267,7 @@ const RegularQuestionResult: React.FC<RegularQuestionResultProps> = ({
               fontSize: "0.9rem",
             }}
           >
-            {isCorrect ? "Correct" : "Incorrect"}
+            {isCorrect ? "Right" : "Wrong"}
           </Text>
         </motion.div>
       </Flex>
@@ -304,7 +404,6 @@ const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
         background:
           "linear-gradient(135deg, rgba(32, 128, 255, 0.1) 0%, rgba(10, 25, 41, 0.7) 100%)",
         borderRadius: "16px",
-        borderLeft: "4px solid var(--brand-solid-medium)",
         boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
         width: "100%",
         flex: 1,
@@ -431,11 +530,11 @@ const ScoreSummary = ({
         padding="4"
         style={{
           background: isPassed
-            ? "linear-gradient(135deg, rgba(0, 180, 120, 0.1) 0%, rgba(10, 25, 41, 0.7) 100%)"
-            : "linear-gradient(135deg, rgba(220, 50, 50, 0.1) 0%, rgba(10, 25, 41, 0.7) 100%)",
+            ? "linear-gradient(135deg, rgba(0, 180, 120, 0.1) 0%, rgba(15, 25, 60, 0.8) 100%)"
+            : "linear-gradient(135deg, rgba(220, 50, 50, 0.1) 0%, rgba(15, 25, 60, 0.8) 100%)",
           borderRadius: "16px",
           textAlign: "center",
-          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.3)",
+          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.5)",
           border: isPassed
             ? "1px solid rgba(0, 180, 120, 0.3)"
             : "1px solid rgba(220, 50, 50, 0.3)",
@@ -561,6 +660,8 @@ export default function QuizResultPage() {
         margin: "0 auto",
         padding: "16px",
         minHeight: "100vh",
+        background:
+          "linear-gradient(135deg, rgba(25, 29, 59, 0.9) 0%, rgba(10, 12, 32, 1) 100%)",
       }}
       center
       align="center"
@@ -642,6 +743,9 @@ export default function QuizResultPage() {
               style={{
                 borderRadius: "8px",
                 boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+                background: "rgba(50, 60, 150, 0.2)",
+                color: "#fff",
+                border: "1px solid rgba(100, 150, 255, 0.3)",
               }}
             >
               Return
