@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_general_ai_prompt_templates",
+  "info": {
+    "displayName": "AIPromptTemplate",
+    "icon": "alien"
+  },
+  "options": {},
+  "attributes": {
+    "content": {
+      "type": "string"
+    },
+    "quiz_question": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::quiz-question.quiz-question"
+    }
+  }
+}
