@@ -112,15 +112,17 @@ const RegularQuestionResult: React.FC<RegularQuestionResultProps> = ({
     <Flex
       padding="4"
       margin="2"
+      gap="40"
       style={{
         background: isCorrect
           ? "linear-gradient(135deg, rgba(0, 180, 120, 0.1) 0%, rgba(15, 25, 60, 0.8) 100%)"
           : "linear-gradient(135deg, rgba(220, 50, 50, 0.1) 0%, rgba(15, 25, 60, 0.8) 100%)",
         borderRadius: "16px",
         boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
+        width: "100%",
       }}
     >
-      <Flex direction="column" gap="2" style={{ width: "100%" }}>
+      <Flex direction="column" gap="8" style={{ width: "100%" }}>
         <Heading as="h3" size="m">
           {index + 1}. {question.question || question.title}
         </Heading>
@@ -137,7 +139,7 @@ const RegularQuestionResult: React.FC<RegularQuestionResultProps> = ({
               marginTop: "8px",
             }}
           >
-            <Text weight="strong">选项：</Text>
+            <Text weight="strong">Options:</Text>
             {question.options.map((option: any) => {
               const isUserSelected = Array.isArray(userAnswer)
                 ? userAnswer.includes(option.id.toString())
@@ -253,7 +255,10 @@ const RegularQuestionResult: React.FC<RegularQuestionResultProps> = ({
             </span>
           </Text>
         </Flex>
-        <motion.div animate={isCorrect ? pulseAnimation : {}}>
+        <motion.div
+          animate={isCorrect ? pulseAnimation : {}}
+          style={{ borderRadius: "10px" }}
+        >
           <Text
             weight="strong"
             color={isCorrect ? "green" : "red"}
@@ -611,10 +616,13 @@ export default function QuizResultPage() {
   // 计算得分
   useEffect(() => {
     if (quizData && Object.keys(userAnswers).length > 0) {
-      let correctCount = 0;
-      const totalQuestions = quizData.questions.length;
+      let earnedPoints = 0;
+      let totalPoints = 0;
 
       quizData.questions.forEach((question: any) => {
+        // 累加总分
+        totalPoints += question.points || 0;
+
         if (question.type !== QuestionType.PROGRAMMING) {
           const userAnswer = userAnswers[question.id];
           const correctAnswer = question.options
@@ -628,13 +636,13 @@ export default function QuizResultPage() {
               userAnswer.every((a) => correctAnswer.includes(a))
             : userAnswer === correctAnswer[0];
 
-          if (isCorrect) correctCount++;
+          if (isCorrect) earnedPoints += question.points || 0;
         }
       });
 
       setScore({
-        correct: correctCount,
-        total: totalQuestions,
+        correct: earnedPoints,
+        total: totalPoints,
       });
     }
   }, [quizData, userAnswers]);
