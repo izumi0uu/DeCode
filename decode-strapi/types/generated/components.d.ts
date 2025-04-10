@@ -1,5 +1,20 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface GeneralAiPromptTemplate extends Struct.ComponentSchema {
+  collectionName: 'components_general_ai_prompt_templates';
+  info: {
+    displayName: 'AIPromptTemplate';
+    icon: 'alien';
+  };
+  attributes: {
+    content: Schema.Attribute.String;
+    quiz_question: Schema.Attribute.Relation<
+      'oneToOne',
+      'api::quiz-question.quiz-question'
+    >;
+  };
+}
+
 export interface GeneralCodeSnippet extends Struct.ComponentSchema {
   collectionName: 'components_general_code_snippets';
   info: {
@@ -154,6 +169,7 @@ export interface GeneralTestimonialItem extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'general.ai-prompt-template': GeneralAiPromptTemplate;
       'general.code-snippet': GeneralCodeSnippet;
       'general.course-requirement': GeneralCourseRequirement;
       'general.faq-item': GeneralFaqItem;
