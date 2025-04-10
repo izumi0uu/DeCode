@@ -73,6 +73,7 @@ export const useGetLessonQuiz = (
 /**
  * 获取特定章节测验的详细数据，包括所有问题和选项
  * 此函数适用于需要完整测验数据展示的场景
+ * 注意：此API不会返回isCorrect字段，确保答案安全
  */
 export const useGetLessonQuizDetailed = (
   lessonSlug: string | undefined

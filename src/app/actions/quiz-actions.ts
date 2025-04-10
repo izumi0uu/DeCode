@@ -4,6 +4,7 @@
 import { revalidatePath } from "next/cache";
 import { XRequest, XStream } from "@ant-design/x";
 // import { GoogleGenAi } from "@google-genai";
+import qs from "qs";
 
 import { QuestionType, QuizQuestion } from "@/features/types/api/quiz-question";
 
@@ -24,54 +25,116 @@ export async function submitQuizAnswer(
           : (userAnswers[q.id] as string),
       }));
 
-    // 计算非代码题分数
+    // 从 with-answers API 获取包含正确答案的题目
+    const queryString = qs.stringify({
+      filters: {
+        lesson: {
+          slug: {
+            $eq: lessonSlug,
+          },
+        },
+      },
+      populate: {
+        questions: {
+          populate: ["options"],
+        },
+      },
+    });
+
+    const answersResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/quizzes?${queryString}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+        },
+      }
+    );
+
+    if (!answersResponse.ok) {
+      throw new Error("无法获取测验答案");
+    }
+
+    const answersData = await answersResponse.json();
+    const quizWithAnswers = answersData.data[0];
+
+    // 如果没有找到测验
+    if (!quizWithAnswers) {
+      throw new Error(`未找到lessonSlug为${lessonSlug}的测验`);
+    }
+
+    // 计算分数
     let totalScore = 0;
     let totalPoints = 0;
+    const questionResponses = [];
 
-    questions.forEach((question) => {
-      // 跳过代码题，因为代码题需要AI评分
-      if (question.type === QuestionType.PROGRAMMING) return;
+    // 遍历问题计算分数
+    for (const question of questions) {
+      // 跳过代码题，因为需要AI评分
+      if (question.type === QuestionType.PROGRAMMING) continue;
 
       totalPoints += question.points || 1;
       const userAnswer = userAnswers[question.id];
 
-      if (!userAnswer) return; // 未回答的题目
+      if (!userAnswer) continue; // 未回答的题目
+
+      // 从quizWithAnswers中找到对应的问题和选项
+      const questionWithAnswers =
+        quizWithAnswers.attributes.questions.data.find(
+          (q: any) => q.id === question.id
+        );
+
+      if (!questionWithAnswers) continue;
+
+      const options = questionWithAnswers.attributes.options.data;
+      const correctOptions = options.filter(
+        (opt: any) => opt.attributes.isCorrect
+      );
+
+      let isCorrect = false;
 
       if (question.type === QuestionType.MULTIPLE_CHOICE) {
         // 处理多选题
         if (Array.isArray(userAnswer)) {
-          const correctAnswers = question.options
-            .filter((option) => option.isCorrect)
-            .map((option) => option.id.toString());
+          const correctOptionIds = correctOptions.map((opt: any) =>
+            opt.id.toString()
+          );
 
           // 单选情况
           if (
-            correctAnswers.length === 1 &&
-            userAnswer.includes(correctAnswers[0]) &&
+            correctOptionIds.length === 1 &&
+            userAnswer.includes(correctOptionIds[0]) &&
             userAnswer.length === 1
           ) {
+            isCorrect = true;
             totalScore += question.points || 1;
           }
           // 多选情况 - 需要完全匹配所有正确选项
           else if (
-            correctAnswers.length > 1 &&
-            userAnswer.length === correctAnswers.length &&
-            userAnswer.every((answer) => correctAnswers.includes(answer))
+            correctOptionIds.length > 1 &&
+            userAnswer.length === correctOptionIds.length &&
+            userAnswer.every((answer) => correctOptionIds.includes(answer))
           ) {
+            isCorrect = true;
             totalScore += question.points || 1;
           }
         }
       } else {
-        // 处理单选题和其他类型的题目
-        const correctAnswer = question.options
-          .find((option) => option.isCorrect)
-          ?.id.toString();
+        // 处理单选题
+        const correctOptionId = correctOptions[0]?.id.toString();
+        isCorrect = userAnswer === correctOptionId;
 
-        if (userAnswer === correctAnswer) {
+        if (isCorrect) {
           totalScore += question.points || 1;
         }
       }
-    });
+
+      // 保存用户对该题的回答
+      questionResponses.push({
+        questionId: question.id,
+        selectedOptions: userAnswer,
+        isCorrect,
+      });
+    }
 
     const scorePercentage =
       totalPoints > 0 ? Math.round((totalScore / totalPoints) * 100) : 0;
@@ -79,12 +142,16 @@ export async function submitQuizAnswer(
     // 将答案保存到数据库
     await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/quiz-answers`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+      },
       body: JSON.stringify({
         data: {
           lesson: lessonSlug,
           answers: JSON.stringify(userAnswers),
           score: scorePercentage,
+          questionResponses: JSON.stringify(questionResponses),
         },
       }),
     });
