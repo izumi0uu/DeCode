@@ -10,15 +10,18 @@ interface BannerCarouselProps {
 const BannerCarousel = ({ children, data }: BannerCarouselProps) => {
   return (
     <Flex fillWidth className={styles.bannerCarousel} direction="column">
-      <Flex className={styles.imageContainer}>
+      <Flex
+        className={styles.imageContainer}
+        style={{ position: "relative", height: "500px" }}
+      >
         <Image
           src="/images/banner2.png"
           alt="banner"
-          width={1550}
-          height={500}
+          sizes="100vw"
+          fill
+          style={{ objectFit: "cover" }}
           quality={100}
           priority
-          className={styles.bannerBackgroundImage}
         />
       </Flex>
 

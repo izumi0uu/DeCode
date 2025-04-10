@@ -17,7 +17,7 @@ const AnimatePopularBoxesInner = () => {
 
   return (
     <div className={styles.animatePopularBoxes}>
-      <Suspense fallback={<CoursePopularCardSkeletons count={2} />}>
+      <Suspense fallback={<CoursePopularCardSkeletons count={1} />}>
         <AnimatePresence mode="popLayout">
           <StackBox
             key={`front-${currentIndex}`}
