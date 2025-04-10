@@ -2,14 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useParams, useRouter } from "next/navigation";
-import {
-  Flex,
-  Text,
-  Card,
-  Heading,
-  Button,
-  Skeleton,
-} from "@/once-ui/components";
+import { Flex, Text, Heading, Button, Skeleton } from "@/once-ui/components";
 import { Bubble } from "@ant-design/x";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGetQuizAnswers } from "@/features/quiz/api/use-get-quiz-option-answer";
@@ -84,7 +77,7 @@ const ResultLoading = () => (
     animate={{ opacity: 1 }}
     transition={{ duration: 0.5 }}
   >
-    <Card
+    <Flex
       padding="4"
       margin="2"
       style={{ background: "rgba(10, 25, 41, 0.7)", borderRadius: "16px" }}
@@ -95,7 +88,7 @@ const ResultLoading = () => (
         <Skeleton shape="line" width="m" />
         <Skeleton shape="line" width="s" />
       </Flex>
-    </Card>
+    </Flex>
   </motion.div>
 );
 
@@ -116,7 +109,7 @@ const RegularQuestionResult: React.FC<RegularQuestionResultProps> = ({
     : userAnswer === correctAnswer;
 
   return (
-    <Card
+    <Flex
       padding="4"
       margin="2"
       style={{
@@ -178,7 +171,7 @@ const RegularQuestionResult: React.FC<RegularQuestionResultProps> = ({
           </Text>
         </motion.div>
       </Flex>
-    </Card>
+    </Flex>
   );
 };
 
@@ -304,7 +297,7 @@ const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
     typeof data === "string" ? data : data?.content || "正在生成AI反馈...";
 
   return (
-    <Card
+    <Flex
       padding="4"
       margin="2"
       style={{
@@ -313,6 +306,9 @@ const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
         borderRadius: "16px",
         borderLeft: "4px solid var(--brand-solid-medium)",
         boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
+        width: "100%",
+        flex: 1,
+        flexGrow: 1,
       }}
     >
       <Flex direction="column" gap="4">
@@ -410,7 +406,7 @@ const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
           </motion.div>
         )}
       </Flex>
-    </Card>
+    </Flex>
   );
 };
 
@@ -431,7 +427,7 @@ const ScoreSummary = ({
       animate={{ scale: 1, opacity: 1 }}
       transition={{ type: "spring", stiffness: 300, damping: 25, delay: 0.2 }}
     >
-      <Card
+      <Flex
         padding="4"
         style={{
           background: isPassed
@@ -445,7 +441,12 @@ const ScoreSummary = ({
             : "1px solid rgba(220, 50, 50, 0.3)",
         }}
       >
-        <Flex direction="column" align="center" gap="4">
+        <Flex
+          direction="column"
+          align="center"
+          gap="4"
+          style={{ width: "100%" }}
+        >
           <Heading as="h2" size="l">
             Your Score
           </Heading>
@@ -454,9 +455,6 @@ const ScoreSummary = ({
             style={{
               fontSize: "48px",
               fontWeight: "bold",
-              color: isPassed
-                ? "var(--success-solid-medium)"
-                : "var(--danger-solid-medium)",
             }}
           >
             {score} / {totalScore}
@@ -479,7 +477,7 @@ const ScoreSummary = ({
             {isPassed ? "Passed" : "Failed"}
           </div>
         </Flex>
-      </Card>
+      </Flex>
     </motion.div>
   );
 };
@@ -585,7 +583,14 @@ export default function QuizResultPage() {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        style={{ width: "100%", marginTop: "32px" }}
+        style={{
+          width: "100%",
+          marginTop: "32px",
+          gap: "16px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
       >
         {quizData.questions.map((question: any, index: number) => {
           const userAnswer = userAnswers[question.id];
