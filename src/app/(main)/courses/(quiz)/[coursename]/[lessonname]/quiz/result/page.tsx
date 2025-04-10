@@ -11,6 +11,7 @@ import {
   Skeleton,
 } from "@/once-ui/components";
 import { Bubble } from "@ant-design/x";
+import { motion, AnimatePresence } from "framer-motion";
 import { useGetQuizAnswers } from "@/features/quiz/api/use-get-quiz-option-answer";
 import { useGetAIPromptTemplate } from "@/features/quiz/api/use-get-ai-prompt";
 import { QuestionType } from "@/features/types/api/quiz-question";
@@ -36,6 +37,7 @@ interface RegularQuestionResultProps {
   };
   userAnswer: string | string[] | undefined;
   correctAnswer: string | string[];
+  index: number;
 }
 
 interface CodeQuestionResultProps {
@@ -46,18 +48,55 @@ interface CodeQuestionResultProps {
   };
   userAnswer: string | string[] | undefined;
   quizId: string | number;
+  index: number;
 }
+
+// 动画变体
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      when: "beforeChildren",
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const pulseAnimation = {
+  scale: [1, 1.02, 1],
+  boxShadow: [
+    "0 0 0 rgba(32, 128, 255, 0)",
+    "0 0 20px rgba(32, 128, 255, 0.5)",
+    "0 0 0 rgba(32, 128, 255, 0)",
+  ],
+  transition: {
+    duration: 2,
+    repeat: Infinity,
+    repeatType: "loop" as "loop",
+  },
+};
 
 // 骨架屏加载状态组件
 const ResultLoading = () => (
-  <Card padding="4" margin="2">
-    <Flex direction="column" gap="4">
-      <Skeleton shape="line" width="l" />
-      <Skeleton shape="line" width="m" />
-      <Skeleton shape="line" width="m" />
-      <Skeleton shape="line" width="s" />
-    </Flex>
-  </Card>
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.5 }}
+  >
+    <Card
+      padding="4"
+      margin="2"
+      style={{ background: "rgba(10, 25, 41, 0.7)", borderRadius: "16px" }}
+    >
+      <Flex direction="column" gap="4">
+        <Skeleton shape="line" width="l" />
+        <Skeleton shape="line" width="m" />
+        <Skeleton shape="line" width="m" />
+        <Skeleton shape="line" width="s" />
+      </Flex>
+    </Card>
+  </motion.div>
 );
 
 // 常规题目答案组件
@@ -65,6 +104,7 @@ const RegularQuestionResult: React.FC<RegularQuestionResultProps> = ({
   question,
   userAnswer,
   correctAnswer,
+  index,
 }) => {
   // 判断答案是否正确
   const isMultipleChoice = Array.isArray(correctAnswer);
@@ -76,24 +116,67 @@ const RegularQuestionResult: React.FC<RegularQuestionResultProps> = ({
     : userAnswer === correctAnswer;
 
   return (
-    <Card padding="4" margin="2">
+    <Card
+      padding="4"
+      margin="2"
+      style={{
+        background: isCorrect
+          ? "linear-gradient(135deg, rgba(0, 180, 120, 0.1) 0%, rgba(10, 25, 41, 0.7) 100%)"
+          : "linear-gradient(135deg, rgba(220, 50, 50, 0.1) 0%, rgba(10, 25, 41, 0.7) 100%)",
+        borderRadius: "16px",
+        borderLeft: `4px solid ${
+          isCorrect
+            ? "var(--success-solid-medium)"
+            : "var(--danger-solid-medium)"
+        }`,
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
+      }}
+    >
       <Flex direction="column" gap="2">
         <Heading as="h3" size="m">
           {question.title}
         </Heading>
-        <Text>
-          您的答案:{" "}
-          {Array.isArray(userAnswer)
-            ? userAnswer.join(", ")
-            : userAnswer || "未作答"}
-        </Text>
-        <Text>
-          正确答案:{" "}
-          {isMultipleChoice ? correctAnswer.join(", ") : correctAnswer}
-        </Text>
-        <Text weight="strong" color={isCorrect ? "green" : "red"}>
-          {isCorrect ? "✓ 正确" : "✗ 错误"}
-        </Text>
+        <Flex
+          style={{
+            background: "rgba(0, 0, 0, 0.2)",
+            padding: "12px",
+            borderRadius: "8px",
+          }}
+          direction="column"
+          gap="2"
+        >
+          <Text>
+            Your Answer:{" "}
+            <span style={{ fontWeight: "bold" }}>
+              {Array.isArray(userAnswer)
+                ? userAnswer.join(", ")
+                : userAnswer || "No Answer"}
+            </span>
+          </Text>
+          <Text>
+            Correct Answer:{" "}
+            <span style={{ fontWeight: "bold" }}>
+              {isMultipleChoice ? correctAnswer.join(", ") : correctAnswer}
+            </span>
+          </Text>
+        </Flex>
+        <motion.div animate={isCorrect ? pulseAnimation : {}}>
+          <Text
+            weight="strong"
+            color={isCorrect ? "green" : "red"}
+            style={{
+              display: "inline-block",
+              padding: "8px 16px",
+              background: isCorrect
+                ? "rgba(0, 180, 120, 0.2)"
+                : "rgba(220, 50, 50, 0.2)",
+              borderRadius: "20px",
+              fontSize: "0.9rem",
+            }}
+          >
+            {isCorrect ? "Correct" : "Incorrect"}
+          </Text>
+        </motion.div>
       </Flex>
     </Card>
   );
@@ -172,6 +255,7 @@ const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
   question,
   userAnswer,
   quizId,
+  index,
 }) => {
   const [streamStarted, setStreamStarted] = useState(false);
   const [streamUrl, setStreamUrl] = useState<string | null>(null);
@@ -220,7 +304,17 @@ const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
     typeof data === "string" ? data : data?.content || "正在生成AI反馈...";
 
   return (
-    <Card padding="4" margin="2">
+    <Card
+      padding="4"
+      margin="2"
+      style={{
+        background:
+          "linear-gradient(135deg, rgba(32, 128, 255, 0.1) 0%, rgba(10, 25, 41, 0.7) 100%)",
+        borderRadius: "16px",
+        borderLeft: "4px solid var(--brand-solid-medium)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
+      }}
+    >
       <Flex direction="column" gap="4">
         <Heading as="h3" size="m">
           {question.title}
@@ -229,8 +323,9 @@ const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
         <div
           style={{
             padding: "16px",
-            background: "#f5f5f5",
-            borderRadius: "4px",
+            background: "rgba(0, 0, 0, 0.2)",
+            borderRadius: "8px",
+            border: "1px solid rgba(100, 100, 100, 0.2)",
           }}
         >
           <Text style={{ fontFamily: "monospace", whiteSpace: "pre-wrap" }}>
@@ -240,38 +335,152 @@ const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
           </Text>
         </div>
 
-        <Heading as="h4" size="s">
-          AI 代码反馈:
-        </Heading>
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          transition={{ duration: 0.5 }}
+        >
+          <Heading as="h4" size="s" style={{ marginBottom: "12px" }}>
+            AI 代码反馈:
+          </Heading>
 
-        {promptLoading ? (
-          <Text>正在准备AI分析...</Text>
-        ) : !streamStarted ? (
-          <Button onClick={startStream}>获取AI反馈</Button>
-        ) : (
-          <Bubble
-            variant="filled"
-            content={actualContent}
-            loading={status === "loading"}
-            typing={status === "success"}
-            avatar={
-              <div
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: "50%",
-                  background: "#1677ff",
-                }}
+          {promptLoading ? (
+            <motion.div
+              animate={{
+                opacity: [0.5, 1, 0.5],
+                transition: { repeat: Infinity, duration: 1.5 },
+              }}
+            >
+              <Text>正在准备AI分析...</Text>
+            </motion.div>
+          ) : !streamStarted ? (
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                onClick={startStream}
+                style={{ background: "var(--brand-solid-medium)" }}
+              >
+                获取AI反馈
+              </Button>
+            </motion.div>
+          ) : (
+            <div
+              style={{
+                background: "rgba(0, 0, 0, 0.2)",
+                borderRadius: "12px",
+                padding: "4px",
+              }}
+            >
+              <Bubble
+                variant="filled"
+                content={actualContent}
+                loading={status === "loading"}
+                typing={status === "success"}
+                avatar={
+                  <div
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: "50%",
+                      background:
+                        "linear-gradient(135deg, #3366ff 0%, #00ccff 100%)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "white",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    AI
+                  </div>
+                }
               />
-            }
-          />
-        )}
+            </div>
+          )}
+        </motion.div>
 
         {status === "error" && (
-          <Text color="red">无法获取AI反馈，请稍后重试</Text>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Text color="red">
+              Failed to get AI feedback, please try again later
+            </Text>
+          </motion.div>
         )}
       </Flex>
     </Card>
+  );
+};
+
+// 分数汇总组件
+const ScoreSummary = ({
+  score,
+  totalScore,
+}: {
+  score: number;
+  totalScore: number;
+}) => {
+  const percentage = Math.round((score / totalScore) * 100);
+  const isPassed = percentage >= 60;
+
+  return (
+    <motion.div
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ type: "spring", stiffness: 300, damping: 25, delay: 0.2 }}
+    >
+      <Card
+        padding="4"
+        style={{
+          background: isPassed
+            ? "linear-gradient(135deg, rgba(0, 180, 120, 0.1) 0%, rgba(10, 25, 41, 0.7) 100%)"
+            : "linear-gradient(135deg, rgba(220, 50, 50, 0.1) 0%, rgba(10, 25, 41, 0.7) 100%)",
+          borderRadius: "16px",
+          textAlign: "center",
+          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.3)",
+          border: isPassed
+            ? "1px solid rgba(0, 180, 120, 0.3)"
+            : "1px solid rgba(220, 50, 50, 0.3)",
+        }}
+      >
+        <Flex direction="column" align="center" gap="4">
+          <Heading as="h2" size="l">
+            Your Score
+          </Heading>
+
+          <Text
+            style={{
+              fontSize: "48px",
+              fontWeight: "bold",
+              color: isPassed
+                ? "var(--success-solid-medium)"
+                : "var(--danger-solid-medium)",
+            }}
+          >
+            {score} / {totalScore}
+          </Text>
+
+          <div
+            style={{
+              padding: "8px 20px",
+              borderRadius: "30px",
+              background: isPassed
+                ? "rgba(0, 180, 120, 0.2)"
+                : "rgba(220, 50, 50, 0.2)",
+              color: isPassed
+                ? "var(--success-solid-medium)"
+                : "var(--danger-solid-medium)",
+              fontWeight: "bold",
+              marginTop: "8px",
+            }}
+          >
+            {isPassed ? "Passed" : "Failed"}
+          </div>
+        </Flex>
+      </Card>
+    </motion.div>
   );
 };
 
@@ -288,6 +497,7 @@ export default function QuizResultPage() {
 
   // 本地保存的答案
   const [userAnswers, setUserAnswers] = useState<UserAnswers>({});
+  const [score, setScore] = useState({ correct: 0, total: 0 });
 
   useEffect(() => {
     // 从本地存储获取用户提交的答案
@@ -296,10 +506,41 @@ export default function QuizResultPage() {
       try {
         setUserAnswers(JSON.parse(savedAnswers));
       } catch (e) {
-        console.error("解析本地存储答案出错:", e);
+        console.error("Failed to parse local storage answers:", e);
       }
     }
   }, [lessonname]);
+
+  // 计算得分
+  useEffect(() => {
+    if (quizData && Object.keys(userAnswers).length > 0) {
+      let correctCount = 0;
+      const totalQuestions = quizData.questions.length;
+
+      quizData.questions.forEach((question: any) => {
+        if (question.type !== QuestionType.PROGRAMMING) {
+          const userAnswer = userAnswers[question.id];
+          const correctAnswer = question.options
+            .filter((opt: any) => opt.isCorrect)
+            .map((opt: any) => opt.id.toString());
+
+          const isMultipleChoice = correctAnswer.length > 1;
+          const isCorrect = isMultipleChoice
+            ? Array.isArray(userAnswer) &&
+              userAnswer.length === correctAnswer.length &&
+              userAnswer.every((a) => correctAnswer.includes(a))
+            : userAnswer === correctAnswer[0];
+
+          if (isCorrect) correctCount++;
+        }
+      });
+
+      setScore({
+        correct: correctCount,
+        total: totalQuestions,
+      });
+    }
+  }, [quizData, userAnswers]);
 
   if (quizLoading) {
     return <Loading />;
@@ -308,12 +549,10 @@ export default function QuizResultPage() {
   if (!quizData) {
     return (
       <Flex direction="column" align="center" padding="8">
-        <Text>无法加载测验结果</Text>
+        <Text>Failed to load quiz results</Text>
       </Flex>
     );
   }
-
-  console.log(quizData);
 
   return (
     <Flex
@@ -323,16 +562,32 @@ export default function QuizResultPage() {
         width: "100%",
         margin: "0 auto",
         padding: "16px",
+        minHeight: "100vh",
       }}
       center
       align="center"
     >
-      <Heading as="h1" size="xl" style={{ margin: "16px 0" }}>
-        Quiz Result
-      </Heading>
+      <motion.div
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        style={{ width: "100%", textAlign: "center", marginBottom: "24px" }}
+      >
+        <Heading as="h1" size="xl">
+          Quiz Result
+        </Heading>
+      </motion.div>
 
-      <Flex direction="column" style={{ gap: "24px" }}>
-        {quizData.questions.map((question: any) => {
+      {/* 分数汇总 */}
+      <ScoreSummary score={score.correct} totalScore={score.total} />
+
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        style={{ width: "100%", marginTop: "32px" }}
+      >
+        {quizData.questions.map((question: any, index: number) => {
           const userAnswer = userAnswers[question.id];
 
           if (question.type === QuestionType.PROGRAMMING) {
@@ -342,6 +597,7 @@ export default function QuizResultPage() {
                   question={question}
                   userAnswer={userAnswer}
                   quizId={quizData.id}
+                  index={index}
                 />
               </Suspense>
             );
@@ -359,18 +615,35 @@ export default function QuizResultPage() {
                 correctAnswer={
                   correctAnswer.length === 1 ? correctAnswer[0] : correctAnswer
                 }
+                index={index}
               />
             </Suspense>
           );
         })}
-      </Flex>
+      </motion.div>
 
       {/* 导航按钮 - 使用浏览器历史栈 */}
-      <Flex style={{ justifyContent: "space-between", margin: "32px 0" }}>
-        <Button variant="secondary" onClick={() => router.back()}>
-          Back to Lesson
-        </Button>
-      </Flex>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+        style={{ width: "100%", margin: "32px 0" }}
+      >
+        <Flex style={{ justifyContent: "space-between" }}>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              variant="secondary"
+              onClick={() => router.back()}
+              style={{
+                borderRadius: "8px",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
+              }}
+            >
+              Return
+            </Button>
+          </motion.div>
+        </Flex>
+      </motion.div>
     </Flex>
   );
 }
