@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, forwardRef } from "react";
+import React, { useState, useEffect, forwardRef, useId } from "react";
 import classNames from "classnames";
 import { Flex, InteractiveDetails, InteractiveDetailsProps } from ".";
 import styles from "./SharedInteractiveStyles.module.scss";
@@ -17,15 +17,29 @@ interface RadioButtonProps
   onToggle?: () => void;
 }
 
-const generateId = () => `radio-${Math.random().toString(36).substring(2, 9)}`;
+// const generateId = () => `radio-${Math.random().toString(36).substring(2, 9)}`;
 
-const RadioButton: React.FC<RadioButtonProps> = forwardRef<HTMLInputElement, RadioButtonProps>(
+const RadioButton: React.FC<RadioButtonProps> = forwardRef<
+  HTMLInputElement,
+  RadioButtonProps
+>(
   (
-    { style, className, isChecked: controlledIsChecked, name, value, onToggle, disabled, ...props },
-    ref,
+    {
+      style,
+      className,
+      isChecked: controlledIsChecked,
+      name,
+      value,
+      onToggle,
+      disabled,
+
+      ...props
+    },
+    ref
   ) => {
     const [isChecked, setIsChecked] = useState(controlledIsChecked || false);
-    const [radioId] = useState(generateId());
+    const uniqueId = useId();
+    const radioId = `radio-${uniqueId}`;
 
     useEffect(() => {
       if (controlledIsChecked !== undefined) {
@@ -65,7 +79,9 @@ const RadioButton: React.FC<RadioButtonProps> = forwardRef<HTMLInputElement, Rad
           ref={ref}
           name={name}
           value={value}
-          checked={controlledIsChecked !== undefined ? controlledIsChecked : isChecked}
+          checked={
+            controlledIsChecked !== undefined ? controlledIsChecked : isChecked
+          }
           onChange={toggleItem}
           disabled={disabled}
           className={styles.hidden}
@@ -74,7 +90,9 @@ const RadioButton: React.FC<RadioButtonProps> = forwardRef<HTMLInputElement, Rad
         />
         <Flex
           role="radio"
-          aria-checked={controlledIsChecked !== undefined ? controlledIsChecked : isChecked}
+          aria-checked={
+            controlledIsChecked !== undefined ? controlledIsChecked : isChecked
+          }
           aria-labelledby={radioId}
           aria-disabled={disabled}
           position="relative"
@@ -85,11 +103,16 @@ const RadioButton: React.FC<RadioButtonProps> = forwardRef<HTMLInputElement, Rad
           onKeyDown={handleKeyDown}
           tabIndex={disabled ? -1 : 0}
           className={classNames(styles.element, {
-            [styles.checked]: controlledIsChecked !== undefined ? controlledIsChecked : isChecked,
+            [styles.checked]:
+              controlledIsChecked !== undefined
+                ? controlledIsChecked
+                : isChecked,
             [styles.disabled]: disabled,
           })}
         >
-          {(controlledIsChecked !== undefined ? controlledIsChecked : isChecked) && (
+          {(controlledIsChecked !== undefined
+            ? controlledIsChecked
+            : isChecked) && (
             <Flex
               style={{
                 backgroundColor: "var(--neutral-on-solid-strong)",
@@ -101,10 +124,12 @@ const RadioButton: React.FC<RadioButtonProps> = forwardRef<HTMLInputElement, Rad
             />
           )}
         </Flex>
-        {props.label && <InteractiveDetails id={radioId} {...props} onClick={toggleItem} />}
+        {props.label && (
+          <InteractiveDetails id={radioId} {...props} onClick={toggleItem} />
+        )}
       </Flex>
     );
-  },
+  }
 );
 
 RadioButton.displayName = "RadioButton";

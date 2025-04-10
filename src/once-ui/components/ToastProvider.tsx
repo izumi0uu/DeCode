@@ -1,5 +1,6 @@
 "use client";
 
+import { nanoid } from "nanoid";
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { Toaster } from "./Toaster";
 
@@ -33,7 +34,8 @@ const ToastProvider: React.FC<{
 
   const addToast = (toast: Omit<Toast, "id">) => {
     const newToast: Toast = {
-      id: Math.random().toString(36).substring(7),
+      // id: Math.random().toString(36).substring(7),
+      id: nanoid(),
       ...toast,
     };
     setToasts((prev) => [...prev, newToast]);

@@ -1,12 +1,36 @@
 "use client";
 
-import React, { useState, useRef, useCallback, useEffect, forwardRef, ReactNode } from "react";
+import React, {
+  useState,
+  useRef,
+  useCallback,
+  useEffect,
+  forwardRef,
+  ReactNode,
+} from "react";
 import classNames from "classnames";
 
-const defaultCharset = ["X", "$", "@", "a", "H", "z", "o", "0", "y", "#", "?", "*", "0", "1", "+"];
+const defaultCharset = [
+  "X",
+  "$",
+  "@",
+  "a",
+  "H",
+  "z",
+  "o",
+  "0",
+  "y",
+  "#",
+  "?",
+  "*",
+  "0",
+  "1",
+  "+",
+];
 
 function getRandomCharacter(charset: string[]): string {
-  const randomIndex = Math.floor(Math.random() * charset.length);
+  // const randomIndex = Math.floor(Math.random() * charset.length);
+  const randomIndex = Math.floor(new Date().getTime() * charset.length);
   return charset[randomIndex];
 }
 
@@ -17,7 +41,7 @@ function createEventHandler(
   setInProgress: React.Dispatch<React.SetStateAction<boolean>>,
   speed: "fast" | "medium" | "slow",
   charset: string[],
-  setHasAnimated?: React.Dispatch<React.SetStateAction<boolean>>,
+  setHasAnimated?: React.Dispatch<React.SetStateAction<boolean>>
 ) {
   const speedSettings = {
     fast: {
@@ -37,7 +61,8 @@ function createEventHandler(
     },
   };
 
-  const { BASE_DELAY, REVEAL_DELAY, INITIAL_RANDOM_DURATION } = speedSettings[speed];
+  const { BASE_DELAY, REVEAL_DELAY, INITIAL_RANDOM_DURATION } =
+    speedSettings[speed];
 
   const generateRandomText = () =>
     originalText
@@ -61,7 +86,9 @@ function createEventHandler(
 
     for (let i = 0; i < originalText.length; i++) {
       await new Promise((resolve) => setTimeout(resolve, REVEAL_DELAY));
-      setText(`${originalText.substring(0, i + 1)}${randomizedText.substring(i + 1)}`);
+      setText(
+        `${originalText.substring(0, i + 1)}${randomizedText.substring(i + 1)}`
+      );
     }
 
     setInProgress(false);
@@ -92,12 +119,16 @@ const LetterFx = forwardRef<HTMLSpanElement, LetterFxProps>(
       className,
       style,
     },
-    ref,
+    ref
   ) => {
-    const [text, setText] = useState<string>(typeof children === "string" ? children : "");
+    const [text, setText] = useState<string>(
+      typeof children === "string" ? children : ""
+    );
     const [inProgress, setInProgress] = useState<boolean>(false);
     const [hasAnimated, setHasAnimated] = useState<boolean>(false);
-    const originalText = useRef<string>(typeof children === "string" ? children : "");
+    const originalText = useRef<string>(
+      typeof children === "string" ? children : ""
+    );
 
     const eventHandler = useCallback(
       createEventHandler(
@@ -107,9 +138,9 @@ const LetterFx = forwardRef<HTMLSpanElement, LetterFxProps>(
         setInProgress,
         speed,
         charset,
-        trigger === "instant" ? setHasAnimated : undefined,
+        trigger === "instant" ? setHasAnimated : undefined
       ),
-      [inProgress, trigger, speed, charset],
+      [inProgress, trigger, speed, charset]
     );
 
     useEffect(() => {
@@ -139,7 +170,7 @@ const LetterFx = forwardRef<HTMLSpanElement, LetterFxProps>(
         {text}
       </span>
     );
-  },
+  }
 );
 
 LetterFx.displayName = "LetterFx";
