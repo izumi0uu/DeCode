@@ -11,13 +11,7 @@ import {
   useGetAIPromptTemplate,
 } from "@/features/quiz/api/use-get-quiz-option-answer";
 import { QuestionType } from "@/features/types/api/quiz-question";
-
-// 结果页面加载状态组件
-const ResultLoading = () => (
-  <Flex direction="column" align="center" center padding="8">
-    <Text>正在获取测验结果...</Text>
-  </Flex>
-);
+import Loading from "./loading";
 
 // 常规题目答案组件
 const RegularQuestionResult = ({ question, userAnswer, correctAnswer }) => {
@@ -184,7 +178,7 @@ export default function QuizResultPage() {
   }, [lessonname]);
 
   if (lessonLoading || quizLoading) {
-    return <ResultLoading />;
+    return <Loading />;
   }
 
   if (!quizData) {

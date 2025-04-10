@@ -24,7 +24,7 @@ export function useGetQuizAnswers(lessonSlug: string) {
       const response = await fetch(`/api/quizzes?${queryString}`);
 
       if (!response.ok) {
-        throw new Error("无法获取测验答案");
+        throw new Error("cannot get quiz answers");
       }
 
       const data = await response.json();
@@ -39,20 +39,21 @@ export function useGetAIPromptTemplate(quizId: number) {
   return useQuery({
     queryKey: ["ai-prompt-template", quizId],
     queryFn: async () => {
-      if (!quizId) return "请分析以下代码并提供改进建议：";
+      if (!quizId)
+        return "please analyze the following code and provide improvement suggestions:";
 
       const response = await fetch(
         `/api/quiz-materials/${quizId}?populate=aiPromptTemplate`
       );
 
       if (!response.ok) {
-        throw new Error("无法获取AI提示模板");
+        throw new Error("cannot get ai prompt template");
       }
 
       const data = await response.json();
       return (
         data.data?.attributes?.aiPromptTemplate ||
-        "请分析以下代码并提供改进建议："
+        "please analyze the following code and provide improvement suggestions:"
       );
     },
     enabled: !!quizId,
