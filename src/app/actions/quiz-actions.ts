@@ -168,10 +168,10 @@ export async function submitQuizAnswer(
       hasCodeQuestions: codeQuestions.length > 0,
     };
   } catch (error) {
-    console.error("提交测验失败:", error);
+    console.error("submit quiz answer failed:", error);
     return {
       success: false,
-      error: "提交过程中出现错误",
+      error: "submit quiz answer failed",
     };
   }
 }
