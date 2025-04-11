@@ -5,12 +5,15 @@ import { Flex, Text, Heading, Button } from "@/once-ui/components";
 import { Bubble } from "@ant-design/x";
 import { useAIFeedback } from "@/features/quiz/api/use-get-ai-prompt";
 import { CodeBlock } from "@/once-ui/modules";
+import { useEffect, useMemo, useRef } from "react";
 
 interface CodeQuestionResultProps {
   question: {
     id: string;
     title: string;
     type: string;
+    question?: string;
+    codeTemplate?: string;
   };
   userAnswer:
     | {
@@ -30,8 +33,65 @@ export const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
   userAnswer,
   quizSlug,
 }) => {
+  // 确保用户答案包含题目ID
+  const enhancedUserAnswer = useMemo(() => {
+    if (!userAnswer) return { code: "", id: question.id };
+
+    if (typeof userAnswer === "object" && !Array.isArray(userAnswer)) {
+      return { ...userAnswer, id: question.id };
+    }
+
+    if (Array.isArray(userAnswer)) {
+      return { code: userAnswer.join("\n"), id: question.id };
+    }
+
+    return { code: userAnswer.toString(), id: question.id };
+  }, [userAnswer, question.id]);
+
+  // 只在开发环境中输出调试信息
+  if (process.env.NODE_ENV === "development") {
+    // 使用useEffect避免每次渲染都输出日志
+    useEffect(() => {
+      console.log("题目ID:", question.id, "类型:", typeof question.id);
+      console.log("传递给useAIFeedback的用户答案:", enhancedUserAnswer);
+    }, [question.id, enhancedUserAnswer]);
+  }
+
   const { promptLoading, streamStarted, startStream, actualContent, status } =
-    useAIFeedback(quizSlug, userAnswer);
+    useAIFeedback(quizSlug, enhancedUserAnswer);
+
+  // 在组件加载时，保存题目信息到localStorage
+  useEffect(() => {
+    // 从localStorage获取已存在的题目
+    try {
+      const existingQuestions = localStorage.getItem(
+        `quiz_questions_${quizSlug}`
+      );
+      let questions = existingQuestions ? JSON.parse(existingQuestions) : [];
+
+      // 检查是否已存在该题目
+      const existingIndex = questions.findIndex(
+        (q: any) => String(q.id) === String(question.id)
+      );
+
+      if (existingIndex >= 0) {
+        // 更新已有题目
+        questions[existingIndex] = question;
+      } else {
+        // 添加新题目
+        questions.push(question);
+      }
+
+      // 保存到localStorage
+      localStorage.setItem(
+        `quiz_questions_${quizSlug}`,
+        JSON.stringify(questions)
+      );
+      console.log("题目已保存到本地存储");
+    } catch (error) {
+      console.error("保存题目失败:", error);
+    }
+  }, [question, quizSlug]);
 
   // 处理代码数据
   const processCodeData = () => {
@@ -161,7 +221,7 @@ export const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
                 variant="filled"
                 content={actualContent}
                 loading={status === "loading"}
-                typing={status === "success"}
+                typing={status === "streaming"} // 修改为 streaming
                 avatar={
                   <div
                     style={{

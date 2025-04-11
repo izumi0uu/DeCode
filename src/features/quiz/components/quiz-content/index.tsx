@@ -109,6 +109,14 @@ const QuizContent: React.FC<QuizContentProps> = ({
       JSON.stringify(state.userAnswers)
     );
 
+    // 保存题目到本地存储，供AI反馈使用
+    if (quizData?.questions) {
+      localStorage.setItem(
+        `quiz_questions_${quizData.slug}`,
+        JSON.stringify(quizData.questions)
+      );
+    }
+
     // 设置提交状态为true，防止重复提交
     setQuizSubmitted(true);
 
