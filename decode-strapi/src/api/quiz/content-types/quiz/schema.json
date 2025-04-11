@@ -45,6 +45,11 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::quiz-material.quiz-material"
+    },
+    "aiPromptTemplate": {
+      "type": "component",
+      "repeatable": false,
+      "component": "general.ai-prompt-template"
     }
   }
 }

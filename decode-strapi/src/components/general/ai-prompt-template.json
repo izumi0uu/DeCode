@@ -2,17 +2,33 @@
   "collectionName": "components_general_ai_prompt_templates",
   "info": {
     "displayName": "AIPromptTemplate",
-    "icon": "alien"
+    "icon": "alien",
+    "description": "AI 反馈模板"
   },
   "options": {},
   "attributes": {
     "content": {
-      "type": "string"
+      "type": "text",
+      "required": true,
+      "description": "AI 提示模板内容"
     },
-    "quiz_question": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::quiz-question.quiz-question"
+    "scoreRubric": {
+      "type": "json",
+      "description": "评分标准",
+      "default": {
+        "functionality": 40,
+        "security": 30,
+        "bestPractices": 30
+      }
+    },
+    "codeAnalysis": {
+      "type": "json",
+      "description": "代码分析配置",
+      "default": {
+        "checkSecurity": true,
+        "checkGas": true,
+        "checkBestPractices": true
+      }
     }
   }
 }

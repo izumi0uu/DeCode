@@ -3,15 +3,24 @@ import type { Schema, Struct } from '@strapi/strapi';
 export interface GeneralAiPromptTemplate extends Struct.ComponentSchema {
   collectionName: 'components_general_ai_prompt_templates';
   info: {
+    description: 'AI \u53CD\u9988\u6A21\u677F';
     displayName: 'AIPromptTemplate';
     icon: 'alien';
   };
   attributes: {
-    content: Schema.Attribute.String;
-    quiz_question: Schema.Attribute.Relation<
-      'oneToOne',
-      'api::quiz-question.quiz-question'
-    >;
+    codeAnalysis: Schema.Attribute.JSON &
+      Schema.Attribute.DefaultTo<{
+        checkBestPractices: true;
+        checkGas: true;
+        checkSecurity: true;
+      }>;
+    content: Schema.Attribute.Text & Schema.Attribute.Required;
+    scoreRubric: Schema.Attribute.JSON &
+      Schema.Attribute.DefaultTo<{
+        bestPractices: 30;
+        functionality: 40;
+        security: 30;
+      }>;
   };
 }
 

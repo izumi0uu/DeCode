@@ -948,6 +948,10 @@ export interface ApiQuizQuiz extends Struct.CollectionTypeSchema {
     };
   };
   attributes: {
+    aiPromptTemplate: Schema.Attribute.Component<
+      'general.ai-prompt-template',
+      false
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
