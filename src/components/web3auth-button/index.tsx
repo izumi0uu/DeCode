@@ -36,8 +36,7 @@ const Web3AuthButton: React.FC<Web3AuthButtonProps> = ({ className }) => {
               <Option
                 label="Logout"
                 value="logout"
-                onClick={async (e: React.MouseEvent) => {
-                  e.preventDefault();
+                onClick={async (value: string) => {
                   await logout();
                 }}
               />

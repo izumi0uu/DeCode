@@ -8,6 +8,7 @@ import React, {
   ReactNode,
 } from "react";
 import web3AuthService from "@/services/web3auth";
+import mockWeb3AuthService from "@/services/mock-web3auth";
 import { UserInfo } from "@web3auth/base";
 
 interface Web3AuthContextType {
@@ -32,8 +33,11 @@ export const Web3AuthProvider: React.FC<{ children: ReactNode }> = ({
   useEffect(() => {
     const initWeb3Auth = async () => {
       try {
-        await web3AuthService.init();
-        const userInfo = await web3AuthService.getUserInfo();
+        // await web3AuthService.init();
+        // const userInfo = await web3AuthService.getUserInfo();
+
+        await mockWeb3AuthService.init();
+        const userInfo = await mockWeb3AuthService.getUserInfo();
 
         if (userInfo) {
           setUser(userInfo as UserInfo);
@@ -52,8 +56,11 @@ export const Web3AuthProvider: React.FC<{ children: ReactNode }> = ({
   const login = async () => {
     try {
       setIsLoading(true);
-      await web3AuthService.login();
-      const userInfo = await web3AuthService.getUserInfo();
+      // await web3AuthService.login();
+      // const userInfo = await web3AuthService.getUserInfo();
+
+      await mockWeb3AuthService.login();
+      const userInfo = await mockWeb3AuthService.getUserInfo();
 
       if (userInfo) {
         setUser(userInfo as UserInfo);
@@ -69,7 +76,8 @@ export const Web3AuthProvider: React.FC<{ children: ReactNode }> = ({
   const logout = async () => {
     try {
       setIsLoading(true);
-      await web3AuthService.logout();
+      // await web3AuthService.logout();
+      await mockWeb3AuthService.logout();
       setUser(null);
       setIsLoggedIn(false);
     } catch (error) {
