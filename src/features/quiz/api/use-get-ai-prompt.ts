@@ -23,7 +23,7 @@ export const useAIFeedback = (
   const [content, setContent] = useState<string>("");
   const [streamStarted, setStreamStarted] = useState<boolean>(false);
   const [status, setStatus] = useState<
-    "idle" | "loading" | "streaming" | "error"
+    "idle" | "loading" | "streaming" | "error" | "success"
   >("idle");
 
   // 初始化 Google AI
@@ -85,7 +85,7 @@ export const useAIFeedback = (
         setContent(fullResponse);
       }
 
-      setStatus("idle");
+      setStatus("success");
     } catch (error) {
       console.error("AI Stream Error:", error);
       setStatus("error");
