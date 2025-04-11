@@ -60,12 +60,8 @@ export const useAIFeedback = (
           `quiz_questions_${quizSlug}`
         );
 
-        if (!storedQuestions) {
-          console.log("未找到题目数据");
-          return;
-        }
+        if (!storedQuestions) return;
 
-        console.log("成功获取题目数据");
         const questions = JSON.parse(storedQuestions);
 
         // 根据问题ID查找
@@ -80,33 +76,15 @@ export const useAIFeedback = (
           questionId = String(userAnswer.id);
         }
 
-        console.log("查找题目，ID:", questionId);
-
-        // 如果没有ID，则不进行匹配
-        if (!questionId) {
-          console.log("没有题目ID，无法匹配题目");
-          return;
-        }
-
-        // 打印所有题目信息用于调试
-        console.log("所有题目:", JSON.stringify(questions));
+        if (!questionId) return;
 
         // 尝试多种方式查找题目
         let currentQuestion = null;
         for (let i = 0; i < questions.length; i++) {
           const q = questions[i];
-          console.log(
-            `题目[${i}]:`,
-            q.id,
-            typeof q.id,
-            "对比",
-            questionId,
-            typeof questionId
-          );
 
           // 转换为字符串比较
           if (String(q.id) === String(questionId)) {
-            console.log("找到匹配题目:", q);
             currentQuestion = q;
             break;
           }
@@ -114,8 +92,6 @@ export const useAIFeedback = (
 
         if (currentQuestion) {
           setQuestionData(currentQuestion);
-        } else {
-          console.log("未找到匹配题目");
         }
       } catch (error) {
         console.error("加载题目数据失败:", error);
@@ -165,9 +141,7 @@ export const useAIFeedback = (
 
       // 3. 构建完整提示，包含题目和代码
       let promptContent = promptData.aiPromptTemplate.content;
-      console.log("promptContent", promptContent);
-      console.log("questionData", questionData);
-      console.log("userAnswer", userAnswer);
+
       // 替换题目描述
       if (questionData) {
         promptContent = promptContent.replace(

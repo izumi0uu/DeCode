@@ -5,7 +5,7 @@ import { Flex, Text, Heading, Button } from "@/once-ui/components";
 import { Bubble } from "@ant-design/x";
 import { useAIFeedback } from "@/features/quiz/api/use-get-ai-prompt";
 import { CodeBlock } from "@/once-ui/modules";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 
 interface CodeQuestionResultProps {
   question: {
@@ -47,15 +47,6 @@ export const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
 
     return { code: userAnswer.toString(), id: question.id };
   }, [userAnswer, question.id]);
-
-  // 只在开发环境中输出调试信息
-  if (process.env.NODE_ENV === "development") {
-    // 使用useEffect避免每次渲染都输出日志
-    useEffect(() => {
-      console.log("题目ID:", question.id, "类型:", typeof question.id);
-      console.log("传递给useAIFeedback的用户答案:", enhancedUserAnswer);
-    }, [question.id, enhancedUserAnswer]);
-  }
 
   const { promptLoading, streamStarted, startStream, actualContent, status } =
     useAIFeedback(quizSlug, enhancedUserAnswer);
