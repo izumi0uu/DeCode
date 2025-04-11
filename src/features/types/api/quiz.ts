@@ -24,6 +24,7 @@ export interface Quiz {
   createdAt: string;
   updatedAt: string;
   publishedAt: string | null;
+  slug: string;
 }
 
 /**

@@ -42,10 +42,10 @@ const QuizResultContent = () => {
 // 主页面组件
 export default function QuizResultPage() {
   const params = useParams();
-  const lessonname = params.lessonname as string;
-
+  const lessonSlug = params.lessonname as string;
+  console.log(lessonSlug);
   return (
-    <QuizResultProvider lessonname={lessonname}>
+    <QuizResultProvider lessonSlug={lessonSlug}>
       <ResultLayout>
         <QuizResultContent />
       </ResultLayout>

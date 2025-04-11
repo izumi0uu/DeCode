@@ -50,6 +50,9 @@
       "type": "component",
       "repeatable": false,
       "component": "general.ai-prompt-template"
+    },
+    "slug": {
+      "type": "uid"
     }
   }
 }

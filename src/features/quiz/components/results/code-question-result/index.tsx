@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Flex, Text, Heading, Button } from "@/once-ui/components";
 import { Bubble } from "@ant-design/x";
-import { useAIFeedback } from "@/features/quiz/hooks/use-ai-feedback";
+import { useAIFeedback } from "@/features/quiz/api/use-get-ai-prompt";
 import { CodeBlock } from "@/once-ui/modules";
 
 interface CodeQuestionResultProps {
@@ -21,18 +21,18 @@ interface CodeQuestionResultProps {
     | string
     | string[]
     | undefined;
-  quizId: string | number;
+  quizSlug: string;
   index: number;
 }
 
 export const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
   question,
   userAnswer,
-  quizId,
+  quizSlug,
   index,
 }) => {
   const { promptLoading, streamStarted, startStream, actualContent, status } =
-    useAIFeedback(quizId, question.id, userAnswer);
+    useAIFeedback(quizSlug, userAnswer);
 
   // 处理代码数据
   const processCodeData = () => {

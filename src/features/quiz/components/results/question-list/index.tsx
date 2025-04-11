@@ -35,7 +35,7 @@ export const QuestionList = () => {
               <CodeQuestionResult
                 question={question}
                 userAnswer={userAnswer}
-                quizId={quizData.id}
+                quizSlug={quizData.slug}
                 index={index}
               />
             </Suspense>

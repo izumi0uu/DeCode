@@ -37,18 +37,20 @@ export const useQuizResultContext = () => {
 
 export const QuizResultProvider = ({
   children,
-  lessonname,
+  lessonSlug,
+  quizSlug,
 }: {
   children: ReactNode;
-  lessonname: string;
+  lessonSlug: string;
+  quizSlug: string;
 }) => {
-  const { data: quizData, isLoading } = useGetQuizAnswers(lessonname);
+  const { data: quizData, isLoading } = useGetQuizAnswers(lessonSlug);
   const [userAnswers, setUserAnswers] = useState<UserAnswers>({});
   const [score, setScore] = useState({ correct: 0, total: 0 });
 
   useEffect(() => {
     // 从本地存储获取用户提交的答案
-    const savedAnswers = localStorage.getItem(`quiz_answers_${lessonname}`);
+    const savedAnswers = localStorage.getItem(`quiz_answers_${lessonSlug}`);
     if (savedAnswers) {
       try {
         setUserAnswers(JSON.parse(savedAnswers));
@@ -56,7 +58,7 @@ export const QuizResultProvider = ({
         console.error("Failed to parse local storage answers:", e);
       }
     }
-  }, [lessonname]);
+  }, [lessonSlug]);
 
   // 计算得分
   useEffect(() => {

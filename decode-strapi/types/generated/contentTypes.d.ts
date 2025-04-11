@@ -970,6 +970,7 @@ export interface ApiQuizQuiz extends Struct.CollectionTypeSchema {
       'oneToMany',
       'api::quiz-material.quiz-material'
     >;
+    slug: Schema.Attribute.UID;
     timeLimit: Schema.Attribute.Integer;
     title: Schema.Attribute.String &
       Schema.Attribute.Unique &
