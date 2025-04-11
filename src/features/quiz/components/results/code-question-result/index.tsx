@@ -6,6 +6,7 @@ import { Bubble } from "@ant-design/x";
 import { useAIFeedback } from "@/features/quiz/api/use-get-ai-prompt";
 import { CodeBlock } from "@/once-ui/modules";
 import { useEffect, useMemo } from "react";
+import Markdown from "@/features/mdx/components/code/markdown";
 
 interface CodeQuestionResultProps {
   question: {
@@ -208,7 +209,7 @@ export const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
                 padding: "4px",
               }}
             >
-              <Bubble
+              {/* <Bubble
                 variant="filled"
                 content={actualContent}
                 loading={status === "loading"}
@@ -231,7 +232,8 @@ export const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
                     AI
                   </div>
                 }
-              />
+              /> */}
+              <Markdown>{actualContent}</Markdown>
             </div>
           )}
         </motion.div>

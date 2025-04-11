@@ -111,10 +111,6 @@ export default function Markdown({
       ),
       pre: (props: any) => <CodeBlock highlight={true} {...props} />,
       code: (props: any) => {
-        // 检查是否单行代码还是代码块
-        if (props.className?.includes("language-")) {
-          return <CodeBlock highlight={true} {...props} />;
-        }
         return <InlineCode>{props.children}</InlineCode>;
       },
       p: (props: any) => (
