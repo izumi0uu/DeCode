@@ -29,7 +29,6 @@ export const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
   question,
   userAnswer,
   quizSlug,
-  index,
 }) => {
   const { promptLoading, streamStarted, startStream, actualContent, status } =
     useAIFeedback(quizSlug, userAnswer);
