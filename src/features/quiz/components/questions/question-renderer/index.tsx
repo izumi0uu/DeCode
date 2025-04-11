@@ -79,7 +79,7 @@ const QuestionRenderer: React.FC<QuestionRendererProps> = ({
             onChange={onChange}
           />
         );
-      case "programming":
+      case QuestionType.PROGRAMMING:
         return (
           <ProgrammingQuestion
             questionId={question.id}

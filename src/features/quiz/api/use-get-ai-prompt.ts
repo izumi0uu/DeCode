@@ -27,10 +27,12 @@ export const useAIFeedback = (
   >("idle");
 
   // 初始化 Google AI
-  const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GOOGLE_AI_KEY!);
+  const genAI = new GoogleGenerativeAI(
+    process.env.AI_GEMINI_API_KEY || "AIzaSyA3-gECu7JAOZWr_bPOsR6kzOg2yxQyUOg"
+  );
 
   // 获取AI提示模板
-  const { data: promptData, isLoading: promptLoading } =
+  const { data: aiPromptTemplate, isLoading: promptLoading } =
     useGetAIPromptTemplate(quizSlug);
 
   // 处理用户代码
@@ -49,20 +51,20 @@ export const useAIFeedback = (
   };
 
   const startStream = async () => {
-    if (!userAnswer || !promptData?.aiPromptTemplate) return;
     setStreamStarted(true);
-
     try {
       setStatus("loading");
 
       // 1. 准备模型
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
+      console.log("model", model);
+
       // 2. 处理代码内容
       const codeContent = processUserCode(userAnswer);
 
       // 3. 构建提示 - 替换模板中的 {{code}} 变量
-      const promptContent = promptData.aiPromptTemplate.content.replace(
+      const promptContent = aiPromptTemplate.content.replace(
         "{{code}}",
         codeContent
       );
@@ -120,7 +122,7 @@ export function useGetAIPromptTemplate(quizSlug: string) {
 
       const data = await response.json();
       return (
-        data.data?.aiPromptTemplate ||
+        data?.data[0]?.aiPromptTemplate ||
         "please analyze the following code and provide improvement suggestions:"
       );
     } catch (error) {
