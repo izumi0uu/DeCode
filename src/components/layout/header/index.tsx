@@ -11,6 +11,7 @@ import {
 } from "@/once-ui/components";
 import { HeaderInteraction } from "@/components/layout/header-interaction";
 import { TimeDisplay, PopoverBtn, Cascader } from "@/components";
+import Web3AuthButton from "@/components/web3auth-button";
 import styles from "./index.module.scss";
 import { mode, courses, myInfo, about } from "@/resources";
 import classNames from "classnames";
@@ -178,6 +179,7 @@ const Header = () => {
                 <Flex hide="s">
                   {<TimeDisplay timeZone={timeZone} locale={locale} />}
                 </Flex>
+                <Web3AuthButton />
               </Flex>
             </Flex>
           </Flex>
