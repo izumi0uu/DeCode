@@ -19,3 +19,6 @@ export { default as QuestionNav } from "./components/question-nav";
 export { default as ValidationErrors } from "./components/validation-errors";
 export { default as QuizNotFound } from "./components/quiz-not-found";
 export { default as QuizContent } from "./components/quiz-content";
+
+// 上下文
+export { QuizResultProvider } from "./contexts/quiz-result-context";
