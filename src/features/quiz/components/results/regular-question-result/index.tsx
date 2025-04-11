@@ -131,7 +131,7 @@ export const RegularQuestionResult: React.FC<RegularQuestionResultProps> = ({
                         position: "absolute",
                       }}
                     >
-                      Correct Answer
+                      Right
                     </Text>
                   )}
                 </Flex>

@@ -5,7 +5,13 @@ import React, { useState, useEffect, useRef, ReactNode } from "react";
 import "./CodeHighlight.css";
 import styles from "./CodeBlock.module.scss";
 
-import { Flex, Button, IconButton, DropdownWrapper, Option } from "@/once-ui/components";
+import {
+  Flex,
+  Button,
+  IconButton,
+  DropdownWrapper,
+  Option,
+} from "@/once-ui/components";
 
 import Prism from "prismjs";
 import "prismjs/plugins/line-highlight/prism-line-highlight";
@@ -13,6 +19,7 @@ import "prismjs/components/prism-jsx";
 import "prismjs/components/prism-css";
 import "prismjs/components/prism-typescript";
 import "prismjs/components/prism-tsx";
+import "prismjs/components/prism-solidity";
 import classNames from "classnames";
 
 type CodeInstance = {
@@ -80,7 +87,9 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
   };
 
   const handleContent = (selectedLabel: string) => {
-    const index = codeInstances.findIndex((instance) => instance.label === selectedLabel);
+    const index = codeInstances.findIndex(
+      (instance) => instance.label === selectedLabel
+    );
     if (index !== -1) {
       setSelectedInstance(index);
     }
@@ -103,7 +112,12 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
       {...rest}
     >
       {(codeInstances.length > 1 || (copyButton && !compact)) && (
-        <Flex borderBottom="neutral-medium" zIndex={2} fillWidth horizontal="space-between">
+        <Flex
+          borderBottom="neutral-medium"
+          zIndex={2}
+          fillWidth
+          horizontal="space-between"
+        >
           {codeInstances.length > 1 ? (
             <Flex padding="4">
               <DropdownWrapper
@@ -119,7 +133,13 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
                   />
                 }
                 dropdown={
-                  <Flex direction="column" gap="2" padding="4" minWidth={6} data-surface="filled">
+                  <Flex
+                    direction="column"
+                    gap="2"
+                    padding="4"
+                    minWidth={6}
+                    data-surface="filled"
+                  >
                     {codeInstances.map((instance, index) => (
                       <Option
                         key={index}
@@ -163,7 +183,9 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
           vertical="center"
         >
           {Array.isArray(codePreview)
-            ? codePreview.map((item, index) => <React.Fragment key={index}>{item}</React.Fragment>)
+            ? codePreview.map((item, index) => (
+                <React.Fragment key={index}>{item}</React.Fragment>
+              ))
             : codePreview}
         </Flex>
       )}
@@ -181,7 +203,10 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
               className={classNames(styles.pre, `language-${language}`)}
               tabIndex={-1}
             >
-              <code ref={codeRef} className={classNames(styles.code, `language-${language}`)}>
+              <code
+                ref={codeRef}
+                className={classNames(styles.code, `language-${language}`)}
+              >
                 {code}
               </code>
             </pre>

@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Flex, Text, Heading, Button } from "@/once-ui/components";
 import { Bubble } from "@ant-design/x";
 import { useAIFeedback } from "@/features/quiz/hooks/use-ai-feedback";
+import { CodeBlock } from "@/once-ui/modules";
 
 interface CodeQuestionResultProps {
   question: {
@@ -11,7 +12,15 @@ interface CodeQuestionResultProps {
     title: string;
     type: string;
   };
-  userAnswer: string | string[] | undefined;
+  userAnswer:
+    | {
+        code: string;
+        highlightStart?: number;
+        highlightEnd?: number;
+      }
+    | string
+    | string[]
+    | undefined;
   quizId: string | number;
   index: number;
 }
@@ -24,6 +33,51 @@ export const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
 }) => {
   const { promptLoading, streamStarted, startStream, actualContent, status } =
     useAIFeedback(quizId, question.id, userAnswer);
+
+  // 处理代码数据
+  const processCodeData = () => {
+    if (!userAnswer) return [];
+
+    // 如果是对象格式
+    if (
+      typeof userAnswer === "object" &&
+      !Array.isArray(userAnswer) &&
+      "code" in userAnswer
+    ) {
+      return [
+        {
+          code: userAnswer.code,
+          language: "solidity",
+          label: "Solidity Contract",
+        },
+      ];
+    }
+
+    // 如果是字符串或字符串数组
+    const code = Array.isArray(userAnswer) ? userAnswer.join("\n") : userAnswer;
+    return [
+      {
+        code,
+        language: "solidity",
+        label: "Solidity Contract",
+      },
+    ];
+  };
+
+  // 处理高亮行
+  const getHighlight = () => {
+    if (
+      typeof userAnswer === "object" &&
+      !Array.isArray(userAnswer) &&
+      "highlightStart" in userAnswer &&
+      "highlightEnd" in userAnswer
+    ) {
+      return userAnswer.highlightStart && userAnswer.highlightEnd
+        ? `${userAnswer.highlightStart}-${userAnswer.highlightEnd}`
+        : undefined;
+    }
+    return undefined;
+  };
 
   return (
     <Flex
@@ -44,21 +98,30 @@ export const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
           {question.title}
         </Heading>
 
-        <div
-          style={{
-            padding: "16px",
-            background: "rgba(0, 0, 0, 0.2)",
-            borderRadius: "8px",
-            border: "1px solid rgba(100, 100, 100, 0.2)",
-            width: "100%",
-          }}
-        >
-          <Text style={{ fontFamily: "monospace", whiteSpace: "pre-wrap" }}>
-            {Array.isArray(userAnswer)
-              ? userAnswer.join("\n")
-              : userAnswer || "未提交代码"}
-          </Text>
-        </div>
+        {userAnswer ? (
+          <CodeBlock
+            codeInstances={processCodeData()}
+            highlight={getHighlight()}
+            codeHeight={20}
+          />
+        ) : (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              padding: "16px",
+              background: "rgba(0, 0, 0, 0.2)",
+              borderRadius: "8px",
+              border: "1px solid rgba(100, 100, 100, 0.2)",
+              width: "100%",
+            }}
+          >
+            <Text style={{ fontFamily: "monospace", whiteSpace: "pre-wrap" }}>
+              No Code Submitted
+            </Text>
+          </div>
+        )}
 
         <motion.div
           initial={{ opacity: 0, height: 0 }}
@@ -66,7 +129,7 @@ export const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
           transition={{ duration: 0.5 }}
         >
           <Heading as="h4" size="s" style={{ marginBottom: "12px" }}>
-            AI 代码反馈:
+            AI Code Feedback:
           </Heading>
 
           {promptLoading ? (
@@ -76,7 +139,7 @@ export const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
                 transition: { repeat: Infinity, duration: 1.5 },
               }}
             >
-              <Text>正在准备AI分析...</Text>
+              <Text>Preparing AI Analysis...</Text>
             </motion.div>
           ) : !streamStarted ? (
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -84,7 +147,7 @@ export const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
                 onClick={startStream}
                 style={{ background: "var(--brand-solid-medium)" }}
               >
-                获取AI反馈
+                Accessing AI Feedback
               </Button>
             </motion.div>
           ) : (
