@@ -1,14 +1,27 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { Bubble } from "@ant-design/x";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import qs from "qs";
+import { AIPromptTemplate } from "@/features/types/api/quiz";
+
+// 定义 AI 模板类型
+// 支持对象类型的用户答案
+type UserAnswerType =
+  | string
+  | string[]
+  | {
+      code: string;
+      highlightStart?: number;
+      highlightEnd?: number;
+    }
+  | undefined;
 
 export const useAIFeedback = (
   quizSlug: string,
-  userAnswer?: string | string[]
+  userAnswer?: UserAnswerType
 ) => {
   const [content, setContent] = useState<string>("");
+  const [streamStarted, setStreamStarted] = useState<boolean>(false);
   const [status, setStatus] = useState<
     "idle" | "loading" | "streaming" | "error"
   >("idle");
@@ -17,11 +30,27 @@ export const useAIFeedback = (
   const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GOOGLE_AI_KEY!);
 
   // 获取AI提示模板
-  const { data: promptTemplate, isLoading: promptLoading } =
+  const { data: promptData, isLoading: promptLoading } =
     useGetAIPromptTemplate(quizSlug);
 
+  // 处理用户代码
+  const processUserCode = (answer: UserAnswerType): string => {
+    if (!answer) return "";
+
+    if (
+      typeof answer === "object" &&
+      !Array.isArray(answer) &&
+      "code" in answer
+    ) {
+      return answer.code;
+    }
+
+    return Array.isArray(answer) ? answer.join("\n") : answer;
+  };
+
   const startStream = async () => {
-    if (!userAnswer || !promptTemplate) return;
+    if (!userAnswer || !promptData?.aiPromptTemplate) return;
+    setStreamStarted(true);
 
     try {
       setStatus("loading");
@@ -29,17 +58,23 @@ export const useAIFeedback = (
       // 1. 准备模型
       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-      // 2. 构建提示
-      const prompt = `${promptTemplate.content}\n\nCode:\n${
-        Array.isArray(userAnswer) ? userAnswer.join("\n") : userAnswer
-      }`;
+      // 2. 处理代码内容
+      const codeContent = processUserCode(userAnswer);
 
-      // 3. 开始流式生成
-      const result = await model.generateContentStream(prompt);
+      // 3. 构建提示 - 替换模板中的 {{code}} 变量
+      const promptContent = promptData.aiPromptTemplate.content.replace(
+        "{{code}}",
+        codeContent
+      );
+
+      console.log("promptContent", promptContent);
+
+      // 4. 开始流式生成
+      const result = await model.generateContentStream(promptContent);
 
       setStatus("streaming");
 
-      // 4. 使用 Ant Design X 的 Bubble 组件处理流
+      // 5. 处理流
       let fullResponse = "";
 
       for await (const chunk of result.stream) {
@@ -56,10 +91,10 @@ export const useAIFeedback = (
   };
 
   return {
-    promptTemplate,
     promptLoading,
+    streamStarted,
     startStream,
-    content,
+    actualContent: content,
     status,
   };
 };

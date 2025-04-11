@@ -9,6 +9,24 @@ import { Lesson } from "./lesson";
 import { QuizQuestion } from "./quiz-question";
 
 /**
+ * AI提示模板类型
+ */
+export interface AIPromptTemplate {
+  id: number;
+  content: string;
+  scoreRubric: {
+    functionality: number;
+    security: number;
+    bestPractices: number;
+  };
+  codeAnalysis: {
+    checkSecurity: boolean;
+    checkGas: boolean;
+    checkBestPractices: boolean;
+  };
+}
+
+/**
  * 测验基础属性
  */
 export interface Quiz {
@@ -25,6 +43,7 @@ export interface Quiz {
   updatedAt: string;
   publishedAt: string | null;
   slug: string;
+  aiPromptTemplate?: AIPromptTemplate; // AI提示模板作为可选属性
 }
 
 /**

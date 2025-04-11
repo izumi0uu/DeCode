@@ -43,9 +43,9 @@ const QuizResultContent = () => {
 export default function QuizResultPage() {
   const params = useParams();
   const lessonSlug = params.lessonname as string;
-  console.log(lessonSlug);
+  const quizSlug = params.quizname as string;
   return (
-    <QuizResultProvider lessonSlug={lessonSlug}>
+    <QuizResultProvider lessonSlug={lessonSlug} quizSlug={quizSlug}>
       <ResultLayout>
         <QuizResultContent />
       </ResultLayout>
