@@ -147,7 +147,7 @@ export const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
                 onClick={startStream}
                 style={{ background: "var(--brand-solid-medium)" }}
               >
-                Accessing AI Feedback
+                Access AI Feedback
               </Button>
             </motion.div>
           ) : (
