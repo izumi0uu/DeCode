@@ -8,19 +8,10 @@ import React, {
   ReactNode,
 } from "react";
 import web3AuthService from "@/services/web3auth";
-
-interface Web3AuthUser {
-  email: string;
-  name: string;
-  profileImage: string;
-  verifier: string;
-  verifierId: string;
-  typeOfLogin: string;
-  aggregate_verifier: string;
-}
+import { UserInfo } from "@web3auth/base";
 
 interface Web3AuthContextType {
-  user: Web3AuthUser | null;
+  user: UserInfo | null;
   isLoggedIn: boolean;
   isLoading: boolean;
   login: () => Promise<void>;
@@ -34,7 +25,7 @@ const Web3AuthContext = createContext<Web3AuthContextType | undefined>(
 export const Web3AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<Web3AuthUser | null>(null);
+  const [user, setUser] = useState<UserInfo | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -45,7 +36,7 @@ export const Web3AuthProvider: React.FC<{ children: ReactNode }> = ({
         const userInfo = await web3AuthService.getUserInfo();
 
         if (userInfo) {
-          setUser(userInfo);
+          setUser(userInfo as UserInfo);
           setIsLoggedIn(true);
         }
       } catch (error) {
@@ -65,7 +56,7 @@ export const Web3AuthProvider: React.FC<{ children: ReactNode }> = ({
       const userInfo = await web3AuthService.getUserInfo();
 
       if (userInfo) {
-        setUser(userInfo);
+        setUser(userInfo as UserInfo);
         setIsLoggedIn(true);
       }
     } catch (error) {
