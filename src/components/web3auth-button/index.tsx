@@ -10,6 +10,7 @@ import {
   Column,
 } from "@/once-ui/components";
 import { useWeb3Auth } from "@/contexts/web3auth-context";
+import { useRouter } from "next/navigation";
 
 interface Web3AuthButtonProps {
   className?: string;
@@ -18,7 +19,7 @@ interface Web3AuthButtonProps {
 const Web3AuthButton: React.FC<Web3AuthButtonProps> = ({ className }) => {
   const { user, isLoggedIn, isLoading, login, logout } = useWeb3Auth();
   const [imageError, setImageError] = useState(false);
-
+  const router = useRouter();
   return (
     <Flex className={className}>
       {isLoggedIn && user ? (
@@ -33,7 +34,13 @@ const Web3AuthButton: React.FC<Web3AuthButtonProps> = ({ className }) => {
           }}
           dropdown={
             <Column padding="2" gap="2" minWidth={8}>
-              <Option label="Profile" value="profile" />
+              <Option
+                label="Profile"
+                value="profile"
+                onClick={() => {
+                  router.push("/my-info");
+                }}
+              />
               <Option label="Settings" value="settings" />
               <Line />
               <Option
