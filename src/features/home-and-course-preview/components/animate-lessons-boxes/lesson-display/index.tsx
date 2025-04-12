@@ -43,8 +43,6 @@ const LessonImage = memo(({ src, alt }: { src: string; alt: string }) => {
         height={160}
         loading="lazy"
         style={{
-          width: "100%",
-          height: "160px",
           objectFit: "cover",
           borderRadius: "12px",
         }}
@@ -125,7 +123,7 @@ const LessonCard = memo(
         </motion.div>
       </Link>
     );
-  }
+  },
 );
 
 // 空内容提示组件
@@ -181,7 +179,7 @@ const VirtualizedList = memo(
         {items.map((item, index) => renderItem(item, index))}
       </Flex>
     );
-  }
+  },
 );
 
 // 主组件使用memo优化
@@ -208,5 +206,5 @@ export const LessonDisplay = memo(
 
     // 没有内容可显示
     return <NoContentMessage />;
-  }
+  },
 );
