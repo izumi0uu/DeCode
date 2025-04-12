@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Flex,
   Column,
@@ -12,9 +12,12 @@ import {
   Button,
   Avatar,
   Icon,
+  Input,
+  Textarea,
 } from "@/once-ui/components";
 import { useWeb3Auth } from "@/contexts/web3auth-context";
 import { useQuery } from "@tanstack/react-query";
+import { motion, AnimatePresence } from "framer-motion";
 
 // 模拟获取用户课程进度数据
 const fetchUserProgress = async (userId: string) => {
@@ -51,6 +54,12 @@ const fetchUserAchievements = async (walletAddress: string) => {
 
 export default function MyInfoPage() {
   const { user, isLoggedIn } = useWeb3Auth();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({
+    name: user?.name || "",
+    email: user?.email || "",
+    bio: user?.bio || "",
+  });
 
   const { data: userProgress } = useQuery({
     queryKey: ["userProgress", user?.id],
@@ -63,6 +72,20 @@ export default function MyInfoPage() {
     queryFn: () => fetchUserAchievements(user?.walletAddress || ""),
     enabled: !!user?.walletAddress && isLoggedIn,
   });
+
+  const handleEditFormChange = (field: string, value: string) => {
+    setEditForm((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleSaveChanges = () => {
+    // 这里应实现保存用户数据的API调用
+    console.log("保存用户数据:", editForm);
+    // 模拟API调用成功后关闭编辑区域
+    setIsEditing(false);
+  };
 
   if (!isLoggedIn) {
     return (
@@ -136,13 +159,87 @@ export default function MyInfoPage() {
               fitWidth
             >
               <Button
-                href="/settings"
-                prefixIcon="settings"
+                prefixIcon="edit"
                 label="Edit personal information"
                 size="s"
                 variant="secondary"
+                onClick={() => setIsEditing(!isEditing)}
               />
             </Flex>
+
+            <AnimatePresence>
+              {isEditing && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  style={{ width: "100%", overflow: "hidden" }}
+                >
+                  <Card
+                    border="neutral-medium"
+                    radius="m"
+                    padding="l"
+                    marginTop="m"
+                    style={{ width: "100%" }}
+                  >
+                    <Column gap="m" style={{ width: "100%", flexGrow: 1 }}>
+                      <Heading variant="heading-strong-s">
+                        Edit your profile
+                      </Heading>
+
+                      <Input
+                        id="user-name"
+                        label="Name"
+                        value={editForm.name}
+                        onChange={(e) =>
+                          handleEditFormChange("name", e.target.value)
+                        }
+                        hasPrefix={
+                          <Icon name="user" onBackground="neutral-medium" />
+                        }
+                      />
+
+                      <Input
+                        id="user-email"
+                        label="Email"
+                        value={editForm.email}
+                        onChange={(e) =>
+                          handleEditFormChange("email", e.target.value)
+                        }
+                        hasPrefix={
+                          <Icon name="email" onBackground="neutral-medium" />
+                        }
+                      />
+
+                      <Textarea
+                        id="user-bio"
+                        label="Bio"
+                        value={editForm.bio}
+                        onChange={(e) =>
+                          handleEditFormChange("bio", e.target.value)
+                        }
+                      />
+
+                      <Flex gap="m" horizontal="end">
+                        <Button
+                          label="Cancel"
+                          size="s"
+                          variant="tertiary"
+                          onClick={() => setIsEditing(false)}
+                        />
+                        <Button
+                          label="Save changes"
+                          size="s"
+                          variant="primary"
+                          onClick={handleSaveChanges}
+                        />
+                      </Flex>
+                    </Column>
+                  </Card>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </Column>
 
           {/* 学习进度部分 */}
@@ -257,7 +354,7 @@ export default function MyInfoPage() {
                         variant="body-default-xs"
                         onBackground="neutral-weak"
                       >
-                        Date of award of award: {achievement.dateEarned}
+                        Date of award: {achievement.dateEarned}
                       </Text>
                     </Column>
                   </Card>
