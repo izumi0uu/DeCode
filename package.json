@@ -10,7 +10,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@ant-design/x": "^1.1.0",
     "@floating-ui/react": "^0.27.4",
     "@floating-ui/react-dom": "^2.1.1",
     "@google/genai": "^0.8.0",
@@ -23,7 +22,6 @@
     "@web3auth/ethereum-provider": "^9.7.0",
     "@web3auth/modal": "^9.7.0",
     "@web3auth/mpc-core-kit": "^3.4.3",
-    "ahooks": "^3.8.4",
     "classnames": "^2.5.1",
     "compressorjs": "^1.2.1",
     "embla-carousel-class-names": "^8.5.2",
