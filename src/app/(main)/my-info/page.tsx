@@ -9,9 +9,10 @@ import {
   Card,
   Line,
   Badge,
-  Grid,
   SmartImage,
   Button,
+  Avatar,
+  Icon,
 } from "@/once-ui/components";
 import { useWeb3Auth } from "@/contexts/web3auth-context";
 import { useQuery } from "@tanstack/react-query";
@@ -66,204 +67,219 @@ export default function MyInfoPage() {
 
   if (!isLoggedIn) {
     return (
-      <Flex center alignItems="center" style={{ minHeight: "60vh" }}>
-        <Column gap="8" alignItems="center">
-          <Heading>请先登录</Heading>
-          <Text>您需要登录才能查看个人信息</Text>
-        </Column>
-      </Flex>
+      <Column maxWidth="m">
+        <Flex fillHeight center vertical="center" style={{ minHeight: "60vh" }}>
+          <Column gap="m" horizontal="center" textVariant="body-default-l">
+            <Heading variant="display-strong-l">请先登录</Heading>
+            <Text onBackground="neutral-weak">您需要登录才能查看个人信息</Text>
+          </Column>
+        </Flex>
+      </Column>
     );
   }
 
   return (
-    <Column
-      gap="8"
-      style={{ maxWidth: "1200px", margin: "0 auto", padding: "2rem 1rem" }}
-    >
-      {/* 个人资料部分 */}
-      <Card style={{ padding: "2rem" }}>
-        <Column gap="8">
-          <Flex gap="8" flex-start>
-            <Flex
-              style={{
-                position: "relative",
-                minWidth: "120px",
-                minHeight: "120px",
-              }}
-            >
-              {user?.profileImage ? (
-                <SmartImage
-                  src={user.profileImage}
-                  alt={user.name || "userAvator"}
-                  style={{
-                    borderRadius: "50%",
-                    width: "120px",
-                    height: "120px",
-                    objectFit: "cover",
-                  }}
-                />
-              ) : (
-                <Flex
-                  center
-                  alignItems="center"
-                  style={{
-                    borderRadius: "50%",
-                    width: "120px",
-                    height: "120px",
-                    backgroundColor: "#3B82F6",
-                    color: "white",
-                    fontSize: "2rem",
-                  }}
-                >
-                  {user?.name?.charAt(0).toUpperCase() || "U"}
-                </Flex>
-              )}
-            </Flex>
-
-            <Column gap="4" style={{ flex: 1 }}>
-              <Heading>{user?.name || "未命名用户"}</Heading>
-              <Text>{user?.email || "未提供邮箱"}</Text>
-
-              {user?.walletAddress && (
-                <Text>
-                  钱包地址:{" "}
-                  {`${user.walletAddress.slice(0, 6)}...${user.walletAddress.slice(-4)}`}
-                </Text>
-              )}
-
-              <Flex gap="2">
-                <Badge>Web3学习者</Badge>
-                {achievements && achievements.length > 0 && (
-                  <Badge color="success">
-                    已获得 {achievements.length} 个认证
-                  </Badge>
-                )}
-              </Flex>
-            </Column>
-          </Flex>
-
-          <Line />
-
-          <Button
-            variant="secondary"
-            label="编辑个人资料"
-            size="m"
-            style={{ alignSelf: "flex-start" }}
-          />
-        </Column>
-      </Card>
-
-      {/* 学习进度部分 */}
-      {userProgress && (
-        <Card style={{ padding: "2rem" }}>
-          <Column gap="4">
-            <Heading level="h3">学习进度</Heading>
-
-            <Grid columns={{ sm: 1, md: 2, lg: 3 }} gap="4">
-              <Card style={{ padding: "1.5rem", backgroundColor: "#f8fafc" }}>
-                <Column gap="2">
-                  <Text color="secondary">完成课程</Text>
-                  <Heading level="h2">
-                    {userProgress.completedCourses}/{userProgress.totalCourses}
-                  </Heading>
-                  <Text>
-                    {Math.round(
-                      (userProgress.completedCourses /
-                        userProgress.totalCourses) *
-                        100,
-                    )}
-                    % 完成
-                  </Text>
-                </Column>
-              </Card>
-
-              <Card style={{ padding: "1.5rem", backgroundColor: "#f8fafc" }}>
-                <Column gap="2">
-                  <Text color="secondary">进行中课程</Text>
-                  <Heading level="h2">{userProgress.inProgressCourses}</Heading>
-                  <Text>继续学习</Text>
-                </Column>
-              </Card>
-
-              <Card style={{ padding: "1.5rem", backgroundColor: "#f8fafc" }}>
-                <Column gap="2">
-                  <Text color="secondary">完成课时</Text>
-                  <Heading level="h2">
-                    {userProgress.completedLessons}/{userProgress.totalLessons}
-                  </Heading>
-                  <Text>
-                    {Math.round(
-                      (userProgress.completedLessons /
-                        userProgress.totalLessons) *
-                        100,
-                    )}
-                    % 完成
-                  </Text>
-                </Column>
-              </Card>
-            </Grid>
-
-            <Button
-              variant="primary"
-              label="继续学习"
-              size="m"
-              style={{ alignSelf: "flex-start", marginTop: "1rem" }}
+    <Column maxWidth="m">
+      <Flex fillWidth mobileDirection="column" horizontal="center">
+        {/* 左侧个人资料卡片 */}
+        <Column
+          minWidth="160"
+          paddingX="l"
+          paddingBottom="xl"
+          gap="m"
+          flex={3}
+          horizontal="center"
+        >
+          {user?.profileImage ? (
+            <Avatar src={user.profileImage} size="xl" />
+          ) : (
+            <Avatar
+              value={user?.name?.charAt(0).toUpperCase() || "U"}
+              size="xl"
             />
+          )}
+
+          {user?.walletAddress && (
+            <Flex gap="8" vertical="center">
+              <Icon onBackground="accent-weak" name="link" />
+              <Text>{`${user.walletAddress.slice(0, 6)}...${user.walletAddress.slice(-4)}`}</Text>
+            </Flex>
+          )}
+
+          <Flex wrap gap="8" horizontal="center">
+            <Badge arrow={false}>Web3 Learner</Badge>
+            {achievements && achievements.length > 0 && (
+              <Badge background="success-weak">
+                {achievements.length} 个认证
+              </Badge>
+            )}
+          </Flex>
+        </Column>
+
+        {/* 右侧内容区域 */}
+        <Column flex={9} maxWidth={40}>
+          {/* 个人信息部分 */}
+          <Column fillWidth minHeight="160" vertical="center" marginBottom="32">
+            <Heading variant="display-strong-xl">
+              {user?.name || "未命名用户"}
+            </Heading>
+            <Text variant="display-default-xs" onBackground="neutral-weak">
+              {user?.email || "未提供邮箱"}
+            </Text>
+
+            <Flex
+              paddingTop="20"
+              paddingBottom="8"
+              gap="8"
+              horizontal="center"
+              fitWidth
+            >
+              <Button
+                href="/settings"
+                prefixIcon="settings"
+                label="编辑个人资料"
+                size="s"
+                variant="secondary"
+              />
+            </Flex>
           </Column>
-        </Card>
-      )}
 
-      {/* SBT成就部分 */}
-      <Card style={{ padding: "2rem" }}>
-        <Column gap="4">
-          <Heading level="h3">SBT认证成就</Heading>
+          {/* 学习进度部分 */}
+          {userProgress && (
+            <Column
+              textVariant="body-default-l"
+              fillWidth
+              gap="m"
+              marginBottom="xl"
+            >
+              <Heading as="h2" variant="display-strong-s" marginBottom="m">
+                学习进度
+              </Heading>
 
-          {achievements && achievements.length > 0 ? (
-            <Grid columns={{ sm: 1, md: 2, lg: 3 }} gap="4">
-              {achievements.map((achievement) => (
-                <Card
-                  key={achievement.id}
-                  style={{ padding: "1.5rem", backgroundColor: "#f8fafc" }}
-                >
-                  <Column gap="3">
-                    {achievement.imageUrl && (
-                      <Flex
-                        justifyContent="center"
-                        style={{ marginBottom: "1rem" }}
-                      >
-                        <SmartImage
-                          src={achievement.imageUrl}
-                          alt={achievement.name}
-                          style={{
-                            width: "100px",
-                            height: "100px",
-                            objectFit: "contain",
-                          }}
-                        />
-                      </Flex>
-                    )}
-                    <Heading level="h4">{achievement.name}</Heading>
-                    <Text>{achievement.description}</Text>
-                    <Text size="xs" color="secondary">
-                      获得时间: {achievement.dateEarned}
+              <Flex fillWidth gap="m" wrap>
+                <Card border="neutral-medium" radius="m" padding="l" flex={1}>
+                  <Column gap="4">
+                    <Text onBackground="neutral-weak">完成课程</Text>
+                    <Heading variant="heading-strong-l">
+                      {userProgress.completedCourses}/
+                      {userProgress.totalCourses}
+                    </Heading>
+                    <Text variant="body-default-s" onBackground="brand-weak">
+                      {Math.round(
+                        (userProgress.completedCourses /
+                          userProgress.totalCourses) *
+                          100,
+                      )}
+                      % 完成
                     </Text>
                   </Column>
                 </Card>
-              ))}
-            </Grid>
-          ) : (
-            <Flex
-              direction="column"
-              alignItems="center"
-              gap="4"
-              style={{ padding: "3rem 1rem" }}
-            >
-              <Text>您还没有获得SBT认证成就</Text>
-              <Button variant="primary" label="浏览课程" size="m" />
-            </Flex>
+
+                <Card border="neutral-medium" radius="m" padding="l" flex={1}>
+                  <Column gap="4">
+                    <Text onBackground="neutral-weak">进行中课程</Text>
+                    <Heading variant="heading-strong-l">
+                      {userProgress.inProgressCourses}
+                    </Heading>
+                    <Text variant="body-default-s" onBackground="brand-weak">
+                      继续学习
+                    </Text>
+                  </Column>
+                </Card>
+
+                <Card border="neutral-medium" radius="m" padding="l" flex={1}>
+                  <Column gap="4">
+                    <Text onBackground="neutral-weak">完成课时</Text>
+                    <Heading variant="heading-strong-l">
+                      {userProgress.completedLessons}/
+                      {userProgress.totalLessons}
+                    </Heading>
+                    <Text variant="body-default-s" onBackground="brand-weak">
+                      {Math.round(
+                        (userProgress.completedLessons /
+                          userProgress.totalLessons) *
+                          100,
+                      )}
+                      % 完成
+                    </Text>
+                  </Column>
+                </Card>
+              </Flex>
+
+              <Flex marginTop="m">
+                <Button
+                  href="/courses"
+                  label="继续学习"
+                  prefixIcon="play"
+                  size="m"
+                  variant="primary"
+                />
+              </Flex>
+            </Column>
           )}
+
+          {/* SBT成就部分 */}
+          <Column fillWidth>
+            <Heading as="h2" variant="display-strong-s" marginBottom="m">
+              SBT认证成就
+            </Heading>
+
+            {achievements && achievements.length > 0 ? (
+              <Flex fillWidth gap="m" wrap>
+                {achievements.map((achievement) => (
+                  <Card
+                    key={achievement.id}
+                    border="neutral-medium"
+                    radius="m"
+                    padding="l"
+                    flex={1}
+                  >
+                    <Column gap="4">
+                      {achievement.imageUrl && (
+                        <Flex horizontal="center" marginBottom="m">
+                          <SmartImage
+                            src={achievement.imageUrl}
+                            alt={achievement.name}
+                            width={100}
+                            height={100}
+                            radius="m"
+                          />
+                        </Flex>
+                      )}
+                      <Heading variant="heading-strong-m">
+                        {achievement.name}
+                      </Heading>
+                      <Text variant="body-default-m">
+                        {achievement.description}
+                      </Text>
+                      <Text
+                        variant="body-default-xs"
+                        onBackground="neutral-weak"
+                      >
+                        获得时间: {achievement.dateEarned}
+                      </Text>
+                    </Column>
+                  </Card>
+                ))}
+              </Flex>
+            ) : (
+              <Card border="neutral-medium" radius="m" padding="xl">
+                <Column horizontal="center" gap="m">
+                  <Text variant="body-default-m" onBackground="neutral-weak">
+                    您还没有获得SBT认证成就
+                  </Text>
+                  <Button
+                    href="/courses"
+                    label="浏览课程"
+                    size="m"
+                    variant="primary"
+                  />
+                </Column>
+              </Card>
+            )}
+          </Column>
         </Column>
-      </Card>
+      </Flex>
     </Column>
   );
 }
