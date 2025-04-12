@@ -15,6 +15,7 @@ import {
   LessonsBoxesSkeleton,
 } from "@/features/home-and-course-preview/components/skeletons";
 import { Footer } from "@/components";
+import styles from "./index.module.scss";
 
 interface CoursesPageClientProps {
   coursesData: any;
@@ -26,7 +27,7 @@ export function CoursesPageClient({
   popularCoursesData,
 }: CoursesPageClientProps) {
   return (
-    <Flex direction="column" className="courses-page-client">
+    <Flex direction="column" className={styles.coursesPageClient}>
       {/* 热门课程部分：独立Suspense区域 */}
       <Suspense
         fallback={

@@ -13,7 +13,7 @@ import {
   Icon,
   Line,
 } from "@/once-ui/components";
-
+import { Footer } from "@/components";
 // 模拟项目技术栈数据
 const techStack = [
   {
