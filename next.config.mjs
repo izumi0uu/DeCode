@@ -6,6 +6,10 @@ const nextConfig = {
         source: "/api/:path*",
         destination: "http://localhost:1337/api/:path*",
       },
+      {
+        source: "/web3auth/:path*",
+        destination: "https://api.web3auth.io/:path*",
+      },
     ];
   },
   sassOptions: {
