@@ -12,7 +12,7 @@ const mode = {
   phone: {
     routes: {
       "/": true,
-      "/myInfo": true,
+      "/my-info": true,
       "/courses": false,
       "/about": false,
     },
@@ -20,7 +20,7 @@ const mode = {
   desktop: {
     routes: {
       "/": true,
-      "/myInfo": true,
+      "/my-info": true,
       "/courses": true,
       "/about": true,
     },

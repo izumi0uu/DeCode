@@ -19,7 +19,7 @@ import classNames from "classnames";
 const Header = () => {
   const isShowHomeBtn = mode.phone.routes["/"] || mode.desktop.routes["/"];
   const isShowMyInfoBtn =
-    mode.phone.routes["/myInfo"] || mode.desktop.routes["/myInfo"];
+    mode.phone.routes["/my-info"] || mode.desktop.routes["/my-info"];
   const isShowCoursesBtn =
     mode.phone.routes["/courses"] || mode.desktop.routes["/courses"];
   const isShowAboutBtn =
@@ -116,15 +116,15 @@ const Header = () => {
                       <ToggleButton
                         className="s-flex-hide"
                         prefixIcon="user"
-                        href="/myInfo"
+                        href="/my-info"
                         label={myInfo.label}
-                        selected={pathname === "/myInfo"}
+                        selected={pathname === "/my-info"}
                       />
                       <ToggleButton
                         className="s-flex-show"
                         prefixIcon="user"
-                        href="/myInfo"
-                        selected={pathname === "/myInfo"}
+                        href="/my-info"
+                        selected={pathname === "/my-info"}
                       />
                     </>
                   )}
