@@ -7,7 +7,6 @@ import {
   Heading,
   Text,
   Card,
-  Line,
   Badge,
   SmartImage,
   Button,
