@@ -342,7 +342,7 @@ export default function AboutPage() {
           <Button
             variant="secondary"
             label="Join the community"
-            prefixIcon="users"
+            prefixIcon="people"
             size="m"
           />
           <Button

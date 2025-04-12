@@ -21,7 +21,7 @@ const animations = {
 };
 
 // 内容组件，使用Context
-function LessonBoxesContent() {
+const LessonBoxesContent = () => {
   const {
     currentTag,
     selectedTagIds,
@@ -122,7 +122,7 @@ function LessonBoxesContent() {
       </Flex>
     </Flex>
   );
-}
+};
 
 // 导出主组件 - 不再直接包含Provider
 export const AnimateLessonsBoxes = () => {
