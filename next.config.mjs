@@ -10,6 +10,10 @@ const nextConfig = {
         source: "/web3auth/:path*",
         destination: "https://api.web3auth.io/:path*",
       },
+      {
+        source: "/ethereum-rpc/:path*",
+        destination: "https://eth-mainnet.g.alchemy.com/v2/demo/:path*",
+      },
     ];
   },
   sassOptions: {

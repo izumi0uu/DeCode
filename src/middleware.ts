@@ -9,7 +9,18 @@ export function middleware(request: NextRequest) {
   response.headers.set("Cross-Origin-Opener-Policy", "unsafe-none");
   response.headers.set("Cross-Origin-Embedder-Policy", "unsafe-none");
 
+  // 处理Web3Auth API请求
   if (request.nextUrl.pathname.startsWith("/web3auth/")) {
+    response.headers.set("Access-Control-Allow-Origin", "*");
+    response.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    response.headers.set(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization",
+    );
+  }
+
+  // 处理以太坊RPC请求
+  if (request.nextUrl.pathname.startsWith("/ethereum-rpc/")) {
     response.headers.set("Access-Control-Allow-Origin", "*");
     response.headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     response.headers.set(

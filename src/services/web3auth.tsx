@@ -30,7 +30,11 @@ export class Web3AuthService {
       const chainConfig = {
         chainNamespace: CHAIN_NAMESPACES.EIP155,
         chainId: "0x1", // 以太坊主网
-        rpcTarget: "https://rpc.ethereum.org",
+        // 使用环境变量中的RPC节点配置
+        rpcTarget: process.env.NEXT_PUBLIC_ETHEREUM_RPC_URL || "/ethereum-rpc",
+        // 备选可靠节点
+        // rpcTarget: "https://eth-mainnet.g.alchemy.com/v2/demo",
+        // rpcTarget: "https://rpc.ankr.com/eth",
         displayName: "Ethereum Mainnet",
         blockExplorerUrl: "https://etherscan.io/",
         ticker: "ETH",
