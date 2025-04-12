@@ -70,8 +70,10 @@ export default function MyInfoPage() {
       <Column maxWidth="m">
         <Flex fillHeight center vertical="center" style={{ minHeight: "60vh" }}>
           <Column gap="m" horizontal="center" textVariant="body-default-l">
-            <Heading variant="display-strong-l">请先登录</Heading>
-            <Text onBackground="neutral-weak">您需要登录才能查看个人信息</Text>
+            <Heading variant="display-strong-l">Please login first</Heading>
+            <Text onBackground="neutral-weak">
+              You need to login to view your personal information
+            </Text>
           </Column>
         </Flex>
       </Column>
@@ -110,7 +112,7 @@ export default function MyInfoPage() {
             <Badge arrow={false}>Web3 Learner</Badge>
             {achievements && achievements.length > 0 && (
               <Badge background="success-weak">
-                {achievements.length} 个认证
+                {achievements.length} certifications
               </Badge>
             )}
           </Flex>
@@ -121,10 +123,10 @@ export default function MyInfoPage() {
           {/* 个人信息部分 */}
           <Column fillWidth minHeight="160" vertical="center" marginBottom="32">
             <Heading variant="display-strong-xl">
-              {user?.name || "未命名用户"}
+              {user?.name || "Unnamed user"}
             </Heading>
             <Text variant="display-default-xs" onBackground="neutral-weak">
-              {user?.email || "未提供邮箱"}
+              {user?.email || "No email provided"}
             </Text>
 
             <Flex
@@ -137,7 +139,7 @@ export default function MyInfoPage() {
               <Button
                 href="/settings"
                 prefixIcon="settings"
-                label="编辑个人资料"
+                label="Edit personal information"
                 size="s"
                 variant="secondary"
               />
@@ -153,13 +155,13 @@ export default function MyInfoPage() {
               marginBottom="xl"
             >
               <Heading as="h2" variant="display-strong-s" marginBottom="m">
-                学习进度
+                Learning progress
               </Heading>
 
               <Flex fillWidth gap="m" wrap>
                 <Card border="neutral-medium" radius="m" padding="l" flex={1}>
                   <Column gap="4">
-                    <Text onBackground="neutral-weak">完成课程</Text>
+                    <Text onBackground="neutral-weak">Completed courses</Text>
                     <Heading variant="heading-strong-l">
                       {userProgress.completedCourses}/
                       {userProgress.totalCourses}
@@ -170,26 +172,26 @@ export default function MyInfoPage() {
                           userProgress.totalCourses) *
                           100,
                       )}
-                      % 完成
+                      % completed
                     </Text>
                   </Column>
                 </Card>
 
                 <Card border="neutral-medium" radius="m" padding="l" flex={1}>
                   <Column gap="4">
-                    <Text onBackground="neutral-weak">进行中课程</Text>
+                    <Text onBackground="neutral-weak">In progress courses</Text>
                     <Heading variant="heading-strong-l">
                       {userProgress.inProgressCourses}
                     </Heading>
                     <Text variant="body-default-s" onBackground="brand-weak">
-                      继续学习
+                      Continue learning
                     </Text>
                   </Column>
                 </Card>
 
                 <Card border="neutral-medium" radius="m" padding="l" flex={1}>
                   <Column gap="4">
-                    <Text onBackground="neutral-weak">完成课时</Text>
+                    <Text onBackground="neutral-weak">Completed lessons</Text>
                     <Heading variant="heading-strong-l">
                       {userProgress.completedLessons}/
                       {userProgress.totalLessons}
@@ -200,7 +202,7 @@ export default function MyInfoPage() {
                           userProgress.totalLessons) *
                           100,
                       )}
-                      % 完成
+                      % completed
                     </Text>
                   </Column>
                 </Card>
@@ -209,7 +211,7 @@ export default function MyInfoPage() {
               <Flex marginTop="m">
                 <Button
                   href="/courses"
-                  label="继续学习"
+                  label="Continue learning"
                   prefixIcon="play"
                   size="m"
                   variant="primary"
@@ -221,7 +223,7 @@ export default function MyInfoPage() {
           {/* SBT成就部分 */}
           <Column fillWidth>
             <Heading as="h2" variant="display-strong-s" marginBottom="m">
-              SBT认证成就
+              SBT certifications
             </Heading>
 
             {achievements && achievements.length > 0 ? (
@@ -256,7 +258,7 @@ export default function MyInfoPage() {
                         variant="body-default-xs"
                         onBackground="neutral-weak"
                       >
-                        获得时间: {achievement.dateEarned}
+                        Date of award of award: {achievement.dateEarned}
                       </Text>
                     </Column>
                   </Card>
@@ -266,11 +268,11 @@ export default function MyInfoPage() {
               <Card border="neutral-medium" radius="m" padding="xl">
                 <Column horizontal="center" gap="m">
                   <Text variant="body-default-m" onBackground="neutral-weak">
-                    您还没有获得SBT认证成就
+                    You have not yet obtained SBT certification achievements
                   </Text>
                   <Button
                     href="/courses"
-                    label="浏览课程"
+                    label="Browse courses"
                     size="m"
                     variant="primary"
                   />

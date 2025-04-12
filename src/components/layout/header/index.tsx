@@ -154,7 +154,11 @@ const Header = () => {
                             href="#"
                           >
                             <Flex>
-                              Hover me
+                              Apply for a &nbsp;
+                              <span style={{ color: "skyblue" }}>
+                                contributor
+                              </span>
+                              &nbsp; role
                               <Arrow trigger="#trigger" color="onBackground" />
                             </Flex>
                           </Button>
