@@ -17,6 +17,7 @@ import { AnimateLessonsBoxes } from "@/features/home-and-course-preview/componen
 import { Footer } from "@/components/layout/footer";
 import { LessonBoxesProvider } from "@/features/home-and-course-preview/context/lessonBoxesContext";
 import { LessonsBoxesSkeleton } from "@/features/home-and-course-preview/components/skeletons/lesson-boxes-skeleton";
+import { useRouter } from "next/navigation";
 
 // 接收服务端传入的数据
 interface HomePageClientProps {
@@ -26,6 +27,8 @@ interface HomePageClientProps {
 // 英雄区内容
 const HeroSection = () => {
   const cover1 = "/images/cover1.jpg";
+
+  const router = useRouter();
 
   return (
     <Column maxWidth="l" gap="xl" horizontal="center">
@@ -66,7 +69,11 @@ const HeroSection = () => {
             size="m"
             arrowIcon
           >
-            <Flex gap="8" vertical="center">
+            <Flex
+              gap="8"
+              vertical="center"
+              onClick={() => router.push(`/courses`)}
+            >
               <Avatar
                 style={{ marginLeft: "-0.75rem", marginRight: "0.25rem" }}
                 src={courses.picUrl}
