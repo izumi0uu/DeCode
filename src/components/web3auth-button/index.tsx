@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Button,
   Flex,
@@ -17,6 +17,7 @@ interface Web3AuthButtonProps {
 
 const Web3AuthButton: React.FC<Web3AuthButtonProps> = ({ className }) => {
   const { user, isLoggedIn, isLoading, login, logout } = useWeb3Auth();
+  const [imageError, setImageError] = useState(false);
 
   return (
     <Flex className={className}>
@@ -25,8 +26,10 @@ const Web3AuthButton: React.FC<Web3AuthButtonProps> = ({ className }) => {
           name={user.name}
           subline={user.email}
           avatarProps={{
-            empty: !user.profileImage,
-            src: user.profileImage,
+            empty: !user.profileImage || imageError,
+            src:
+              user.profileImage && !imageError ? user.profileImage : undefined,
+            onError: () => setImageError(true),
           }}
           dropdown={
             <Column padding="2" gap="2" minWidth={8}>
@@ -38,6 +41,7 @@ const Web3AuthButton: React.FC<Web3AuthButtonProps> = ({ className }) => {
                 value="logout"
                 onClick={async (value: string) => {
                   await logout();
+                  setImageError(false);
                 }}
               />
             </Column>
