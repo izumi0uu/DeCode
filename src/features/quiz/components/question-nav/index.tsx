@@ -26,15 +26,12 @@ const QuestionNav: React.FC<QuestionNavProps> = ({
       }}
     >
       {questions.map((_, index) => {
-        const isAnswered = userAnswers[questions[index].id] !== undefined;
         const isCurrent = index === currentIndex;
 
         return (
           <Button
             key={index}
-            variant={
-              isCurrent ? "primary" : isAnswered ? "secondary" : "tertiary"
-            }
+            variant={isCurrent ? "primary" : "secondary"}
             size="s"
             onClick={() => onNavigation(index)}
             style={{
