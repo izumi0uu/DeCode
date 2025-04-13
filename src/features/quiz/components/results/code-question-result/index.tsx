@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion";
 import { Flex, Text, Heading, Button } from "@/once-ui/components";
-import { Bubble } from "@ant-design/x";
 import { useAIFeedback } from "@/features/quiz/api/use-get-ai-prompt";
 import { CodeBlock } from "@/once-ui/modules";
 import { useEffect, useMemo } from "react";
@@ -57,13 +56,13 @@ export const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
     // 从localStorage获取已存在的题目
     try {
       const existingQuestions = localStorage.getItem(
-        `quiz_questions_${quizSlug}`
+        `quiz_questions_${quizSlug}`,
       );
       let questions = existingQuestions ? JSON.parse(existingQuestions) : [];
 
       // 检查是否已存在该题目
       const existingIndex = questions.findIndex(
-        (q: any) => String(q.id) === String(question.id)
+        (q: any) => String(q.id) === String(question.id),
       );
 
       if (existingIndex >= 0) {
@@ -77,7 +76,7 @@ export const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
       // 保存到localStorage
       localStorage.setItem(
         `quiz_questions_${quizSlug}`,
-        JSON.stringify(questions)
+        JSON.stringify(questions),
       );
       console.log("题目已保存到本地存储");
     } catch (error) {

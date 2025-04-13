@@ -29,9 +29,9 @@ export function CoursePageContainer({
         <Flex
           style={{
             flex: 1,
+            flexGrow: 1,
             height: "100vh",
             overflowY: "auto",
-            width: "1200px",
             background: "var(--bg-surface)",
           }}
         >
