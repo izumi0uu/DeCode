@@ -2,7 +2,7 @@ import "@/once-ui/styles/index.scss";
 import "@/once-ui/tokens/index.scss";
 
 import classNames from "classnames";
-import { Background, Column, Flex, ToastProvider } from "@/once-ui/components";
+import { Background, Column, Flex } from "@/once-ui/components";
 
 import localFont from "next/font/local";
 import { Raleway, Sora } from "next/font/google";
@@ -53,10 +53,8 @@ const tertiary: FontConfig | undefined = undefined;
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <Flex
-      as="html"
+    <html
       lang="en"
-      background="page"
       data-neutral={style.neutral}
       data-brand={style.brand}
       data-accent={style.accent}
@@ -69,16 +67,17 @@ export default function RootLayout({ children }: RootLayoutProps) {
       className={classNames(
         primary.variable,
         secondary.variable,
-        tertiary?.variable
+        tertiary?.variable,
       )}
     >
       <Providers>
         <Column
-          style={{ minHeight: "100vh" }}
           as="body"
+          style={{ minHeight: "100vh" }}
           fillWidth
           margin="0"
           padding="0"
+          className="page-background"
         >
           <Background
             mask={{
@@ -122,6 +121,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
           </Flex>
         </Column>
       </Providers>
-    </Flex>
+    </html>
   );
 }

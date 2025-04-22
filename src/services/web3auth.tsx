@@ -144,9 +144,12 @@ export class Web3AuthService {
 
       // 初始化 SDK
       try {
+        // initModal 只初始化，不主动连接或显示UI
         await this.web3AuthInstance.initModal();
 
+        // 检查 Web3Auth 是否已经连接 (可能来自之前的会话)
         if (this.web3AuthInstance.connected) {
+          console.log("Web3Auth 已连接 (来自现有会话)");
           this.provider = this.web3AuthInstance.provider;
         }
 
@@ -193,14 +196,17 @@ export class Web3AuthService {
         throw new Error("Web3Auth 未初始化");
       }
 
+      // 移除自动登录逻辑：如果 provider 不存在，说明用户未登录或会话未恢复
       if (!this.provider) {
-        console.warn("Provider未初始化，尝试先登录...");
-        try {
-          await this.login();
-        } catch (error) {
-          console.error("自动登录失败", error);
-          return null;
-        }
+        // console.warn("Provider未初始化，尝试先登录...");
+        // try {
+        //   await this.login();
+        // } catch (error) {
+        //   console.error("自动登录失败", error);
+        //   return null;
+        // }
+        console.log("用户未登录或会话无效，无法获取用户信息");
+        return null; // 直接返回 null，不尝试自动登录
       }
 
       console.log("尝试获取用户信息...");

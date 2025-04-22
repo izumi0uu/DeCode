@@ -192,14 +192,12 @@ export const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
               <Text>Preparing AI Analysis...</Text>
             </motion.div>
           ) : !streamStarted ? (
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button
-                onClick={startStream}
-                style={{ background: "var(--brand-solid-medium)" }}
-              >
-                Access AI Feedback
-              </Button>
-            </motion.div>
+            <Button
+              onClick={startStream}
+              style={{ backgroundColor: "#3366ff" }}
+            >
+              Access AI Feedback
+            </Button>
           ) : (
             <div
               style={{
@@ -208,30 +206,6 @@ export const CodeQuestionResult: React.FC<CodeQuestionResultProps> = ({
                 padding: "4px",
               }}
             >
-              {/* <Bubble
-                variant="filled"
-                content={actualContent}
-                loading={status === "loading"}
-                typing={status === "streaming"} // 修改为 streaming
-                avatar={
-                  <div
-                    style={{
-                      width: 40,
-                      height: 40,
-                      borderRadius: "50%",
-                      background:
-                        "linear-gradient(135deg, #3366ff 0%, #00ccff 100%)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "white",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    AI
-                  </div>
-                }
-              /> */}
               <Markdown>{actualContent}</Markdown>
             </div>
           )}

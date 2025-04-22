@@ -29,8 +29,11 @@ export const Web3AuthProvider: React.FC<{ children: ReactNode }> = ({
   const [user, setUser] = useState<UserInfo | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+
     const initWeb3Auth = async () => {
       try {
         await web3AuthService.init();

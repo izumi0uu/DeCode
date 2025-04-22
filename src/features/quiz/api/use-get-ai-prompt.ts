@@ -27,7 +27,7 @@ interface QuestionData {
 
 export const useAIFeedback = (
   quizSlug: string,
-  userAnswer?: UserAnswerType
+  userAnswer?: UserAnswerType,
 ) => {
   const [content, setContent] = useState<string>("");
   const [streamStarted, setStreamStarted] = useState<boolean>(false);
@@ -39,7 +39,7 @@ export const useAIFeedback = (
   // 初始化 Google AI
   const genAI = new GoogleGenerativeAI(
     process.env.NEXT_PUBLIC_GOOGLE_AI_KEY ||
-      "AIzaSyA3-gECu7JAOZWr_bPOsR6kzOg2yxQyUOg"
+      "AIzaSyA3-gECu7JAOZWr_bPOsR6kzOg2yxQyUOg",
   );
 
   // 获取AI提示模板
@@ -57,7 +57,7 @@ export const useAIFeedback = (
         console.log("开始加载题目数据", { quizSlug });
         // 获取题目数据
         const storedQuestions = localStorage.getItem(
-          `quiz_questions_${quizSlug}`
+          `quiz_questions_${quizSlug}`,
         );
 
         if (!storedQuestions) return;
@@ -146,7 +146,7 @@ export const useAIFeedback = (
       if (questionData) {
         promptContent = promptContent.replace(
           "{{question}}",
-          questionData.question || questionData.title
+          questionData.question || questionData.title,
         );
       }
 
@@ -154,7 +154,7 @@ export const useAIFeedback = (
       if (questionData?.codeTemplate) {
         promptContent = promptContent.replace(
           "{{template}}",
-          questionData.codeTemplate
+          questionData.codeTemplate,
         );
       }
 
@@ -215,7 +215,7 @@ export function useGetAIPromptTemplate(quizSlug: string) {
       });
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/quizzes/?${queryString}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/quizzes/?${queryString}`,
       );
 
       if (!response.ok) {
@@ -241,12 +241,12 @@ export function useGetAIPromptTemplate(quizSlug: string) {
 // 保存题目到localStorage的辅助函数
 export function saveQuestionsToLocalStorage(
   quizSlug: string,
-  questions: any[]
+  questions: any[],
 ) {
   try {
     localStorage.setItem(
       `quiz_questions_${quizSlug}`,
-      JSON.stringify(questions)
+      JSON.stringify(questions),
     );
     console.log("保存题目到本地存储成功");
   } catch (error) {
