@@ -1,3 +1,4 @@
+"use client";
 import "@/once-ui/styles/index.scss";
 import "@/once-ui/tokens/index.scss";
 
@@ -69,6 +70,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         secondary.variable,
         tertiary?.variable,
       )}
+      suppressHydrationWarning
     >
       <Providers>
         <Column
@@ -78,6 +80,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           margin="0"
           padding="0"
           className="page-background"
+          suppressHydrationWarning
         >
           <Background
             mask={{
