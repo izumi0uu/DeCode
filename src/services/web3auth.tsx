@@ -20,6 +20,8 @@ export class Web3AuthService {
   // 添加新方法测试RPC节点
   private async testRpcNode(url: string): Promise<boolean> {
     try {
+      if (!url) return false;
+
       const rpcTest = await fetch(url, {
         method: "POST",
         headers: {
@@ -33,7 +35,28 @@ export class Web3AuthService {
         }),
       });
 
-      const response = await rpcTest.json();
+      // 检查HTTP状态码
+      if (!rpcTest.ok) {
+        console.error(`RPC节点 ${url} 返回HTTP错误: ${rpcTest.status}`);
+        return false;
+      }
+
+      // 尝试解析JSON，添加try-catch以防止JSON解析错误
+      let response;
+      try {
+        const text = await rpcTest.text();
+        // 检查响应是否为空
+        if (!text || text.trim() === "") {
+          console.error(`RPC节点 ${url} 返回空响应`);
+          return false;
+        }
+
+        response = JSON.parse(text);
+      } catch (parseError) {
+        console.error(`RPC节点 ${url} 返回的不是有效JSON:`, parseError);
+        return false;
+      }
+
       if (response.error) {
         console.error(`RPC节点 ${url} 测试失败:`, response.error);
         return false;
@@ -49,14 +72,14 @@ export class Web3AuthService {
 
   // 添加新方法获取可用的RPC节点
   private async getWorkingRpcNode(): Promise<string> {
-    // 常用的公共RPC节点列表
+    // 常用的公共RPC节点列表，优先使用免费开放的节点
     const publicNodes = [
-      process.env.NEXT_PUBLIC_ETHEREUM_RPC_URL ||
-        "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
       "https://eth.llamarpc.com",
       "https://ethereum.publicnode.com",
       "https://1rpc.io/eth",
       "https://rpc.ankr.com/eth",
+      process.env.NEXT_PUBLIC_ETHEREUM_RPC_URL ||
+        "https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161",
     ];
 
     // 测试每个节点，返回第一个可用的
@@ -67,8 +90,8 @@ export class Web3AuthService {
     }
 
     // 如果所有节点都不可用，返回默认节点
-    console.warn("所有RPC节点测试失败，使用默认节点");
-    return publicNodes[0];
+    console.warn("所有RPC节点测试失败，使用备用节点");
+    return "https://eth.llamarpc.com"; // 使用最可靠的免费公共节点作为备用
   }
 
   public async init() {
