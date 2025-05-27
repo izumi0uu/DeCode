@@ -161,7 +161,7 @@ export class Web3AuthService {
             process.env.NEXT_PUBLIC_WEB3AUTH_API_URL,
           );
         } catch (error) {
-          console.error("设置Web3Auth API URL时出错:", error);
+          // console.error("设置Web3Auth API URL时出错:", error);
         }
       }
 
@@ -179,11 +179,11 @@ export class Web3AuthService {
         this.initialized = true;
         return this.web3AuthInstance;
       } catch (error) {
-        console.error("初始化Web3Auth Modal时出错:", error);
+        // console.error("初始化Web3Auth Modal时出错:", error);
         throw error;
       }
     } catch (error) {
-      console.error("初始化 Web3Auth 时出错：", error);
+      // console.error("初始化 Web3Auth 时出错：", error);
       return null;
     }
   }
@@ -204,11 +204,11 @@ export class Web3AuthService {
         console.log("Web3Auth连接成功");
         return this.provider;
       } catch (error) {
-        console.error("Web3Auth连接失败", error);
+        // console.error("Web3Auth连接失败", error);
         throw error;
       }
     } catch (error) {
-      console.error("登录失败：", error);
+      // console.error("登录失败：", error);
       throw error;
     }
   }
@@ -237,7 +237,7 @@ export class Web3AuthService {
       console.log("成功获取用户信息", user);
       return user;
     } catch (error) {
-      console.error("获取用户信息失败：", error);
+      // console.error("获取用户信息失败：", error);
       return null;
     }
   }
@@ -256,7 +256,7 @@ export class Web3AuthService {
       this.provider = null;
       return true;
     } catch (error) {
-      console.error("登出失败：", error);
+      // console.error("登出失败：", error);
       return false;
     }
   }
